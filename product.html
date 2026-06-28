@@ -607,7 +607,7 @@ input,select{
 </div>
 
 
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
 
@@ -793,63 +793,79 @@ async function saveProduct(){
 
     resetForm();
     await 
+
 let barcodeScanner = null;
 let scannerRunning = false;
+let lastScannedCode = "";
+
+function setScanStatus(text){
+  const status = document.getElementById("scanStatus");
+  if(status) status.textContent = text;
+}
 
 async function openBarcodeScanner(){
   const modal = document.getElementById("scannerModal");
-  const status = document.getElementById("scanStatus");
 
-  if(!modal || typeof Html5Qrcode === "undefined"){
-    alert("ไม่สามารถเปิด scanner ได้ กรุณาเช็กอินเทอร์เน็ตหรือ browser");
+  if(!modal){
+    alert("ไม่พบหน้าต่าง scanner");
     return;
   }
 
   modal.classList.add("active");
-  status.textContent = "กำลังเปิดกล้อง...";
+  setScanStatus("กำลังเตรียมกล้อง...");
+
+  if(location.protocol !== "https:" && location.hostname !== "localhost"){
+    setScanStatus("ต้องเปิดผ่าน HTTPS เท่านั้น กล้องถึงจะใช้งานได้");
+    return;
+  }
+
+  if(typeof Html5Qrcode === "undefined"){
+    setScanStatus("โหลดตัวสแกนไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ หรือเช็กอินเทอร์เน็ต");
+    return;
+  }
 
   try{
     if(!barcodeScanner){
       barcodeScanner = new Html5Qrcode("barcodeReader");
     }
 
+    if(scannerRunning){
+      setScanStatus("กล้องเปิดอยู่แล้ว");
+      return;
+    }
+
     const config = {
       fps: 10,
-      qrbox: { width: 260, height: 140 },
-      formatsToSupport: [
-        Html5QrcodeSupportedFormats.EAN_13,
-        Html5QrcodeSupportedFormats.EAN_8,
-        Html5QrcodeSupportedFormats.CODE_128,
-        Html5QrcodeSupportedFormats.UPC_A,
-        Html5QrcodeSupportedFormats.UPC_E
-      ]
+      qrbox: { width: 260, height: 140 }
     };
 
     await barcodeScanner.start(
       { facingMode: "environment" },
       config,
       async (decodedText) => {
+        if(decodedText === lastScannedCode) return;
+        lastScannedCode = decodedText;
+
         document.getElementById("barcode").value = decodedText;
-        status.textContent = "สแกนสำเร็จ: " + decodedText;
+        document.getElementById("barcode").classList.add("scan-success");
+        setScanStatus("สแกนสำเร็จ: " + decodedText);
 
         await closeBarcodeScanner(false);
 
-        const barcodeInput = document.getElementById("barcode");
-        if(barcodeInput){
-          barcodeInput.classList.add("scan-success");
-        }
-
         showModal("สแกนบาร์โค้ดสำเร็จ", [
           {label:"Barcode", value:decodedText},
-          {label:"ขั้นตอนต่อไป", value:"กดบันทึกสินค้าเพื่อผูกบาร์โค้ดกับสินค้านี้"}
+          {label:"ขั้นตอนต่อไป", value:"เลือก/แก้สินค้า แล้วกดบันทึกสินค้า"}
         ]);
-      }
+
+        setTimeout(() => { lastScannedCode = ""; }, 1200);
+      },
+      () => {}
     );
 
     scannerRunning = true;
-    status.textContent = "พร้อมสแกนแล้ว";
+    setScanStatus("พร้อมสแกนแล้ว");
   }catch(err){
-    status.textContent = "เปิดกล้องไม่สำเร็จ: " + err.message;
+    setScanStatus("เปิดกล้องไม่สำเร็จ: " + (err.message || err));
   }
 }
 
@@ -863,7 +879,7 @@ async function closeBarcodeScanner(clearReader = true){
     }
 
     if(barcodeScanner && clearReader){
-      barcodeScanner.clear();
+      await barcodeScanner.clear();
     }
   }catch(err){
     console.warn(err);
@@ -871,6 +887,7 @@ async function closeBarcodeScanner(clearReader = true){
 
   if(modal) modal.classList.remove("active");
 }
+
 
 loadProducts();
 
