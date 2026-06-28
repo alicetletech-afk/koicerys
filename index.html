@@ -3,168 +3,664 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koicerys POS</title>
+<title>Koicerys POS | ขายสินค้า</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f3f5fb;color:#111827;}
-.header{background:#173b92;color:white;padding:32px;border-radius:0 0 36px 36px;}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:20px;}
-.stat{background:rgba(255,255,255,.15);padding:20px;border-radius:18px;}
-.nav{display:flex;justify-content:center;gap:16px;padding:24px;overflow-x:auto;}
-.nav a{
-  min-width:130px;height:90px;border-radius:18px;border:1px solid #dce2f0;background:white;
-  font-weight:bold;color:#111827;text-decoration:none;display:flex;align-items:center;justify-content:center;
-  text-align:center;flex-shrink:0;
+:root{
+  --blue:#3468f5;
+  --navy:#173b92;
+  --bg:#f3f5fb;
+  --card:#ffffff;
+  --line:#dce2f0;
+  --muted:#64748b;
+  --text:#111827;
+  --green:#0f766e;
+  --red:#dc2626;
+  --soft:#f1f5fb;
+  --shadow:0 16px 38px rgba(30,58,138,.08);
 }
-.nav a.active{background:#3468f5;color:white;}
-.main{display:grid;grid-template-columns:2fr 1fr;gap:20px;padding:24px;}
-.box{background:white;padding:20px;border-radius:20px;}
-.search-wrap{display:flex;gap:10px;}
-.search{flex:1;padding:14px;border-radius:14px;border:1px solid #ddd;}
-.search-btn{padding:14px 20px;border:none;border-radius:14px;background:#3468f5;color:white;font-weight:bold;}
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:20px;}
-.product{background:white;padding:16px;border-radius:16px;cursor:pointer;border:1px solid #eef2f7;}
-.product:hover{border-color:#3468f5;}
-input,select{width:100%;padding:14px;margin-top:12px;border-radius:12px;border:1px solid #ddd;box-sizing:border-box;}
-.pay-btn{width:100%;padding:16px;margin-top:16px;border:none;border-radius:14px;background:#3468f5;color:white;font-weight:bold;cursor:pointer;}
-.pay-btn:disabled{background:#9ca3af;cursor:not-allowed;}
-.hidden{display:none;}
-.cart-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #eef2f7;}
-.cart-row button{border:none;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:4px 8px;cursor:pointer;}
-.summary{background:#f3f5fb;padding:14px;border-radius:14px;margin:14px 0;}
-.success{background:#dcfce7;color:#166534;padding:12px;border-radius:12px;margin-top:12px;display:none;font-weight:bold;}
-@media(max-width:900px){.main{grid-template-columns:1fr;}.nav{justify-content:flex-start;}}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+.header{
+  background:linear-gradient(145deg,#10245f,#1d4297);
+  color:white;
+  padding:34px clamp(20px,4vw,56px) 56px;
+  border-radius:0 0 36px 36px;
+}
+.header-top{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:flex-start;
+}
+.header h1{
+  margin:0;
+  font-size:clamp(1.8rem,2.5vw,2.4rem);
+  font-weight:950;
+}
+.header p{
+  margin:10px 0 0;
+  opacity:.85;
+}
+.icon-box{
+  width:58px;
+  height:58px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.2);
+  font-size:1.5rem;
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  margin-top:24px;
+}
+.stat{
+  background:rgba(255,255,255,.15);
+  padding:20px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.16);
+}
+.stat small{
+  opacity:.72;
+  font-weight:800;
+}
+.stat h2{
+  margin:10px 0 0;
+  font-size:1.65rem;
+}
+.nav{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  padding:26px 20px 0;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav a{
+  min-width:132px;
+  min-height:88px;
+  border-radius:22px;
+  border:1px solid var(--line);
+  background:white;
+  font-weight:950;
+  color:var(--text);
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  flex-shrink:0;
+  box-shadow:var(--shadow);
+}
+.nav a.active{
+  background:var(--blue);
+  color:white;
+  border-color:var(--blue);
+}
+.main{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 430px;
+  gap:24px;
+  padding:34px clamp(20px,4vw,56px) 48px;
+  align-items:start;
+}
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:12px;
+  margin-bottom:16px;
+}
+.section-title h2{
+  margin:0;
+  font-size:1.65rem;
+}
+.section-title small{
+  color:var(--muted);
+  font-weight:900;
+}
+.box{
+  background:white;
+  padding:18px;
+  border-radius:24px;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+}
+.search-wrap{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.search{
+  flex:1;
+  min-width:0;
+  padding:15px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:var(--soft);
+  font-size:1rem;
+}
+.search-btn{
+  padding:15px 22px;
+  border:none;
+  border-radius:16px;
+  background:var(--blue);
+  color:white;
+  font-weight:950;
+  cursor:pointer;
+}
+.help{
+  color:var(--muted);
+  font-size:.84rem;
+  margin-top:9px;
+}
+.category-wrap{
+  display:flex;
+  gap:10px;
+  margin:18px 0 16px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.category-wrap::-webkit-scrollbar{display:none}
+.category-wrap button{
+  border:1px solid var(--line);
+  background:white;
+  padding:12px 18px;
+  border-radius:999px;
+  font-weight:950;
+  color:#475569;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.category-wrap button.active{
+  background:#eaf1ff;
+  color:#245bd4;
+  border-color:#bcd2ff;
+}
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:16px;
+}
+.product{
+  background:white;
+  padding:18px;
+  border-radius:22px;
+  cursor:pointer;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  min-height:168px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.product:hover{
+  border-color:var(--blue);
+}
+.product .emoji{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+  background:var(--soft);
+  margin-bottom:10px;
+}
+.product h3{
+  margin:0;
+  font-size:1.05rem;
+}
+.product .barcode{
+  display:inline-block;
+  margin-top:7px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#edf2f7;
+  color:#475569;
+  font-size:.75rem;
+  font-weight:900;
+  word-break:break-all;
+}
+.product .bottom{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:16px;
+}
+.product .price{
+  font-size:1.5rem;
+  font-weight:950;
+  color:var(--green);
+}
+.product .stock{
+  text-align:right;
+  color:var(--muted);
+  font-size:.84rem;
+}
+.cart-box{
+  position:sticky;
+  top:18px;
+}
+.cart-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:14px;
+}
+.cart-head h3{
+  margin:0;
+  font-size:1.35rem;
+}
+.cart-list{
+  max-height:250px;
+  overflow:auto;
+  margin-bottom:14px;
+}
+.cart-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  padding:11px 0;
+  border-bottom:1px solid #edf2f7;
+}
+.cart-row:last-child{border-bottom:0}
+.cart-row small{
+  color:var(--muted);
+}
+.qty-control{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+  margin-top:6px;
+}
+.qty-control button{
+  border:0;
+  width:28px;
+  height:28px;
+  border-radius:9px;
+  font-weight:950;
+  cursor:pointer;
+}
+.remove{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+.total{
+  background:var(--soft);
+  border-radius:18px;
+  padding:15px;
+  margin-bottom:13px;
+}
+.total small{
+  display:block;
+  color:var(--muted);
+  font-weight:800;
+}
+.total b{
+  display:block;
+  font-size:1.55rem;
+  margin-top:5px;
+}
+.pay-section{
+  display:grid;
+  gap:11px;
+}
+label{
+  font-weight:900;
+  color:#475569;
+  font-size:.9rem;
+}
+select,input{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:var(--soft);
+  font-size:1rem;
+}
+.payment-extra{display:none}
+.payment-extra.active{
+  display:grid;
+  gap:10px;
+}
+.pay-btn{
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:16px;
+  background:var(--blue);
+  color:white;
+  font-weight:950;
+  cursor:pointer;
+  font-size:1rem;
+}
+.success{
+  background:#dcfce7;
+  color:#166534;
+  padding:12px;
+  border-radius:14px;
+  margin-top:12px;
+  display:none;
+  font-weight:900;
+}
+.empty{
+  color:var(--muted);
+  padding:26px 12px;
+  text-align:center;
+}
+.loading{
+  color:var(--muted);
+  text-align:center;
+  padding:30px;
+}
+@media(max-width:1050px){
+  .main{
+    grid-template-columns:1fr;
+  }
+  .cart-box{
+    position:static;
+    order:-1;
+  }
+}
+@media(max-width:720px){
+  .header{
+    padding:26px 16px 36px;
+  }
+  .stats{
+    grid-template-columns:1fr;
+  }
+  .nav{
+    justify-content:flex-start;
+    padding-left:16px;
+    padding-right:16px;
+  }
+  .nav a{
+    min-width:105px;
+    min-height:78px;
+    font-size:.85rem;
+  }
+  .main{
+    padding:24px 16px 40px;
+  }
+  .search-wrap{
+    align-items:stretch;
+  }
+  .products{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media(max-width:440px){
+  .products{
+    grid-template-columns:1fr;
+  }
+  .section-title{
+    display:block;
+  }
+  .section-title small{
+    display:block;
+    margin-top:6px;
+  }
+}
 </style>
 </head>
 <body>
 
-<div class="header">
-<h1>ร้านของชำ</h1>
-<p>ขายสินค้า / ยิงบาร์โค้ด / ค้นหาด้วยชื่อ</p>
-<div class="stats">
-<div class="stat">ยอดขายวันนี้<br><h2>฿<span id="todaySales">0</span></h2></div>
-<div class="stat">สินค้าใกล้หมด<br><h2>2 รายการ</h2></div>
-</div>
-</div>
+<header class="header">
+  <div class="header-top">
+    <div>
+      <h1>ร้านของชำ</h1>
+      <p>ขายสินค้า / ยิงบาร์โค้ด / ค้นหาด้วยชื่อ</p>
+    </div>
+    <div class="icon-box">🛒</div>
+  </div>
 
-<div class="nav">
-<a class="active" href="index.html">🧾<br>ขาย</a>
-<a href="stock.html">📦<br>สต๊อก</a>
-<a href="add-stock.html">➕<br>เติมของ</a>
-<a href="product.html">🏷️<br>สินค้า</a>
-<a href="report.html">📊<br>รายงาน</a>
-</div>
+  <div class="stats">
+    <div class="stat">
+      <small>ยอดขายวันนี้</small>
+      <h2>฿<span id="todaySales">0</span></h2>
+    </div>
+    <div class="stat">
+      <small>สินค้าใกล้หมด</small>
+      <h2><span id="lowStock">0</span> รายการ</h2>
+    </div>
+  </div>
+</header>
 
-<div class="main">
-<div>
-<div class="box">
-<div class="search-wrap">
-<input id="searchInput" class="search" placeholder="ยิงบาร์โค้ด หรือค้นหาชื่อสินค้า" onkeydown="handleSearchEnter(event)">
-<button class="search-btn" onclick="searchProduct()">ค้นหา</button>
-</div>
-</div>
+<nav class="nav">
+  <a class="active" href="index.html"><span>🧾</span>ขาย</a>
+  <a href="stock.html"><span>📦</span>สต๊อก</a>
+  <a href="add-stock.html"><span>➕</span>เติมของ</a>
+  <a href="product.html"><span>🏷️</span>สินค้า</a>
+  <a href="report.html"><span>📊</span>รายงาน</a>
+</nav>
 
-<div class="products" id="productList"></div>
-</div>
+<main class="main">
+  <section>
+    <div class="section-title">
+      <h2>ขายสินค้า</h2>
+      <small>Barcode-ready</small>
+    </div>
 
-<div class="box">
-<h3>ตะกร้าสินค้า</h3>
-<div id="cartList"></div>
+    <div class="box">
+      <div class="search-wrap">
+        <input id="searchInput" class="search" placeholder="ยิงบาร์โค้ด หรือค้นหาชื่อสินค้า" onkeydown="handleSearchEnter(event)">
+        <button class="search-btn" onclick="renderProducts()">ค้นหา</button>
+      </div>
+      <div class="help">คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
+    </div>
 
-<div class="summary">
-<p>จำนวนสินค้า: <b><span id="cartCount">0</span> ชิ้น</b></p>
-<h2>รวม ฿<span id="cartTotal">0</span></h2>
-</div>
+    <div class="category-wrap" id="categoryWrap"></div>
+    <div class="products" id="productList">
+      <div class="loading">กำลังโหลดสินค้าจาก Google Sheet...</div>
+    </div>
+  </section>
 
-<label>ช่องทางชำระเงิน</label>
-<select id="payment" onchange="togglePayment()">
-<option value="cash">เงินสด</option>
-<option value="transfer">เงินโอน</option>
-</select>
+  <aside class="box cart-box">
+    <div class="cart-head">
+      <h3>ตะกร้าสินค้า</h3>
+      <b><span id="cartCount">0</span> ชิ้น</b>
+    </div>
 
-<div id="cash-box">
-<input id="cash" type="number" placeholder="รับเงินจากลูกค้า" oninput="calcChange()">
-<input id="change" placeholder="เงินทอน" readonly>
-</div>
+    <div id="cartList" class="cart-list"></div>
 
-<div id="transfer-box" class="hidden">
-<input id="transferRef" placeholder="เลขอ้างอิงการโอน">
-</div>
+    <div class="total">
+      <small>ยอดรวม</small>
+      <b>฿<span id="cartTotal">0</span></b>
+    </div>
 
-<button class="pay-btn" onclick="checkout()">ชำระเงิน / ตัดสต๊อก</button>
-<div id="successBox" class="success"></div>
-</div>
-</div>
+    <div class="pay-section">
+      <label>ช่องทางชำระเงิน</label>
+      <select id="paymentMethod" onchange="togglePayment()">
+        <option value="cash">เงินสด</option>
+        <option value="transfer">เงินโอน</option>
+      </select>
+
+      <div id="cashBox" class="payment-extra active">
+        <label>รับเงินจากลูกค้า</label>
+        <input id="cashReceived" type="number" placeholder="เช่น 100" oninput="calculateChange()">
+
+        <div class="total">
+          <small>เงินทอน</small>
+          <b>฿<span id="changeAmount">0</span></b>
+        </div>
+      </div>
+
+      <div id="transferBox" class="payment-extra">
+        <label>เลขอ้างอิงการโอน</label>
+        <input id="transferRef" placeholder="เช่น PromptPay / Ref No.">
+      </div>
+
+      <button class="pay-btn" onclick="checkout()">ชำระเงิน / ตัดสต๊อก</button>
+    </div>
+
+    <div id="successBox" class="success"></div>
+  </aside>
+</main>
 
 <script>
-const products = [
-  {id:1, name:"น้ำดื่มคริสตัล", barcode:"8850001000011", price:7, stock:24},
-  {id:2, name:"โค้กกระป๋อง", barcode:"8850001000028", price:18, stock:18},
-  {id:3, name:"โออิชิ 500ml", barcode:"8850001000035", price:22, stock:9},
-  {id:4, name:"มาม่าต้มยำกุ้ง", barcode:"8850001000042", price:8, stock:50}
-];
+const API_URL = "https://script.google.com/macros/s/AKfycbzzkIqWxnmrFj48bTks8tC4KgOuhjfTomH6RRGUtdSgjFLrBpAbGcYuPlr2karfeXzuqQ/exec";
 
-let cart = [{id:1, name:"น้ำดื่มคริสตัล", price:7, qty:2}];
+let products = [];
+let cart = [];
+let currentCategory = "ทั้งหมด";
 let todaySales = 0;
 
 function money(n){
-  return Number(n || 0).toLocaleString();
+  return Number(n || 0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2});
 }
 
-function renderProducts(list = products){
-  document.getElementById("productList").innerHTML = list.map(p => `
-    <div class="product" onclick="addToCart(${p.id})">
-      <b>${p.name}</b><br>
-      Barcode: ${p.barcode}<br>
-      ฿${p.price}<br>
-      <small>เหลือ ${p.stock} ชิ้น</small>
-    </div>
+function getEmoji(category){
+  const map = {
+    "เครื่องดื่ม":"🥤",
+    "แอลกอฮอล์":"🍺",
+    "ยา":"💊",
+    "ขนม":"🍟"
+  };
+  return map[category] || "📦";
+}
+
+async function loadProducts(){
+  try{
+    const res = await fetch(API_URL + "?action=getProducts");
+    const json = await res.json();
+
+    if(!json.success){
+      throw new Error(json.message || "โหลดข้อมูลไม่สำเร็จ");
+    }
+
+    products = json.data
+      .filter(p => String(p.status || "active").toLowerCase() === "active")
+      .map(p => ({
+        id: String(p.product_id),
+        barcode: String(p.barcode || ""),
+        name: String(p.name || ""),
+        category: String(p.category || ""),
+        cost: Number(p.cost || 0),
+        price: Number(p.price || 0),
+        stock: Number(p.stock || 0),
+        reorder: Number(p.reorder_point || 0),
+        unit: String(p.unit || "ชิ้น")
+      }));
+
+    renderCategories();
+    renderProducts();
+    updateStats();
+  }catch(err){
+    document.getElementById("productList").innerHTML =
+      `<div class="empty" style="grid-column:1/-1">โหลดสินค้าจาก Google Sheet ไม่สำเร็จ<br>${err.message}</div>`;
+  }
+}
+
+function renderCategories(){
+  const base = ["ทั้งหมด","เครื่องดื่ม","แอลกอฮอล์","ยา","ขนม"];
+  const fromSheet = [...new Set(products.map(p => p.category).filter(Boolean))];
+  const categories = [...new Set([...base,...fromSheet])];
+
+  document.getElementById("categoryWrap").innerHTML = categories.map(cat => `
+    <button class="${cat === currentCategory ? "active" : ""}" onclick="setCategory('${cat}')">${cat}</button>
   `).join("");
 }
 
-function searchProduct(){
-  const q = document.getElementById("searchInput").value.trim().toLowerCase();
-  if(!q){
-    renderProducts();
-    return;
-  }
-  const result = products.filter(p => 
-    p.name.toLowerCase().includes(q) || p.barcode.includes(q)
-  );
-  renderProducts(result);
+function setCategory(cat){
+  currentCategory = cat;
+  renderCategories();
+  renderProducts();
+}
+
+function matchProduct(p,q){
+  q = String(q || "").trim().toLowerCase();
+  return !q ||
+    p.name.toLowerCase().includes(q) ||
+    p.barcode.includes(q) ||
+    p.category.toLowerCase().includes(q);
+}
+
+function renderProducts(){
+  const q = document.getElementById("searchInput").value;
+  const filtered = products.filter(p => {
+    const matchCat = currentCategory === "ทั้งหมด" || p.category === currentCategory;
+    return matchCat && matchProduct(p,q);
+  });
+
+  document.getElementById("productList").innerHTML = filtered.length ? filtered.map(p => `
+    <div class="product" onclick="addToCart('${p.id}')">
+      <div>
+        <div class="emoji">${getEmoji(p.category)}</div>
+        <h3>${p.name}</h3>
+        <span class="barcode">Barcode: ${p.barcode}</span>
+      </div>
+      <div class="bottom">
+        <div class="price">฿${money(p.price)}</div>
+        <div class="stock">เหลือ<br>${money(p.stock)} ${p.unit}</div>
+      </div>
+    </div>
+  `).join("") : `<div class="empty" style="grid-column:1/-1">ไม่พบสินค้า</div>`;
 }
 
 function handleSearchEnter(e){
   if(e.key === "Enter"){
     const q = document.getElementById("searchInput").value.trim();
     const found = products.find(p => p.barcode === q);
+
     if(found){
       addToCart(found.id);
       document.getElementById("searchInput").value = "";
       renderProducts();
     }else{
-      searchProduct();
+      renderProducts();
     }
   }
 }
 
 function addToCart(id){
-  const product = products.find(p => p.id === id);
-  if(!product || product.stock <= 0){
-    alert("สินค้าหมด");
+  const p = products.find(x => x.id === id);
+
+  if(!p || p.stock <= 0){
+    alert("สินค้าหมดหรือไม่มีในสต๊อก");
     return;
   }
 
-  const item = cart.find(i => i.id === id);
-  if(item){
-    if(item.qty >= product.stock){
-      alert("จำนวนเกินสต๊อก");
+  const existing = cart.find(i => i.id === id);
+
+  if(existing){
+    if(existing.qty >= p.stock){
+      alert("จำนวนในตะกร้าเกินสต๊อก");
       return;
     }
-    item.qty++;
+    existing.qty += 1;
   }else{
-    cart.push({id:product.id, name:product.name, price:product.price, qty:1});
+    cart.push({...p, qty:1});
+  }
+
+  renderCart();
+}
+
+function decreaseQty(id){
+  const item = cart.find(i => i.id === id);
+  if(!item) return;
+
+  item.qty -= 1;
+  if(item.qty <= 0){
+    cart = cart.filter(i => i.id !== id);
   }
   renderCart();
+}
+
+function increaseQty(id){
+  addToCart(id);
 }
 
 function removeFromCart(id){
@@ -172,71 +668,74 @@ function removeFromCart(id){
   renderCart();
 }
 
-function getCartTotal(){
-  return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+function cartTotal(){
+  return cart.reduce((sum,item) => sum + item.price * item.qty, 0);
 }
 
 function renderCart(){
-  const cartList = document.getElementById("cartList");
-  const total = getCartTotal();
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
+  const list = document.getElementById("cartList");
+  const count = cart.reduce((sum,item) => sum + item.qty, 0);
+  const total = cartTotal();
 
   document.getElementById("cartCount").innerText = count;
   document.getElementById("cartTotal").innerText = money(total);
 
-  if(cart.length === 0){
-    cartList.innerHTML = "<p style='color:#6b7280'>ยังไม่มีสินค้าในตะกร้า</p>";
-  }else{
-    cartList.innerHTML = cart.map(item => `
-      <div class="cart-row">
-        <span>${item.name} x${item.qty}</span>
-        <span>฿${money(item.price * item.qty)} <button onclick="removeFromCart(${item.id})">ลบ</button></span>
+  list.innerHTML = cart.length ? cart.map(item => `
+    <div class="cart-row">
+      <div>
+        <b>${item.name}</b><br>
+        <small>฿${money(item.price)} x ${item.qty}</small>
+        <div class="qty-control">
+          <button onclick="decreaseQty('${item.id}')">−</button>
+          <b>${item.qty}</b>
+          <button onclick="increaseQty('${item.id}')">+</button>
+          <button class="remove" onclick="removeFromCart('${item.id}')">ลบ</button>
+        </div>
       </div>
-    `).join("");
-  }
-  calcChange();
+      <b>฿${money(item.price * item.qty)}</b>
+    </div>
+  `).join("") : `<div class="empty">ยังไม่มีสินค้าในตะกร้า</div>`;
+
+  calculateChange();
 }
 
 function togglePayment(){
-  const method = document.getElementById("payment").value;
-  document.getElementById("cash-box").style.display = method === "cash" ? "block" : "none";
-  document.getElementById("transfer-box").style.display = method === "transfer" ? "block" : "none";
+  const method = document.getElementById("paymentMethod").value;
+  document.getElementById("cashBox").classList.toggle("active", method === "cash");
+  document.getElementById("transferBox").classList.toggle("active", method === "transfer");
 }
 
-function calcChange(){
-  const total = getCartTotal();
-  const received = parseFloat(document.getElementById("cash").value) || 0;
-  const change = received - total;
-  document.getElementById("change").value = change >= 0 ? money(change) : "0";
+function calculateChange(){
+  const received = Number(document.getElementById("cashReceived").value || 0);
+  const change = Math.max(received - cartTotal(), 0);
+  document.getElementById("changeAmount").innerText = money(change);
 }
 
 function checkout(){
-  const total = getCartTotal();
-  const method = document.getElementById("payment").value;
-  const successBox = document.getElementById("successBox");
-
   if(cart.length === 0){
     alert("ยังไม่มีสินค้าในตะกร้า");
     return;
   }
 
-  let popupMessage = "";
+  const total = cartTotal();
+  const method = document.getElementById("paymentMethod").value;
+  let popup = "";
 
   if(method === "cash"){
-    const received = parseFloat(document.getElementById("cash").value) || 0;
+    const received = Number(document.getElementById("cashReceived").value || 0);
     const change = received - total;
 
     if(received < total){
-      alert("รับเงินยังไม่พอ\nยอดรวม: ฿" + money(total) + "\nรับมา: ฿" + money(received));
+      alert("รับเงินยังไม่พอ\\nยอดรวม: ฿" + money(total) + "\\nรับมา: ฿" + money(received));
       return;
     }
 
-    popupMessage =
-      "ชำระเงินสำเร็จ\n" +
-      "ช่องทาง: เงินสด\n" +
-      "ยอดรวม: ฿" + money(total) + "\n" +
-      "รับเงิน: ฿" + money(received) + "\n" +
-      "เงินทอน: ฿" + money(change) + "\n" +
+    popup =
+      "ชำระเงินสำเร็จ\\n" +
+      "ช่องทาง: เงินสด\\n" +
+      "ยอดรวม: ฿" + money(total) + "\\n" +
+      "รับเงิน: ฿" + money(received) + "\\n" +
+      "เงินทอน: ฿" + money(change) + "\\n" +
       "ตัดสต๊อกสำเร็จ";
   }
 
@@ -248,39 +747,41 @@ function checkout(){
       return;
     }
 
-    popupMessage =
-      "ชำระเงินสำเร็จ\n" +
-      "ช่องทาง: เงินโอน\n" +
-      "ยอดรวม: ฿" + money(total) + "\n" +
-      "Ref: " + ref + "\n" +
+    popup =
+      "ชำระเงินสำเร็จ\\n" +
+      "ช่องทาง: เงินโอน\\n" +
+      "ยอดรวม: ฿" + money(total) + "\\n" +
+      "Ref: " + ref + "\\n" +
       "ตัดสต๊อกสำเร็จ";
   }
 
   cart.forEach(item => {
-    const product = products.find(p => p.id === item.id);
-    if(product){
-      product.stock -= item.qty;
-    }
+    const p = products.find(x => x.id === item.id);
+    if(p) p.stock -= item.qty;
   });
 
   todaySales += total;
   document.getElementById("todaySales").innerText = money(todaySales);
 
-  successBox.style.display = "block";
-  successBox.innerHTML = popupMessage.replaceAll("\n", "<br>");
+  document.getElementById("successBox").style.display = "block";
+  document.getElementById("successBox").innerHTML = popup.replaceAll("\\n","<br>");
 
-  alert(popupMessage);
+  alert(popup);
 
   cart = [];
-  document.getElementById("cash").value = "";
-  document.getElementById("change").value = "";
+  document.getElementById("cashReceived").value = "";
   document.getElementById("transferRef").value = "";
-
   renderCart();
   renderProducts();
+  updateStats();
 }
 
-renderProducts();
+function updateStats(){
+  const low = products.filter(p => p.stock <= p.reorder).length;
+  document.getElementById("lowStock").innerText = low;
+}
+
+loadProducts();
 renderCart();
 togglePayment();
 </script>
