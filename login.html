@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Koicerys POS</title>
+<style>
+:root{
+  --blue:#3468f5;
+  --navy:#173b92;
+  --bg:#f3f5fb;
+  --line:#dce2f0;
+  --muted:#64748b;
+  --text:#111827;
+  --soft:#f1f5fb;
+  --danger:#dc2626;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;
+  background:linear-gradient(145deg,#eef3ff,#f8fafc);
+  display:grid;
+  place-items:center;
+  color:var(--text);
+  padding:24px;
+}
+.login-card{
+  width:min(94vw,430px);
+  background:white;
+  border:1px solid var(--line);
+  border-radius:30px;
+  box-shadow:0 28px 80px rgba(30,58,138,.16);
+  overflow:hidden;
+}
+.login-head{
+  background:linear-gradient(145deg,#10245f,#1d4297);
+  color:white;
+  padding:30px;
+}
+.login-head h1{
+  margin:0;
+  font-size:2rem;
+  font-weight:950;
+}
+.login-head p{
+  margin:10px 0 0;
+  opacity:.85;
+}
+.login-body{
+  padding:26px;
+  display:grid;
+  gap:14px;
+}
+label{
+  font-weight:900;
+  color:#475569;
+  font-size:.9rem;
+}
+input{
+  width:100%;
+  padding:15px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:var(--soft);
+  font-size:1rem;
+  outline:0;
+}
+button{
+  width:100%;
+  padding:16px;
+  border:0;
+  border-radius:16px;
+  background:var(--blue);
+  color:white;
+  font-weight:950;
+  font-size:1rem;
+  cursor:pointer;
+  margin-top:6px;
+}
+.error{
+  display:none;
+  background:#fee2e2;
+  color:#b91c1c;
+  border:1px solid #fecaca;
+  padding:12px;
+  border-radius:14px;
+  font-weight:850;
+  font-size:.92rem;
+}
+.note{
+  color:var(--muted);
+  font-size:.85rem;
+  line-height:1.45;
+  text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="login-head">
+    <h1>Koicerys POS</h1>
+    <p>เข้าสู่ระบบร้านของชำ</p>
+  </div>
+
+  <div class="login-body">
+    <div id="errorBox" class="error"></div>
+
+    <div>
+      <label>Email</label>
+      <input id="email" type="email" placeholder="admin@mesook.com" autocomplete="email">
+    </div>
+
+    <div>
+      <label>Password</label>
+      <input id="password" type="password" placeholder="รหัสผ่าน" autocomplete="current-password">
+    </div>
+
+    <button onclick="login()">เข้าสู่ระบบ</button>
+
+    <div class="note">
+      ใช้บัญชีที่สร้างไว้ใน Firebase Authentication
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<script>
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    window.location.href = "index.html";
+  }
+});
+
+function showError(message){
+  const box = document.getElementById("errorBox");
+  box.style.display = "block";
+  box.textContent = message;
+}
+
+function login(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if(!email || !password){
+    showError("กรอกอีเมลและรหัสผ่านก่อน");
+    return;
+  }
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => {
+      window.location.href = "index.html";
+    })
+    .catch((error) => {
+      let msg = "เข้าสู่ระบบไม่สำเร็จ";
+
+      if(error.code === "auth/invalid-credential" || error.code === "auth/wrong-password"){
+        msg = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+      }else if(error.code === "auth/user-not-found"){
+        msg = "ไม่พบบัญชีนี้ในระบบ";
+      }else if(error.code === "auth/too-many-requests"){
+        msg = "ลองผิดหลายครั้งเกินไป กรุณารอสักครู่";
+      }
+
+      showError(msg);
+    });
+}
+
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Enter") login();
+});
+</script>
+
+</body>
+</html>
