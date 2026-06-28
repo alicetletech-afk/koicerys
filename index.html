@@ -220,7 +220,7 @@ body{
   margin:0;
   font-size:1.05rem;
 }
-.product .barcode{
+.product .sold-badge{
   display:inline-block;
   margin-top:7px;
   padding:5px 9px;
@@ -228,6 +228,17 @@ body{
   background:#d1fae5;
   color:#047857;
   border:1px solid #6ee7b7;
+  font-size:.75rem;
+  font-weight:900;
+}
+.product .barcode{
+  display:inline-block;
+  margin-top:7px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#ffffff;
+  color:#173b92;
+  border:1px solid #bfdbfe;
   font-size:.75rem;
   font-weight:900;
   word-break:break-all;
@@ -731,7 +742,7 @@ function renderProducts(){
       <div>
         <div class="emoji">${getEmoji(p.category)}</div>
         <h3>${p.name}</h3>
-        ${p.sold_qty > 0 ? `<span class="barcode">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>` : ""}
+        ${p.sold_qty > 0 ? `<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>` : ""}
         <span class="barcode">Barcode: ${p.barcode}</span>
       </div>
       <div class="bottom">
