@@ -232,24 +232,55 @@ function renderLowStock(items){
     : `<div class="empty">ยังไม่มีสินค้าใกล้หมด</div>`;
 }
 
+
 function renderLatestSales(items){
   latestSalesCache = items || [];
 
-  document.getElementById("latestSales").innerHTML =
-    items.length ? items.map(item => `
-      <div class="item-card" onclick="showBillDetail('${item.sale_id}')" style="cursor:pointer;">
-        <h4>${item.sale_id}</h4>
-        <div class="muted">${formatDate(item.datetime)}</div>
+  const latest = items[0];
 
-        <div class="report-row">
-          <span>${item.payment_method === "cash" ? "เงินสด" : "เงินโอน"}</span>
-          <b>฿${money(item.total)}</b>
+  if(!latest){
+    document.getElementById("latestSales").innerHTML =
+      `<div class="empty">ยังไม่มีบิลขายในช่วงวันที่นี้</div>`;
+    return;
+  }
+
+  document.getElementById("latestSales").innerHTML = `
+    <div class="item-card" onclick="toggleBillList()" style="cursor:pointer;">
+      <div class="report-row">
+        <div>
+          <h4>${latest.sale_id}</h4>
+          <div class="muted">${formatDate(latest.datetime)}</div>
         </div>
-
-        <span class="badge">แตะเพื่อดูรายละเอียด</span>
+        <b>฿${money(latest.total)}</b>
       </div>
-    `).join("")
-    : `<div class="empty">ยังไม่มีบิลขายในช่วงวันที่นี้</div>`;
+
+      <span class="badge">แตะเพื่อดูบิลทั้งหมด</span>
+    </div>
+
+    <div id="billListContainer" style="display:none; margin-top:12px;">
+      ${items.map(item => `
+        <div class="item-card"
+             onclick="event.stopPropagation(); showBillDetail('${item.sale_id}')"
+             style="cursor:pointer; margin-top:10px;">
+          <div class="report-row">
+            <div>
+              <h4>${item.sale_id}</h4>
+              <div class="muted">${formatDate(item.datetime)}</div>
+            </div>
+            <b>฿${money(item.total)}</b>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function toggleBillList(){
+  const box = document.getElementById("billListContainer");
+  if(!box) return;
+
+  box.style.display =
+    box.style.display === "none" ? "block" : "none";
 }
 
 function showBillDetail(saleId){
