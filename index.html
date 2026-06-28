@@ -680,8 +680,10 @@ async function loadProducts(){
         price: Number(p.price || 0),
         stock: Number(p.stock || 0),
         reorder: Number(p.reorder_point || 0),
-        unit: String(p.unit || "ชิ้น")
-      }));
+        unit: String(p.unit || "ชิ้น"),
+        sold_qty: Number(p.sold_qty || 0)
+      }))
+      .sort((a,b) => b.sold_qty - a.sold_qty);
 
     renderCategories();
     renderProducts();
@@ -728,6 +730,7 @@ function renderProducts(){
       <div>
         <div class="emoji">${getEmoji(p.category)}</div>
         <h3>${p.name}</h3>
+        ${p.sold_qty > 0 ? `<span class="barcode">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>` : ""}
         <span class="barcode">Barcode: ${p.barcode}</span>
       </div>
       <div class="bottom">
