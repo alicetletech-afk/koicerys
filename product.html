@@ -372,8 +372,25 @@ input,select{
   .search-wrap button{width:100%;margin-top:10px}
 }
 
+.product-picker-box{
+  display:grid;
+  gap:8px;
+  padding:12px;
+  border-radius:18px;
+  background:#f8fafc;
+  border:1px solid var(--line);
+}
+.product-picker-box small{
+  color:var(--muted);
+  font-weight:850;
+  line-height:1.45;
+}
+.scanner-row{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+}
 .scanner-btn{
-  margin-top:8px;
   width:100%;
   padding:13px 16px;
   border-radius:14px;
@@ -416,11 +433,22 @@ input,select{
   color:var(--muted);
   font-size:.9rem;
 }
+.scan-status{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:#f1f5fb;
+  color:#475569;
+  font-size:.9rem;
+  font-weight:850;
+  text-align:center;
+}
 .scanner-reader{
   padding:16px;
 }
 #barcodeReader{
   width:100%;
+  min-height:280px;
   overflow:hidden;
   border-radius:20px;
   background:#0f172a;
@@ -438,18 +466,6 @@ input,select{
   font-weight:950;
   cursor:pointer;
 }
-.scan-status{
-  margin-top:10px;
-  padding:10px 12px;
-  border-radius:14px;
-  background:#f1f5fb;
-  color:#475569;
-  font-size:.9rem;
-  font-weight:850;
-  text-align:center;
-}
-
-
 .scan-success{
   border-color:#6ee7b7 !important;
   background:#ecfdf5 !important;
@@ -498,9 +514,20 @@ input,select{
     <div class="box form">
       <input id="productId" type="hidden">
 
+
+      <div class="product-picker-box">
+        <label>เลือกสินค้าที่มีอยู่</label>
+        <select id="existingProductSelect" onchange="selectExistingProduct(this.value)">
+          <option value="">กำลังโหลดสินค้า...</option>
+        </select>
+        <small>เลือกสินค้าที่มีอยู่เพื่อดึงข้อมูลมาแก้/ผูกบาร์โค้ด</small>
+      </div>
+
       <label>บาร์โค้ด</label>
-      <input id="barcode" placeholder="เช่น 8850001000097">
-      <button type="button" class="scanner-btn" onclick="openBarcodeScanner()">📷 สแกนบาร์โค้ด</button>
+      <div class="scanner-row">
+        <input id="barcode" placeholder="เช่น 8850001000097">
+        <button type="button" class="scanner-btn" onclick="openBarcodeScanner()">📷 สแกนบาร์โค้ด</button>
+      </div>
 
       <label>ชื่อสินค้า</label>
       <input id="name" placeholder="เช่น น้ำดื่ม 600ml">
@@ -576,6 +603,24 @@ input,select{
   </aside>
 </main>
 
+
+<div id="scannerModal" class="scanner-modal-overlay">
+  <div class="scanner-modal-card">
+    <div class="scanner-modal-head">
+      <h3>สแกนบาร์โค้ดสินค้า</h3>
+      <p>เล็งกล้องไปที่บาร์โค้ด ระบบจะเติมเลขให้ในช่องบาร์โค้ด</p>
+      <div id="scanStatus" class="scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง</div>
+    </div>
+    <div class="scanner-reader">
+      <div id="barcodeReader"></div>
+    </div>
+    <div class="scanner-modal-footer">
+      <button class="scanner-close-btn" onclick="closeBarcodeScanner()">ปิดกล้อง</button>
+    </div>
+  </div>
+</div>
+
+
 <div id="resultModal" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-head">
@@ -588,24 +633,6 @@ input,select{
     </div>
   </div>
 </div>
-
-
-<div id="scannerModal" class="scanner-modal-overlay">
-  <div class="scanner-modal-card">
-    <div class="scanner-modal-head">
-      <h3>สแกนบาร์โค้ดสินค้า</h3>
-      <p>เล็งกล้องไปที่บาร์โค้ด ระบบจะเติมเลขให้ในช่องบาร์โค้ดอัตโนมัติ</p>
-      <div id="scanStatus" class="scan-status">กำลังเปิดกล้อง...</div>
-    </div>
-    <div class="scanner-reader">
-      <div id="barcodeReader"></div>
-    </div>
-    <div class="scanner-modal-footer">
-      <button class="scanner-close-btn" onclick="closeBarcodeScanner()">ปิดกล้อง</button>
-    </div>
-  </div>
-</div>
-
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
@@ -640,6 +667,7 @@ async function loadProducts(){
     }));
 
     renderProducts();
+    renderExistingProductSelect();
     updateSummary();
 
   }catch(err){
@@ -793,6 +821,45 @@ async function saveProduct(){
 
     resetForm();
     await 
+function renderExistingProductSelect(){
+  const select = document.getElementById("existingProductSelect");
+  if(!select) return;
+
+  select.innerHTML = `<option value="">เลือกสินค้าเพื่อแก้ไข / ผูกบาร์โค้ด</option>` +
+    products.map(p => `
+      <option value="${p.product_id || p.id}">
+        ${p.name || "-"} ${p.barcode ? "· " + p.barcode : "· ยังไม่มีบาร์โค้ด"}
+      </option>
+    `).join("");
+}
+
+function selectExistingProduct(productId){
+  if(!productId) return;
+
+  const p = products.find(item => String(item.product_id || item.id) === String(productId));
+  if(!p) return;
+
+  // ใช้ฟังก์ชัน editProduct เดิม ถ้ามี
+  if(typeof editProduct === "function"){
+    editProduct(String(productId));
+    return;
+  }
+
+  // fallback: เติมฟอร์มเอง
+  if(document.getElementById("productId")) document.getElementById("productId").value = p.product_id || p.id || "";
+  if(document.getElementById("barcode")) document.getElementById("barcode").value = p.barcode || "";
+  if(document.getElementById("name")) document.getElementById("name").value = p.name || "";
+  if(document.getElementById("category")) document.getElementById("category").value = p.category || "";
+  if(document.getElementById("cost")) document.getElementById("cost").value = p.cost || 0;
+  if(document.getElementById("price")) document.getElementById("price").value = p.price || 0;
+  if(document.getElementById("stock")) document.getElementById("stock").value = p.stock || 0;
+  if(document.getElementById("reorder")) document.getElementById("reorder").value = p.reorder_point || p.reorder || 0;
+  if(document.getElementById("unit")) document.getElementById("unit").value = p.unit || "ชิ้น";
+  if(document.getElementById("status")) document.getElementById("status").value = p.status || "active";
+
+  const title = document.getElementById("formTitle");
+  if(title) title.textContent = "แก้ไขสินค้า / ผูกบาร์โค้ด";
+}
 
 let barcodeScanner = null;
 let scannerRunning = false;
@@ -824,6 +891,9 @@ async function openBarcodeScanner(){
     return;
   }
 
+  // ให้ modal render ก่อน ค่อยเปิดกล้อง โดยเฉพาะ iPhone
+  await new Promise(resolve => setTimeout(resolve, 350));
+
   try{
     if(!barcodeScanner){
       barcodeScanner = new Html5Qrcode("barcodeReader");
@@ -834,27 +904,24 @@ async function openBarcodeScanner(){
       return;
     }
 
-    const config = {
-      fps: 10,
-      qrbox: { width: 260, height: 140 }
-    };
-
     await barcodeScanner.start(
       { facingMode: "environment" },
-      config,
+      { fps: 10, qrbox: { width: 260, height: 140 } },
       async (decodedText) => {
         if(decodedText === lastScannedCode) return;
         lastScannedCode = decodedText;
 
-        document.getElementById("barcode").value = decodedText;
-        document.getElementById("barcode").classList.add("scan-success");
+        const input = document.getElementById("barcode");
+        input.value = decodedText;
+        input.classList.add("scan-success");
+
         setScanStatus("สแกนสำเร็จ: " + decodedText);
 
         await closeBarcodeScanner(false);
 
         showModal("สแกนบาร์โค้ดสำเร็จ", [
           {label:"Barcode", value:decodedText},
-          {label:"ขั้นตอนต่อไป", value:"เลือก/แก้สินค้า แล้วกดบันทึกสินค้า"}
+          {label:"ขั้นตอนต่อไป", value:"กดบันทึกสินค้าเพื่อผูกบาร์โค้ด"}
         ]);
 
         setTimeout(() => { lastScannedCode = ""; }, 1200);
@@ -887,7 +954,6 @@ async function closeBarcodeScanner(clearReader = true){
 
   if(modal) modal.classList.remove("active");
 }
-
 
 loadProducts();
 
