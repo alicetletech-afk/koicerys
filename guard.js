@@ -72,6 +72,8 @@ auth.onAuthStateChanged(async (user) => {
     window.CURRENT_USER_EMAIL = CURRENT_USER_EMAIL;
     window.CURRENT_USER_ROLE = CURRENT_USER_ROLE;
 
+    applyMenuPermission(CURRENT_USER_ROLE);
+
     if (typeof applyRoleUI === "function") {
       applyRoleUI(CURRENT_USER_ROLE);
     }
@@ -86,5 +88,26 @@ auth.onAuthStateChanged(async (user) => {
 function logout(){
   auth.signOut().then(() => {
     window.location.href = "login.html";
+  });
+}
+
+
+function applyMenuPermission(role){
+  if(role !== "staff") return;
+
+  const disabledPages = ["stock.html", "product.html", "report.html"];
+
+  document.querySelectorAll(".nav a").forEach(link => {
+    const href = link.getAttribute("href");
+
+    if(disabledPages.includes(href)){
+      link.style.background = "#e5e7eb";
+      link.style.color = "#9ca3af";
+      link.style.borderColor = "#d1d5db";
+      link.style.pointerEvents = "none";
+      link.style.opacity = "0.8";
+      link.style.cursor = "not-allowed";
+      link.title = "ไม่มีสิทธิ์เข้าใช้งาน";
+    }
   });
 }
