@@ -535,6 +535,47 @@ select,input{
     margin-top:6px;
   }
 }
+
+.popup-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+.popup-card{
+  width:min(90%,360px);
+  background:#fff;
+  border-radius:22px;
+  padding:24px;
+  text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.18);
+}
+.popup-icon{
+  font-size:2rem;
+  margin-bottom:10px;
+}
+.popup-card h3{
+  margin:0 0 8px;
+  color:#dc2626;
+}
+.popup-card p{
+  color:#475569;
+  margin-bottom:18px;
+  line-height:1.5;
+}
+.popup-card button{
+  border:0;
+  background:#dc2626;
+  color:white;
+  padding:12px 18px;
+  border-radius:14px;
+  font-weight:800;
+  cursor:pointer;
+}
+
 </style>
 </head>
 <body>
@@ -981,14 +1022,144 @@ function updateStats(){
 loadProducts();
 renderCart();
 togglePayment();
+
+function showErrorPopup(message){
+  const old = document.getElementById("errorPopup");
+  if(old) old.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "errorPopup";
+  popup.innerHTML = `
+    <div class="popup-overlay">
+      <div class="popup-card">
+        <div class="popup-icon">⚠️</div>
+        <h3>ไม่สามารถขายได้</h3>
+        <p>${message}</p>
+        <button onclick="closeErrorPopup()">ตกลง</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+function closeErrorPopup(){
+  const popup = document.getElementById("errorPopup");
+  if(popup) popup.remove();
+}
+
 </script>
 
 
 <!-- Firebase Auth Guard -->
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
-<script src="firebase-config.js"></script>
-<script src="guard.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js">
+function showErrorPopup(message){
+  const old = document.getElementById("errorPopup");
+  if(old) old.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "errorPopup";
+  popup.innerHTML = `
+    <div class="popup-overlay">
+      <div class="popup-card">
+        <div class="popup-icon">⚠️</div>
+        <h3>ไม่สามารถขายได้</h3>
+        <p>${message}</p>
+        <button onclick="closeErrorPopup()">ตกลง</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+function closeErrorPopup(){
+  const popup = document.getElementById("errorPopup");
+  if(popup) popup.remove();
+}
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js">
+function showErrorPopup(message){
+  const old = document.getElementById("errorPopup");
+  if(old) old.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "errorPopup";
+  popup.innerHTML = `
+    <div class="popup-overlay">
+      <div class="popup-card">
+        <div class="popup-icon">⚠️</div>
+        <h3>ไม่สามารถขายได้</h3>
+        <p>${message}</p>
+        <button onclick="closeErrorPopup()">ตกลง</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+function closeErrorPopup(){
+  const popup = document.getElementById("errorPopup");
+  if(popup) popup.remove();
+}
+
+</script>
+<script src="firebase-config.js">
+function showErrorPopup(message){
+  const old = document.getElementById("errorPopup");
+  if(old) old.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "errorPopup";
+  popup.innerHTML = `
+    <div class="popup-overlay">
+      <div class="popup-card">
+        <div class="popup-icon">⚠️</div>
+        <h3>ไม่สามารถขายได้</h3>
+        <p>${message}</p>
+        <button onclick="closeErrorPopup()">ตกลง</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+function closeErrorPopup(){
+  const popup = document.getElementById("errorPopup");
+  if(popup) popup.remove();
+}
+
+</script>
+<script src="guard.js">
+function showErrorPopup(message){
+  const old = document.getElementById("errorPopup");
+  if(old) old.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "errorPopup";
+  popup.innerHTML = `
+    <div class="popup-overlay">
+      <div class="popup-card">
+        <div class="popup-icon">⚠️</div>
+        <h3>ไม่สามารถขายได้</h3>
+        <p>${message}</p>
+        <button onclick="closeErrorPopup()">ตกลง</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+function closeErrorPopup(){
+  const popup = document.getElementById("errorPopup");
+  if(popup) popup.remove();
+}
+
+</script>
 
 </body>
 </html>
