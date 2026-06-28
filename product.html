@@ -16,7 +16,6 @@
   --text:#172033;
   --muted:#6D7B93;
   --green:#0F766E;
-  --red:#DC2626;
   --shadow:0 14px 34px rgba(23,58,140,.08);
 }
 *{box-sizing:border-box}
@@ -27,7 +26,7 @@ body{
   color:var(--text);
 }
 .app{
-  width:min(100%,1120px);
+  width:min(100%,1180px);
   margin:0 auto;
   min-height:100vh;
   background:var(--page);
@@ -36,7 +35,7 @@ body{
 .hero{
   background:linear-gradient(145deg,#10245F,#1D4297);
   color:#fff;
-  padding:28px 24px 34px;
+  padding:30px 30px 38px;
   border-bottom-left-radius:36px;
   border-bottom-right-radius:36px;
 }
@@ -47,10 +46,10 @@ body{
   gap:18px;
   margin-bottom:22px;
 }
-h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
+h1{margin:0;font-size:2.05rem;line-height:1.1;font-weight:950}
 .hero p{margin:8px 0 0;color:rgba(255,255,255,.78);font-size:.95rem}
 .icon-box{
-  width:56px;height:56px;border-radius:20px;
+  width:58px;height:58px;border-radius:20px;
   display:grid;place-items:center;
   background:rgba(255,255,255,.14);
   border:1px solid rgba(255,255,255,.18);
@@ -60,22 +59,21 @@ h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
 .stats{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
+  gap:14px;
 }
-.stats.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .stat{
   background:rgba(255,255,255,.14);
   border:1px solid rgba(255,255,255,.18);
   border-radius:22px;
-  padding:16px;
+  padding:16px 18px;
 }
 .stat .label{font-size:.78rem;color:rgba(255,255,255,.75);font-weight:800;margin-bottom:6px}
 .stat .value{font-size:1.45rem;font-weight:950}
 .nav{
   display:grid;
-  grid-template-columns:repeat(5,minmax(74px,120px));
+  grid-template-columns:repeat(5,118px);
   gap:10px;
-  padding:16px 24px 6px;
+  padding:16px 30px 6px;
   margin-top:-20px;
   overflow-x:auto;
   scrollbar-width:none;
@@ -101,267 +99,408 @@ h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
 }
 .nav a.active{background:var(--blue);color:white;border-color:var(--blue)}
 .nav .icon{font-size:1.4rem;line-height:1}
-.content{padding:26px 24px 42px}
+.content{padding:28px 30px 42px}
+.main-layout{
+  display:grid;
+  grid-template-columns: minmax(360px, 0.9fr) minmax(540px, 1.25fr);
+  gap:22px;
+  align-items:start;
+}
 .section-title{
   display:flex;
   justify-content:space-between;
   align-items:end;
   gap:12px;
-  margin:10px 0 16px;
+  margin:0 0 16px;
 }
-.section-title h2{margin:0;font-size:1.65rem;font-weight:950}
+.section-title h2{margin:0;font-size:1.6rem;font-weight:950}
 .section-title small{color:var(--muted);font-weight:900;font-size:.95rem;white-space:nowrap}
 .card{
   background:var(--card);
   border:1px solid var(--line);
   border-radius:26px;
-  padding:16px;
+  padding:18px;
   box-shadow:var(--shadow);
 }
-.search-card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:26px;
-  padding:14px;
-  box-shadow:var(--shadow);
-  margin-bottom:16px;
-}
-.search-box{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:var(--soft);
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:10px 12px;
-}
-.search-icon{font-size:1.3rem;color:var(--muted);flex:0 0 auto}
+.form{display:grid;gap:13px}
+.form label{font-size:.9rem;font-weight:950;color:#53627D}
 input,select{
   width:100%;
   min-width:0;
   border:1px solid var(--line);
   background:var(--soft);
-  border-radius:18px;
-  padding:14px 16px;
+  border-radius:16px;
+  padding:13px 15px;
   font-size:1rem;
   outline:none;
   color:var(--text);
 }
-.search-box input{border:0;background:transparent;border-radius:0;padding:10px 2px}
-button,.primary,.secondary{
-  border:0;border-radius:16px;padding:13px 16px;
-  font-weight:950;cursor:pointer;font-size:.95rem;white-space:nowrap;
-}
-.primary{background:var(--blue);color:white}
-.secondary{background:#EEF3FF;color:#245BD4}
-.filter-row{
+.input-icon{
   display:flex;
+  align-items:center;
   gap:10px;
-  overflow-x:auto;
-  scrollbar-width:none;
-  padding:0 2px 14px;
-}
-.filter-row::-webkit-scrollbar{display:none}
-.filter{
   border:1px solid var(--line);
-  background:#fff;
-  color:#53627D;
-  border-radius:999px;
-  padding:11px 16px;
+  background:var(--soft);
+  border-radius:16px;
+  padding:0 12px;
+}
+.input-icon span{color:var(--muted);font-weight:900}
+.input-icon input{
+  border:0;
+  background:transparent;
+  padding:13px 4px;
+}
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.primary{
+  border:0;
+  background:var(--blue);
+  color:white;
+  border-radius:16px;
+  padding:14px 16px;
   font-weight:950;
-  white-space:nowrap;
-  box-shadow:0 8px 22px rgba(27,45,85,.05);
+  cursor:pointer;
+  font-size:.95rem;
+  width:100%;
 }
-.filter.active{background:#EAF1FF;color:#245BD4;border-color:#BCD2FF}
-.layout-2{
-  display:grid;
-  grid-template-columns:minmax(0,1.45fr) minmax(320px,.85fr);
-  gap:20px;
-  align-items:start;
+.secondary{
+  border:1px solid #BCD2FF;
+  background:#fff;
+  color:#245BD4;
+  border-radius:14px;
+  padding:10px 14px;
+  font-weight:950;
+  cursor:pointer;
+  font-size:.88rem;
 }
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:14px;
-}
-.product-card,.stock-card{
-  min-height:205px;
+.table-card{padding:18px}
+.table-toolbar{
   display:flex;
-  flex-direction:column;
+  gap:12px;
+  align-items:center;
   justify-content:space-between;
-  position:relative;
-  overflow:hidden;
+  margin-bottom:14px;
 }
-.product-card:after,.stock-card:after{
-  content:"";
-  position:absolute;
-  right:-34px;top:-34px;
-  width:96px;height:96px;
-  border-radius:999px;
-  background:#F1F5FF;
+.search-box{
+  max-width:360px;
+  flex:1;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:0 12px;
 }
-.add-dot{
-  position:absolute;right:12px;top:12px;z-index:2;
-  width:34px;height:34px;border-radius:50%;
-  background:var(--blue);color:white;
-  display:grid;place-items:center;
-  font-weight:950;font-size:1.2rem;
+.search-box span{color:var(--muted)}
+.search-box input{
+  border:0;
+  background:transparent;
+  padding:12px 4px;
 }
-.emoji{
-  width:44px;height:44px;border-radius:17px;
-  background:#F6F8FC;
-  display:grid;place-items:center;
-  font-size:1.4rem;
-  margin-bottom:10px;
-  position:relative;z-index:1;
+.product-table{
+  display:grid;
+  gap:8px;
 }
-.name{font-size:1.08rem;font-weight:950;line-height:1.35}
-.muted{color:var(--muted);font-size:.9rem;line-height:1.45}
-.price{font-size:1.55rem;font-weight:950;color:var(--green)}
-.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.row-start{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.barcode-pill{
+.table-head,
+.product-row{
+  display:grid;
+  grid-template-columns: minmax(240px,1.6fr) 90px 90px 90px 92px;
+  gap:12px;
+  align-items:center;
+}
+.table-head{
+  color:var(--muted);
+  font-weight:950;
+  font-size:.8rem;
+  padding:0 14px 6px;
+}
+.product-row{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px 14px;
+}
+.product-info{
+  display:grid;
+  grid-template-columns:44px 1fr;
+  gap:12px;
+  align-items:center;
+}
+.thumb{
+  width:44px;height:44px;
+  border-radius:14px;
+  background:var(--soft);
+  display:grid;
+  place-items:center;
+  font-size:1.35rem;
+  border:1px solid var(--line);
+}
+.name{font-size:1rem;font-weight:950;line-height:1.3}
+.barcode{
   display:inline-block;
   background:#F1F5F9;
   color:#475569;
   border-radius:999px;
-  padding:6px 10px;
-  font-size:.78rem;
+  padding:4px 8px;
+  font-size:.72rem;
   font-weight:950;
-  margin-top:8px;
+  margin-top:4px;
 }
-.badge{
-  border-radius:999px;
-  padding:8px 11px;
-  font-size:.8rem;
+.value{
   font-weight:950;
-  white-space:nowrap;
+  font-size:.95rem;
 }
-.badge.ok{background:#DCFCE7;color:#166534}
-.badge.low{background:#FEE2E2;color:#B91C1C}
-.badge.out{background:#1F2937;color:white}
-.info-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
+.stock{
+  font-weight:950;
+  color:var(--text);
+}
+.footer-note{
   margin-top:14px;
-  position:relative;
-  z-index:1;
-}
-.info-box{background:var(--soft);border-radius:20px;padding:13px}
-.info-box small{display:block;color:var(--muted);font-size:.78rem;font-weight:900;margin-bottom:6px}
-.info-box b{font-size:1.25rem;font-weight:950}
-.cart-card{
-  position:sticky;
-  top:20px;
-}
-.total{background:var(--soft);border-radius:20px;padding:13px}
-.total small{display:block;color:var(--muted);font-size:.78rem;font-weight:800}
-.total b{font-size:1.35rem;font-weight:950}
-.checkout-row{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
-.table-row{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:10px;
-  padding:12px 0;
-  border-bottom:1px solid #EEF2F7;
-}
-.table-row:last-child{border-bottom:0}
-.form{display:grid;gap:12px}
-.form label{font-size:.9rem;font-weight:950;color:#53627D}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.list{display:grid;gap:14px}
-.report-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.empty{
+  padding:12px 14px;
+  border-radius:16px;
+  background:#ECF4FF;
+  color:#53627D;
+  font-weight:900;
   text-align:center;
-  padding:30px 18px;
-  color:var(--muted);
-  background:white;
-  border-radius:28px;
-  border:1px solid var(--line);
-  box-shadow:var(--shadow);
 }
-.empty h3{margin:0 0 8px;font-size:1.25rem;color:var(--text)}
-.empty p{margin:0 0 16px;font-size:.95rem;line-height:1.5}
-.help{font-size:.82rem;color:var(--muted);margin-top:8px;line-height:1.5}
-@media(max-width:900px){
-  .app{width:min(100%,720px)}
-  .layout-2{grid-template-columns:1fr}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .cart-card{position:static}
-  .hero{padding:28px 20px 34px}
-  .content{padding:22px 20px 34px}
-  .nav{padding:16px 20px 6px}
+@media(max-width:980px){
+  .app{width:min(100%,760px)}
+  .main-layout{grid-template-columns:1fr}
+  .content{padding:24px 22px 38px}
+  .hero{padding:28px 22px 36px}
+  .nav{padding-left:22px;padding-right:22px}
 }
-@media(max-width:520px){
-  .app{width:100%}
+@media(max-width:620px){
   h1{font-size:1.75rem}
+  .stats{grid-template-columns:1fr}
+  .nav{grid-template-columns:repeat(5,82px);padding:16px 16px 6px}
+  .content{padding:22px 16px 34px}
   .hero{padding:24px 16px 32px}
-  .content{padding:20px 16px 32px}
-  .nav{padding:16px 16px 6px;grid-template-columns:repeat(5,minmax(78px,1fr))}
-  .stats,.stats.three{grid-template-columns:1fr}
-  .grid,.report-grid{grid-template-columns:1fr}
   .form-grid{grid-template-columns:1fr}
-  .info-grid{grid-template-columns:1fr}
-  .search-box{align-items:stretch}
-  .search-btn{padding-left:14px;padding-right:14px}
+  .table-toolbar{display:block}
+  .search-box{max-width:none;margin-top:12px}
+  .table-head{display:none}
+  .product-row{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  .product-row .value,
+  .product-row .stock{
+    display:flex;
+    justify-content:space-between;
+    background:var(--soft);
+    border-radius:14px;
+    padding:10px 12px;
+  }
+  .product-row .cost::before{content:"ต้นทุน";color:var(--muted)}
+  .product-row .price::before{content:"ราคาขาย";color:var(--muted)}
+  .product-row .stock::before{content:"คงเหลือ";color:var(--muted)}
+  .product-row .action{display:flex;justify-content:flex-end}
 }
 </style>
 </head>
 <body>
-
 <div class="app">
-<header class="hero"><div class="hero-top"><div><h1>จัดการสินค้า</h1><p>เพิ่มสินค้าใหม่ + ผูกบาร์โค้ด</p></div><div class="icon-box">🏷️</div></div><div class="stats"><div class="stat"><div class="label">สินค้าในระบบ</div><div class="value">8</div></div><div class="stat"><div class="label">รองรับ</div><div class="value">Barcode</div></div></div></header>
-<nav class="nav"><a class="" href="index.html"><span class="icon">🧾</span>ขาย</a><a class="" href="stock.html"><span class="icon">📦</span>สต๊อก</a><a class="" href="add-stock.html"><span class="icon">➕</span>เติมของ</a><a class="active" href="product.html"><span class="icon">🏷️</span>สินค้า</a><a class="" href="report.html"><span class="icon">📊</span>รายงาน</a></nav>
+<header class="hero">
+  <div class="hero-top">
+    <div>
+      <h1>จัดการสินค้า</h1>
+      <p>เพิ่มสินค้าใหม่ + ผูกบาร์โค้ด</p>
+    </div>
+    <div class="icon-box">🏷️</div>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="label">สินค้าในระบบ</div>
+      <div class="value"><span id="productCount">8</span> รายการ</div>
+    </div>
+    <div class="stat">
+      <div class="label">รองรับ</div>
+      <div class="value">Barcode</div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <a href="index.html"><span class="icon">🧾</span>ขาย</a>
+  <a href="stock.html"><span class="icon">📦</span>สต๊อก</a>
+  <a href="add-stock.html"><span class="icon">➕</span>เติมของ</a>
+  <a class="active" href="product.html"><span class="icon">🏷️</span>สินค้า</a>
+  <a href="report.html"><span class="icon">📊</span>รายงาน</a>
+</nav>
+
 <main class="content">
-  <div class="layout-2">
-    <section><div class="section-title"><h2>เพิ่มสินค้าใหม่</h2><small>Master data</small></div><div class="card form">
-      <label>ยิง/กรอกบาร์โค้ด</label><input id="barcode" placeholder="ยิงบาร์โค้ดตรงนี้ เช่น 885..." autofocus>
-      <label>ชื่อสินค้า</label><input id="name" placeholder="เช่น น้ำดื่ม 600ml">
-      <label>หมวดหมู่</label><select id="category"><option>เครื่องดื่ม</option><option>ขนม</option><option>ของแห้ง</option><option>นม/แช่เย็น</option><option>ของใช้</option></select>
-      <div class="form-grid"><div><label>ต้นทุน</label><input id="cost" type="number"></div><div><label>ราคาขาย</label><input id="price" type="number"></div></div>
-      <div class="form-grid"><div><label>สต๊อกเริ่มต้น</label><input id="stock" type="number"></div><div><label>จุดเตือนสั่งซื้อ</label><input id="reorder" type="number"></div></div>
-      <button class="primary" onclick="addProduct()">เพิ่มสินค้า</button>
-    </div></section>
-    <aside><div class="section-title"><h2>สินค้าในระบบ</h2><small>ค้นบาร์โค้ดได้</small></div><div class="list" id="productList"></div></aside>
+  <div class="main-layout">
+    <section>
+      <div class="section-title">
+        <h2>เพิ่มสินค้าใหม่</h2>
+        <small>Master data</small>
+      </div>
+
+      <div class="card form">
+        <label>บาร์โค้ด (สแกนหรือพิมพ์)</label>
+        <div class="input-icon">
+          <span>▥</span>
+          <input id="barcode" placeholder="สแกนบาร์โค้ด หรือพิมพ์บาร์โค้ด">
+        </div>
+
+        <label>ชื่อสินค้า</label>
+        <input id="name" placeholder="เช่น น้ำดื่มคริสตัล 600ml">
+
+        <label>หมวดหมู่</label>
+        <select id="category">
+          <option>เครื่องดื่ม</option>
+          <option>ของแห้ง</option>
+          <option>ขนม</option>
+          <option>นม/แช่เย็น</option>
+          <option>ของใช้</option>
+        </select>
+
+        <div class="form-grid">
+          <div>
+            <label>ต้นทุน (บาท)</label>
+            <input id="cost" type="number" placeholder="เช่น 5.00">
+          </div>
+          <div>
+            <label>ราคาขาย (บาท)</label>
+            <input id="price" type="number" placeholder="เช่น 7.00">
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <label>สต๊อกเริ่มต้น</label>
+            <input id="stock" type="number" placeholder="เช่น 24">
+          </div>
+          <div>
+            <label>จุดเตือนสั่งซื้อ</label>
+            <input id="reorder" type="number" placeholder="เช่น 10">
+          </div>
+        </div>
+
+        <label>หน่วยนับ</label>
+        <select id="unit">
+          <option>ชิ้น</option>
+          <option>แพ็ค</option>
+          <option>ลัง</option>
+          <option>ขวด</option>
+          <option>ถุง</option>
+        </select>
+
+        <button class="primary" onclick="addProduct()">＋ เพิ่มสินค้า</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>สินค้าในระบบ</h2>
+        <small>ค้นบาร์โค้ดได้</small>
+      </div>
+
+      <div class="card table-card">
+        <div class="table-toolbar">
+          <div class="muted" style="font-weight:900">ทั้งหมด <span id="totalText">8</span> รายการ</div>
+          <div class="search-box">
+            <span>🔎</span>
+            <input id="searchInput" placeholder="ค้นหาชื่อสินค้า หรือบาร์โค้ด" oninput="renderProducts()">
+          </div>
+        </div>
+
+        <div class="table-head">
+          <div>สินค้า</div>
+          <div>ต้นทุน</div>
+          <div>ราคาขาย</div>
+          <div>คงเหลือ</div>
+          <div></div>
+        </div>
+
+        <div class="product-table" id="productList"></div>
+
+        <div class="footer-note">ทั้งหมด <span id="bottomTotal">8</span> รายการ</div>
+      </div>
+    </section>
   </div>
 </main>
 </div>
 
 <script>
 let products = [
-  { id:1, barcode:"8850001000011", name:"น้ำดื่มคริสตัล 600ml", category:"เครื่องดื่ม", cost:5, price:7, stock:24, reorder:10, emoji:"💧" },
-  { id:2, barcode:"8850001000028", name:"โค้กกระป๋อง", category:"เครื่องดื่ม", cost:14, price:18, stock:18, reorder:8, emoji:"🥤" },
-  { id:3, barcode:"8850001000035", name:"โออิชิ 500ml", category:"เครื่องดื่ม", cost:16, price:22, stock:9, reorder:10, emoji:"🍵" },
-  { id:4, barcode:"8850001000042", name:"มาม่าต้มยำกุ้ง", category:"ของแห้ง", cost:6, price:8, stock:50, reorder:20, emoji:"🍜" },
-  { id:5, barcode:"8850001000059", name:"เลย์โนริ", category:"ขนม", cost:15, price:20, stock:12, reorder:10, emoji:"🍟" },
-  { id:6, barcode:"8850001000066", name:"นมถั่วเหลือง", category:"นม/แช่เย็น", cost:10, price:13, stock:6, reorder:8, emoji:"🥛" },
-  { id:7, barcode:"8850001000073", name:"สบู่ก้อน", category:"ของใช้", cost:18, price:25, stock:14, reorder:6, emoji:"🧼" },
-  { id:8, barcode:"8850001000080", name:"ทิชชู่ห่อเล็ก", category:"ของใช้", cost:9, price:12, stock:20, reorder:8, emoji:"🧻" }
+  { id:1, barcode:"8850001000011", name:"น้ำดื่มคริสตัล 600ml", category:"เครื่องดื่ม", cost:5, price:7, stock:24, emoji:"💧" },
+  { id:2, barcode:"8850001000028", name:"โค้กกระป๋อง", category:"เครื่องดื่ม", cost:14, price:18, stock:18, emoji:"🥤" },
+  { id:3, barcode:"8850001000035", name:"โออิชิ 500ml", category:"เครื่องดื่ม", cost:16, price:22, stock:9, emoji:"🍵" },
+  { id:4, barcode:"8850001000042", name:"มาม่าต้มยำกุ้ง", category:"ของแห้ง", cost:6, price:8, stock:50, emoji:"🍜" },
+  { id:5, barcode:"8850001000059", name:"เลย์โนริ", category:"ขนม", cost:15, price:20, stock:12, emoji:"🍟" },
+  { id:6, barcode:"8850001000066", name:"นมถั่วเหลือง", category:"นม/แช่เย็น", cost:10, price:13, stock:6, emoji:"🥛" },
+  { id:7, barcode:"8850001000073", name:"สบู่ก้อน", category:"ของใช้", cost:18, price:25, stock:14, emoji:"🧼" },
+  { id:8, barcode:"8850001000080", name:"ทิชชู่ห่อเล็ก", category:"ของใช้", cost:9, price:12, stock:20, emoji:"🧻" }
 ];
-function money(n){return Number(n).toLocaleString();}
-function statusOf(p){
-  if(p.stock<=0) return {text:"หมด",cls:"out"};
-  if(p.stock<=p.reorder) return {text:"ใกล้หมด",cls:"low"};
-  return {text:"ปกติ",cls:"ok"};
+
+function money(n){ return Number(n || 0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function renderProducts(){
+  const q = document.getElementById("searchInput").value.trim().toLowerCase();
+
+  const filtered = products.filter(p =>
+    !q ||
+    p.name.toLowerCase().includes(q) ||
+    p.category.toLowerCase().includes(q) ||
+    String(p.barcode).includes(q)
+  );
+
+  document.getElementById("productCount").innerText = products.length;
+  document.getElementById("totalText").innerText = filtered.length;
+  document.getElementById("bottomTotal").innerText = filtered.length;
+
+  document.getElementById("productList").innerHTML = filtered.map(p => `
+    <div class="product-row">
+      <div class="product-info">
+        <div class="thumb">${p.emoji || "📦"}</div>
+        <div>
+          <div class="name">${p.name}</div>
+          <span class="barcode">Barcode: ${p.barcode}</span>
+        </div>
+      </div>
+      <div class="value cost">฿${money(p.cost)}</div>
+      <div class="value price">฿${money(p.price)}</div>
+      <div class="stock">${p.stock} ชิ้น</div>
+      <div class="action"><button class="secondary" onclick="alert('Demo: ต่อไปทำโหมดแก้ไข')">✎ แก้ไข</button></div>
+    </div>
+  `).join("") || `
+    <div class="product-row" style="grid-template-columns:1fr;text-align:center;color:var(--muted)">
+      ไม่พบสินค้าในระบบ
+    </div>
+  `;
 }
-function matchProduct(p,q){
-  q = String(q || "").trim().toLowerCase();
-  return !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || String(p.barcode).includes(q);
-}
-</script>
-<script>
-function renderList(){
- productList.innerHTML=products.map(p=>`<div class="card"><div class="row-start"><div><div class="name">${p.name}</div><div class="muted">${p.category}</div><span class="barcode-pill">Barcode: ${p.barcode}</span></div><button class="secondary" onclick="alert('Demo: ต่อไปทำหน้าแก้ไข')">แก้ไข</button></div></div>`).join("");
-}
+
 function addProduct(){
- if(!barcode.value||!name.value)return alert("กรอก/ยิงบาร์โค้ด และชื่อสินค้าก่อน");
- products.unshift({id:Date.now(),barcode:barcode.value,name:name.value,category:category.value,cost:Number(cost.value||0),price:Number(price.value||0),stock:Number(stock.value||0),reorder:Number(reorder.value||0),emoji:"📦"});
- renderList();alert("เพิ่มสินค้าแล้ว (Demo ยังไม่บันทึกถาวร)");
- barcode.value=name.value=cost.value=price.value=stock.value=reorder.value="";
+  const newProduct = {
+    id: Date.now(),
+    barcode: document.getElementById("barcode").value.trim(),
+    name: document.getElementById("name").value.trim(),
+    category: document.getElementById("category").value,
+    cost: Number(document.getElementById("cost").value || 0),
+    price: Number(document.getElementById("price").value || 0),
+    stock: Number(document.getElementById("stock").value || 0),
+    reorder: Number(document.getElementById("reorder").value || 0),
+    emoji: "📦"
+  };
+
+  if(!newProduct.barcode || !newProduct.name){
+    alert("กรอกบาร์โค้ดและชื่อสินค้าก่อน");
+    return;
+  }
+
+  products.unshift(newProduct);
+  ["barcode","name","cost","price","stock","reorder"].forEach(id => document.getElementById(id).value = "");
+  renderProducts();
+  alert("เพิ่มสินค้าแล้ว (Demo)");
 }
-renderList();
+
+renderProducts();
 </script>
 </body>
 </html>
