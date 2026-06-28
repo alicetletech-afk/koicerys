@@ -31,7 +31,93 @@ input{padding:12px 14px;border-radius:14px;border:1px solid var(--line);backgrou
 .muted{color:var(--muted);font-size:.9rem;line-height:1.45}.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:.78rem;font-weight:950;background:#eaf1ff;color:#245bd4}.low{background:#fee2e2;color:#b91c1c}
 .table{display:grid;gap:10px}.item-card{background:white;border:1px solid var(--line);border-radius:18px;padding:14px}.item-card h4{margin:0 0 5px;font-size:1rem}
 .danger-card{border:2px solid #ff4d4f;background:#fff1f0}.danger-text{color:#ff2d2d;font-weight:950;font-size:22px;margin-top:8px}
+
+.warning-card{
+  border:2px solid #facc15;
+  background:#fefce8;
+}
+
+.warning-badge{
+  background:#fef3c7;
+  color:#b45309;
+}
+
 .loading,.empty{color:var(--muted);padding:26px 12px;text-align:center;background:white;border-radius:22px;border:1px solid var(--line)}
+
+.bill-modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.52);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+}
+.bill-modal-overlay.active{display:flex}
+.bill-modal-card{
+  width:min(92vw,520px);
+  background:#fff;
+  border-radius:28px;
+  border:1px solid var(--line);
+  box-shadow:0 28px 80px rgba(15,23,42,.28);
+  overflow:hidden;
+}
+.bill-modal-head{
+  padding:22px 22px 14px;
+  text-align:center;
+}
+.bill-modal-icon{
+  width:58px;
+  height:58px;
+  border-radius:999px;
+  background:#eaf1ff;
+  color:#245bd4;
+  display:grid;
+  place-items:center;
+  font-size:1.65rem;
+  margin:0 auto 12px;
+}
+.bill-modal-head h3{
+  margin:0;
+  font-size:1.35rem;
+  font-weight:950;
+}
+.bill-modal-body{
+  padding:0 22px 20px;
+  display:grid;
+  gap:10px;
+}
+.bill-modal-line{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:12px 14px;
+  background:var(--soft);
+  border-radius:16px;
+  font-weight:850;
+}
+.bill-modal-line span:first-child{
+  color:var(--muted);
+}
+.bill-modal-line strong{
+  text-align:right;
+}
+.bill-modal-footer{
+  padding:0 22px 22px;
+}
+.bill-modal-btn{
+  width:100%;
+  border:0;
+  border-radius:16px;
+  padding:15px;
+  background:var(--blue);
+  color:#fff;
+  font-weight:950;
+  font-size:1rem;
+  cursor:pointer;
+}
+
 @media(max-width:960px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-2{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr}}
 @media(max-width:720px){.header{padding:26px 16px 36px}.stats{grid-template-columns:1fr}.nav{justify-content:flex-start;padding-left:16px;padding-right:16px}.nav a{min-width:105px;min-height:78px;font-size:.85rem}.main{padding:24px 16px 40px}.filter-box{display:grid;grid-template-columns:1fr;width:100%}.refresh-btn{width:100%}}
 </style>
@@ -70,8 +156,23 @@ input{padding:12px 14px;border-radius:14px;border:1px solid var(--line);backgrou
     <section class="card"><h3>สินค้าใกล้หมดอายุ</h3><div id="expiryList" class="table"><div class="loading">กำลังโหลด...</div></div></section>
   </div>
 </main>
+
+<div id="billModal" class="bill-modal-overlay">
+  <div class="bill-modal-card">
+    <div class="bill-modal-head">
+      <div class="bill-modal-icon">🧾</div>
+      <h3>รายละเอียดบิล</h3>
+    </div>
+    <div id="billModalBody" class="bill-modal-body"></div>
+    <div class="bill-modal-footer">
+      <button class="bill-modal-btn" onclick="closeBillModal()">ปิด</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
+let latestSalesCache = [];
 function money(n){return Number(n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})}
 function todayStr(){return new Date().toISOString().split("T")[0]}
 function setDefaultDates(){
@@ -104,8 +205,84 @@ async function loadReport(){
 function renderSummary(data){document.getElementById("totalSales").innerText=money(data.total_sales);document.getElementById("grossProfit").innerText=money(data.gross_profit);document.getElementById("billCount").innerText=money(data.bill_count);document.getElementById("lowStockCount").innerText=money((data.low_stock||[]).length)}
 function renderPayment(payment){const labels={cash:"เงินสด",transfer:"เงินโอน"};const rows=Object.keys(payment).map(key=>`<div class="report-row"><span>${labels[key]||key}</span><b>฿${money(payment[key])}</b></div>`).join("");document.getElementById("paymentSummary").innerHTML=rows||`<div class="empty">ยังไม่มีข้อมูลช่องทางชำระเงินในช่วงวันที่นี้</div>`}
 function renderTopProducts(items){document.getElementById("topProducts").innerHTML=items.length?items.map((item,index)=>`<div class="item-card"><h4>${index+1}. ${item.product_name}</h4><div class="muted">ขายได้ ${money(item.qty)} ชิ้น · ยอดขาย ฿${money(item.sales)}</div></div>`).join(""):`<div class="empty">ยังไม่มีรายการขายในช่วงวันที่นี้</div>`}
-function renderLowStock(items){document.getElementById("lowStockList").innerHTML=items.length?items.map(item=>{const isOut=Number(item.stock)<=0;return `<div class="item-card ${isOut?'danger-card':''}"><h4>${item.name}</h4><div class="muted">${item.category||"-"} · คงเหลือ ${money(item.stock)} ${item.unit||"ชิ้น"}</div>${isOut?`<div class="danger-text">หมด!!</div>`:`<span class="badge low">ใกล้หมด</span>`}</div>`}).join(""):`<div class="empty">ยังไม่มีสินค้าใกล้หมด</div>`}
-function renderLatestSales(items){document.getElementById("latestSales").innerHTML=items.length?items.map(item=>`<div class="item-card"><h4>${item.sale_id}</h4><div class="muted">${formatDate(item.datetime)}</div><div class="report-row"><span>${item.payment_method==="cash"?"เงินสด":"เงินโอน"}</span><b>฿${money(item.total)}</b></div></div>`).join(""):`<div class="empty">ยังไม่มีบิลขายในช่วงวันที่นี้</div>`}
+
+function renderLowStock(items){
+  document.getElementById("lowStockList").innerHTML =
+    items.length ? items.map(item => {
+
+      const stock = Number(item.stock || 0);
+      const isOut = stock <= 0;
+      const isLow = stock > 0;
+
+      return `
+        <div class="item-card ${isOut ? 'danger-card' : isLow ? 'warning-card' : ''}">
+          <h4>${item.name}</h4>
+          <div class="muted">
+            ${item.category || "-"} · คงเหลือ ${money(stock)} ${item.unit || "ชิ้น"}
+          </div>
+
+          ${
+            isOut
+              ? `<div class="danger-text">หมด!!</div>`
+              : `<span class="badge warning-badge">กำลังจะหมด</span>`
+          }
+        </div>
+      `;
+    }).join("")
+    : `<div class="empty">ยังไม่มีสินค้าใกล้หมด</div>`;
+}
+
+function renderLatestSales(items){
+  latestSalesCache = items || [];
+
+  document.getElementById("latestSales").innerHTML =
+    items.length ? items.map(item => `
+      <div class="item-card" onclick="showBillDetail('${item.sale_id}')" style="cursor:pointer;">
+        <h4>${item.sale_id}</h4>
+        <div class="muted">${formatDate(item.datetime)}</div>
+
+        <div class="report-row">
+          <span>${item.payment_method === "cash" ? "เงินสด" : "เงินโอน"}</span>
+          <b>฿${money(item.total)}</b>
+        </div>
+
+        <span class="badge">แตะเพื่อดูรายละเอียด</span>
+      </div>
+    `).join("")
+    : `<div class="empty">ยังไม่มีบิลขายในช่วงวันที่นี้</div>`;
+}
+
+function showBillDetail(saleId){
+  const item = latestSalesCache.find(x => String(x.sale_id) === String(saleId));
+
+  if(!item) return;
+
+  document.getElementById("billModalBody").innerHTML = `
+    <div class="bill-modal-line">
+      <span>เลขบิล</span>
+      <strong>${item.sale_id}</strong>
+    </div>
+    <div class="bill-modal-line">
+      <span>วันที่/เวลา</span>
+      <strong>${formatDate(item.datetime)}</strong>
+    </div>
+    <div class="bill-modal-line">
+      <span>ช่องทางชำระเงิน</span>
+      <strong>${item.payment_method === "cash" ? "เงินสด" : "เงินโอน"}</strong>
+    </div>
+    <div class="bill-modal-line">
+      <span>ยอดรวม</span>
+      <strong>฿${money(item.total)}</strong>
+    </div>
+  `;
+
+  document.getElementById("billModal").classList.add("active");
+}
+
+function closeBillModal(){
+  document.getElementById("billModal").classList.remove("active");
+}
+
 function renderExpiry(items){document.getElementById("expiryList").innerHTML=items.length?items.map(item=>{const isOut=Number(item.qty)<=0;return `<div class="item-card ${isOut?'danger-card':''}"><h4>${item.product_name}</h4>${isOut?`<div class="danger-text">หมด!!</div>`:`<div class="muted">หมดอายุ: ${formatDate(item.expiry_date)}</div><div class="muted">เหลือ ${item.days_left} วัน · ${item.qty} ชิ้น</div>`}</div>`}).join(""):`<div class="empty">ไม่มีสินค้าใกล้หมดอายุ</div>`}
 setDefaultDates();loadReport();
 </script>
