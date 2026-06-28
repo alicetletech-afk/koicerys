@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koicerys POS | รายงาน</title>
+<title>Koicerys POS | รายงาน v2</title>
 <style>
 :root{--blue:#3468f5;--bg:#f3f5fb;--line:#dce2f0;--muted:#64748b;--text:#111827;--soft:#f1f5fb;--shadow:0 16px 38px rgba(30,58,138,.08)}
 *{box-sizing:border-box}
@@ -233,28 +233,29 @@ function renderLowStock(items){
 }
 
 
+
 function renderLatestSales(items){
   latestSalesCache = items || [];
 
-  const latest = items[0];
-
-  if(!latest){
+  if(!items || !items.length){
     document.getElementById("latestSales").innerHTML =
       `<div class="empty">ยังไม่มีบิลขายในช่วงวันที่นี้</div>`;
     return;
   }
 
+  const latest = items[0];
+
   document.getElementById("latestSales").innerHTML = `
-    <div class="item-card" onclick="toggleBillList()" style="cursor:pointer;">
+    <div class="item-card bill-summary-card" onclick="toggleBillList()" style="cursor:pointer;">
       <div class="report-row">
         <div>
-          <h4>${latest.sale_id}</h4>
-          <div class="muted">${formatDate(latest.datetime)}</div>
+          <h4>บิลล่าสุด: ${latest.sale_id}</h4>
+          <div class="muted">${formatDate(latest.datetime)} · ${latest.payment_method === "cash" ? "เงินสด" : "เงินโอน"}</div>
         </div>
         <b>฿${money(latest.total)}</b>
       </div>
 
-      <span class="badge">แตะเพื่อดูบิลทั้งหมด</span>
+      <span class="badge">แตะเพื่อแสดง/ซ่อนบิลทั้งหมด</span>
     </div>
 
     <div id="billListContainer" style="display:none; margin-top:12px;">
@@ -265,10 +266,11 @@ function renderLatestSales(items){
           <div class="report-row">
             <div>
               <h4>${item.sale_id}</h4>
-              <div class="muted">${formatDate(item.datetime)}</div>
+              <div class="muted">${formatDate(item.datetime)} · ${item.payment_method === "cash" ? "เงินสด" : "เงินโอน"}</div>
             </div>
             <b>฿${money(item.total)}</b>
           </div>
+          <span class="badge">แตะเพื่อดูรายละเอียด</span>
         </div>
       `).join("")}
     </div>
@@ -277,10 +279,19 @@ function renderLatestSales(items){
 
 function toggleBillList(){
   const box = document.getElementById("billListContainer");
-  if(!box) return;
+  const summary = document.querySelector(".bill-summary-card");
 
-  box.style.display =
-    box.style.display === "none" ? "block" : "none";
+  if(!box || !summary) return;
+
+  const isHidden = box.style.display === "none";
+
+  if(isHidden){
+    box.style.display = "block";
+    summary.style.display = "none";
+  }else{
+    box.style.display = "none";
+    summary.style.display = "block";
+  }
 }
 
 function showBillDetail(saleId){
