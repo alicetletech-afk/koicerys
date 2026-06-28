@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Grocery POS</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Sarabun", "Noto Sans Thai", Arial, sans-serif;
+      background: #f3f6fb;
+      color: #182235;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #f7f9fd;
+      position: relative;
+      padding-bottom: 150px;
+    }
+
+    .hero {
+      background: linear-gradient(145deg, #10245f, #1c3f8f);
+      color: white;
+      padding: 24px 20px 26px;
+      border-bottom-left-radius: 34px;
+      border-bottom-right-radius: 34px;
+      box-shadow: 0 18px 35px rgba(16,36,95,.25);
+    }
+
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.15;
+      letter-spacing: -.5px;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      opacity: .78;
+      font-size: 14px;
+    }
+
+    .profile {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.15);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      border: 1px solid rgba(255,255,255,.16);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 20px;
+      padding: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-card .label {
+      font-size: 12px;
+      opacity: .75;
+      margin-bottom: 6px;
+    }
+
+    .stat-card .value {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 16px 16px 2px;
+      margin-top: -8px;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: #31415f;
+      background: white;
+      border: 1px solid #e7edf6;
+      border-radius: 18px;
+      padding: 12px 6px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(27,45,85,.06);
+    }
+
+    .nav a.active {
+      color: white;
+      background: #2f68e8;
+      border-color: #2f68e8;
+    }
+
+    .nav .icon {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .content {
+      padding: 16px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      margin: 8px 2px 14px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .section-title small {
+      color: #72809a;
+      font-weight: 600;
+    }
+
+    .search-card {
+      background: white;
+      border-radius: 24px;
+      padding: 14px;
+      box-shadow: 0 12px 28px rgba(27,45,85,.07);
+      border: 1px solid #e8eef6;
+      margin-bottom: 14px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f4f7fb;
+      border: 1px solid #e0e7f2;
+      border-radius: 18px;
+      padding: 13px 14px;
+    }
+
+    .search-box span { color: #74819a; font-size: 18px; }
+    .search-box input {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      width: 100%;
+      font-size: 15px;
+      color: #182235;
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 14px;
+      scrollbar-width: none;
+    }
+
+    .categories::-webkit-scrollbar { display: none; }
+
+    .cat {
+      border: 0;
+      background: white;
+      color: #53627d;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(27,45,85,.05);
+      border: 1px solid #e7edf6;
+    }
+
+    .cat.active {
+      background: #eaf1ff;
+      color: #245bd4;
+      border-color: #bcd2ff;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .product {
+      border: 1px solid #e7edf6;
+      background: white;
+      border-radius: 24px;
+      padding: 14px;
+      min-height: 142px;
+      box-shadow: 0 10px 24px rgba(27,45,85,.055);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product::after {
+      content: "";
+      position: absolute;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: #f2f6ff;
+      right: -30px;
+      top: -34px;
+    }
+
+    .product .emoji {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      background: #f6f8fc;
+      display: grid;
+      place-items: center;
+      font-size: 23px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .product-name {
+      font-weight: 900;
+      font-size: 15px;
+      line-height: 1.3;
+      min-height: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 8px;
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: 900;
+      color: #0f766e;
+    }
+
+    .stock {
+      font-size: 12px;
+      color: #77849a;
+      text-align: right;
+    }
+
+    .stock.low { color: #dc2626; font-weight: 800; }
+
+    .cart-drawer {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      width: min(448px, calc(100% - 32px));
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      box-shadow: 0 18px 45px rgba(15,23,42,.20);
+      padding: 14px;
+      z-index: 10;
+    }
+
+    .cart-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-weight: 900;
+    }
+
+    .cart-list {
+      max-height: 92px;
+      overflow: auto;
+      margin-bottom: 10px;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      font-size: 13px;
+      padding: 6px 0;
+      border-bottom: 1px dashed #e5eaf2;
+    }
+
+    .cart-empty {
+      color: #7d89a0;
+      font-size: 13px;
+      padding: 8px 0;
+    }
+
+    .checkout-row {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .total {
+      background: #f3f6fb;
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .total small {
+      display: block;
+      color: #7d89a0;
+      font-size: 11px;
+    }
+
+    .total b {
+      font-size: 22px;
+    }
+
+    .primary {
+      border: 0;
+      background: #2f68e8;
+      color: white;
+      border-radius: 18px;
+      padding: 15px 12px;
+      font-weight: 900;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(47,104,232,.28);
+    }
+
+    .floating-add {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 0;
+      background: #2f68e8;
+      color: white;
+      font-size: 18px;
+      z-index: 2;
+    }
+
+    @media (min-width: 768px) {
+      body { background: #dfe7f4; }
+      .app { box-shadow: 0 0 60px rgba(15,23,42,.12); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="brand-row">
+        <div class="brand">
+          <h1>ร้านของชำ</h1>
+          <p>ระบบขาย + ตัดสต๊อก สำหรับร้านเล็ก</p>
+        </div>
+        <div class="profile">🛒</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="label">ยอดขายวันนี้</div>
+          <div class="value">฿<span id="todaySales">0</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="label">สินค้าใกล้หมด</div>
+          <div class="value"><span id="lowStock">2</span> รายการ</div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="nav">
+      <a class="active" href="index.html"><span class="icon">🧾</span>ขาย</a>
+      <a href="stock.html"><span class="icon">📦</span>สต๊อก</a>
+      <a href="restock.html"><span class="icon">➕</span>เติมของ</a>
+      <a href="report.html"><span class="icon">📊</span>รายงาน</a>
+    </nav>
+
+    <main class="content">
+      <div class="section-title">
+        <h2>ขายสินค้า</h2>
+        <small>250 SKU</small>
+      </div>
+
+      <div class="search-card">
+        <div class="search-box">
+          <span>🔎</span>
+          <input id="searchInput" placeholder="ค้นหาสินค้า เช่น โค้ก มาม่า น้ำดื่ม" oninput="renderProducts()" />
+        </div>
+      </div>
+
+      <div class="categories" id="categoryList"></div>
+
+      <div class="product-grid" id="productList"></div>
+    </main>
+
+    <div class="cart-drawer">
+      <div class="cart-head">
+        <span>ตะกร้าสินค้า</span>
+        <span><span id="cartCount">0</span> ชิ้น</span>
+      </div>
+      <div class="cart-list" id="cartList"></div>
+      <div class="checkout-row">
+        <div class="total">
+          <small>ยอดรวม</small>
+          <b>฿<span id="cartTotal">0</span></b>
+        </div>
+        <button class="primary" onclick="checkout()">ชำระเงิน / ตัดสต๊อก</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let products = [
+      { id: 1, name: "น้ำดื่มคริสตัล 600ml", category: "เครื่องดื่ม", cost: 5, price: 7, stock: 24, reorder: 10, emoji: "💧" },
+      { id: 2, name: "โค้กกระป๋อง", category: "เครื่องดื่ม", cost: 14, price: 18, stock: 18, reorder: 8, emoji: "🥤" },
+      { id: 3, name: "โออิชิ 500ml", category: "เครื่องดื่ม", cost: 16, price: 22, stock: 9, reorder: 10, emoji: "🍵" },
+      { id: 4, name: "มาม่าต้มยำกุ้ง", category: "ของแห้ง", cost: 6, price: 8, stock: 50, reorder: 20, emoji: "🍜" },
+      { id: 5, name: "เลย์โนริ", category: "ขนม", cost: 15, price: 20, stock: 12, reorder: 10, emoji: "🍟" },
+      { id: 6, name: "นมถั่วเหลือง", category: "นม/แช่เย็น", cost: 10, price: 13, stock: 6, reorder: 8, emoji: "🥛" },
+      { id: 7, name: "สบู่ก้อน", category: "ของใช้", cost: 18, price: 25, stock: 14, reorder: 6, emoji: "🧼" },
+      { id: 8, name: "ทิชชู่ห่อเล็ก", category: "ของใช้", cost: 9, price: 12, stock: 20, reorder: 8, emoji: "🧻" }
+    ];
+
+    let cart = [];
+    let totalSales = 0;
+    let currentCategory = "ทั้งหมด";
+
+    function renderCategories() {
+      const cats = ["ทั้งหมด", ...new Set(products.map(p => p.category))];
+      document.getElementById("categoryList").innerHTML = cats.map(c =>
+        `<button class="cat ${c === currentCategory ? "active" : ""}" onclick="currentCategory='${c}'; renderCategories(); renderProducts();">${c}</button>`
+      ).join("");
+    }
+
+    function renderProducts() {
+      const q = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = products.filter(p =>
+        (currentCategory === "ทั้งหมด" || p.category === currentCategory) &&
+        p.name.toLowerCase().includes(q)
+      );
+
+      document.getElementById("productList").innerHTML = filtered.map(p => `
+        <div class="product" onclick="addToCart(${p.id})">
+          <button class="floating-add">+</button>
+          <div>
+            <div class="emoji">${p.emoji}</div>
+            <div class="product-name">${p.name}</div>
+          </div>
+          <div class="meta">
+            <div class="price">฿${p.price}</div>
+            <div class="stock ${p.stock <= p.reorder ? "low" : ""}">เหลือ<br>${p.stock} ชิ้น</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function addToCart(id) {
+      const p = products.find(x => x.id === id);
+      if (p.stock <= 0) return alert("สินค้าหมดแล้ว");
+      const item = cart.find(x => x.id === id);
+      if (item) {
+        if (item.qty >= p.stock) return alert("จำนวนเกินสต๊อก");
+        item.qty++;
+      } else {
+        cart.push({ ...p, qty: 1 });
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      const count = cart.reduce((s, i) => s + i.qty, 0);
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      document.getElementById("cartCount").innerText = count;
+      document.getElementById("cartTotal").innerText = total;
+
+      document.getElementById("cartList").innerHTML = cart.length
+        ? cart.map(i => `<div class="cart-item"><span>${i.name} x ${i.qty}</span><b>฿${i.price * i.qty}</b></div>`).join("")
+        : `<div class="cart-empty">ยังไม่มีสินค้า กดการ์ดสินค้าเพื่อเพิ่มเข้าตะกร้า</div>`;
+    }
+
+    function checkout() {
+      if (!cart.length) return alert("ยังไม่มีสินค้าในตะกร้า");
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      cart.forEach(i => {
+        const p = products.find(x => x.id === i.id);
+        p.stock -= i.qty;
+      });
+      totalSales += total;
+      cart = [];
+      document.getElementById("todaySales").innerText = totalSales;
+      document.getElementById("lowStock").innerText = products.filter(p => p.stock <= p.reorder).length;
+      renderProducts();
+      renderCart();
+      alert("ขายสำเร็จ ตัดสต๊อกแล้ว");
+    }
+
+    renderCategories();
+    renderProducts();
+    renderCart();
+  </script>
+</body>
+</html>
