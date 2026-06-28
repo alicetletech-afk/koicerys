@@ -607,7 +607,7 @@ select,input{
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzzkIqWxnmrFj48bTks8tC4KgOuhjfTomH6RRGUtdSgjFLrBpAbGcYuPlr2karfeXzuqQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
 
 let products = [];
 let cart = [];
@@ -808,7 +808,7 @@ function calculateChange(){
 }
 
 
-function showPaymentModal(lines){
+function showPaymentModal(lines, title = "ชำระเงินสำเร็จ", icon = "✓"){
   const body = document.getElementById("paymentModalBody");
   body.innerHTML = lines.map(item => `
     <div class="modal-line">
@@ -816,6 +816,11 @@ function showPaymentModal(lines){
       <strong>${item.value}</strong>
     </div>
   `).join("");
+
+  const titleEl = document.querySelector("#paymentModal .modal-head h3");
+  const iconEl = document.querySelector("#paymentModal .modal-icon");
+  if(titleEl) titleEl.innerText = title;
+  if(iconEl) iconEl.innerText = icon;
 
   document.getElementById("paymentModal").classList.add("active");
 }
@@ -828,7 +833,7 @@ async function checkout(){
   if(cart.length === 0){
     showPaymentModal([
       {label:"สถานะ", value:"ยังไม่มีสินค้าในตะกร้า"}
-    ]);
+    ], "ยังชำระไม่ได้", "!");
     return;
   }
 
@@ -843,45 +848,43 @@ async function checkout(){
       {label:"สถานะ", value:"รับเงินยังไม่พอ"},
       {label:"ยอดรวม", value:"฿" + money(total)},
       {label:"รับมา", value:"฿" + money(received)}
-    ]);
+    ], "ยังชำระไม่ได้", "!");
     return;
   }
 
   if(method === "transfer" && !transferRef){
     showPaymentModal([
       {label:"สถานะ", value:"กรอกเลขอ้างอิงการโอนก่อน"}
-    ]);
+    ], "ยังชำระไม่ได้", "!");
     return;
   }
 
-  const payload = {
-    action: "checkout",
-    total: total,
-    payment_method: method,
-    received: received,
-    change: method === "cash" ? change : 0,
-    transfer_ref: transferRef,
-    items: cart.map(item => ({
-      product_id: item.id,
-      name: item.name,
-      qty: item.qty,
-      price: item.price
-    }))
-  };
+  const items = cart.map(item => ({
+    product_id: item.id,
+    name: item.name,
+    qty: item.qty,
+    price: item.price
+  }));
+
+  const url =
+    API_URL +
+    "?action=checkout" +
+    "&total=" + encodeURIComponent(total) +
+    "&payment_method=" + encodeURIComponent(method) +
+    "&received=" + encodeURIComponent(received) +
+    "&change=" + encodeURIComponent(method === "cash" ? change : 0) +
+    "&transfer_ref=" + encodeURIComponent(transferRef) +
+    "&items=" + encodeURIComponent(JSON.stringify(items));
 
   try{
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
-
+    const res = await fetch(url);
     const result = await res.json();
 
     if(!result.success){
       showPaymentModal([
         {label:"สถานะ", value:"ชำระเงินไม่สำเร็จ"},
         {label:"ข้อความ", value: result.message || "เกิดข้อผิดพลาด"}
-      ]);
+      ], "ชำระไม่สำเร็จ", "!");
       return;
     }
 
@@ -906,7 +909,7 @@ async function checkout(){
     document.getElementById("successBox").style.display = "block";
     document.getElementById("successBox").innerHTML = "ชำระเงินสำเร็จ";
 
-    showPaymentModal(modalLines);
+    showPaymentModal(modalLines, "ชำระเงินสำเร็จ", "✓");
 
     cart = [];
     document.getElementById("cashReceived").value = "";
@@ -919,7 +922,7 @@ async function checkout(){
     showPaymentModal([
       {label:"สถานะ", value:"เชื่อมต่อไม่สำเร็จ"},
       {label:"ข้อความ", value: err.message}
-    ]);
+    ], "ชำระไม่สำเร็จ", "!");
   }
 }
 
