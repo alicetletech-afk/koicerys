@@ -74,7 +74,15 @@ input{padding:12px 14px;border-radius:14px;border:1px solid var(--line);backgrou
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
 function money(n){return Number(n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})}
 function todayStr(){return new Date().toISOString().split("T")[0]}
-function setDefaultDates(){const today=todayStr();document.getElementById("startDate").value=today;document.getElementById("endDate").value=today}
+function setDefaultDates(){
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  document.getElementById("startDate").value = `${year}-${month}-01`;
+  document.getElementById("endDate").value = `${year}-${month}-${day}`;
+}
 function formatDate(value){if(!value)return "-";const d=new Date(value);if(isNaN(d.getTime()))return value;return d.toLocaleString("th-TH")}
 async function loadReport(){
   try{
