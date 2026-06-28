@@ -372,25 +372,23 @@ input,select{
   .search-wrap button{width:100%;margin-top:10px}
 }
 
-.product-picker-box{
-  display:grid;
-  gap:8px;
-  padding:12px;
+.existing-product-box{
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
   border-radius:18px;
-  background:#f8fafc;
-  border:1px solid var(--line);
+  padding:14px;
+  display:grid;
+  gap:10px;
 }
-.product-picker-box small{
-  color:var(--muted);
-  font-weight:850;
+.existing-product-box label{
+  color:#1d4ed8;
+}
+.existing-product-box small{
+  color:#475569;
+  font-weight:800;
   line-height:1.45;
 }
-.scanner-row{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:8px;
-}
-.scanner-btn{
+.scan-btn{
   width:100%;
   padding:13px 16px;
   border-radius:14px;
@@ -423,16 +421,8 @@ input,select{
   padding:20px 20px 10px;
   text-align:center;
 }
-.scanner-modal-head h3{
-  margin:0;
-  font-size:1.25rem;
-  font-weight:950;
-}
-.scanner-modal-head p{
-  margin:8px 0 0;
-  color:var(--muted);
-  font-size:.9rem;
-}
+.scanner-modal-head h3{margin:0;font-size:1.25rem;font-weight:950}
+.scanner-modal-head p{margin:8px 0 0;color:var(--muted);font-size:.9rem}
 .scan-status{
   margin-top:10px;
   padding:10px 12px;
@@ -443,9 +433,7 @@ input,select{
   font-weight:850;
   text-align:center;
 }
-.scanner-reader{
-  padding:16px;
-}
+.scanner-reader{padding:16px}
 #barcodeReader{
   width:100%;
   min-height:280px;
@@ -453,9 +441,7 @@ input,select{
   border-radius:20px;
   background:#0f172a;
 }
-.scanner-modal-footer{
-  padding:0 20px 20px;
-}
+.scanner-modal-footer{padding:0 20px 20px}
 .scanner-close-btn{
   width:100%;
   border:0;
@@ -507,27 +493,24 @@ input,select{
 <main class="main">
   <section>
     <div class="section-title">
-      <h2 id="formTitle">เพิ่มสินค้าใหม่</h2>
+      <h2 id="formTitle">เพิ่มสินค้าใหม่ / ผูกบาร์โค้ด</h2>
       <small>Master data</small>
     </div>
 
     <div class="box form">
+      <div class="existing-product-box">
+      <label>เลือกสินค้าที่มีอยู่จาก Google Sheet</label>
+      <select id="existingProductSelect" onchange="selectExistingProduct(this.value)">
+        <option value="">กำลังโหลดสินค้าจาก Google Sheet...</option>
+      </select>
+      <small>ใช้สำหรับเลือกสินค้าที่สร้างไว้แล้ว เพื่อแก้ข้อมูลหรือผูกบาร์โค้ด</small><small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-barcode-v3</small>
+    </div>
+
       <input id="productId" type="hidden">
 
-
-      <div class="product-picker-box">
-        <label>เลือกสินค้าที่มีอยู่</label>
-        <select id="existingProductSelect" onchange="selectExistingProduct(this.value)">
-          <option value="">กำลังโหลดสินค้า...</option>
-        </select>
-        <small>เลือกสินค้าที่มีอยู่เพื่อดึงข้อมูลมาแก้/ผูกบาร์โค้ด</small>
-      </div>
-
       <label>บาร์โค้ด</label>
-      <div class="scanner-row">
-        <input id="barcode" placeholder="เช่น 8850001000097">
-        <button type="button" class="scanner-btn" onclick="openBarcodeScanner()">📷 สแกนบาร์โค้ด</button>
-      </div>
+      <input id="barcode" placeholder="เช่น 8850001000097">
+      <button type="button" class="scan-btn" onclick="openBarcodeScanner()">📷 สแกนบาร์โค้ด</button>
 
       <label>ชื่อสินค้า</label>
       <input id="name" placeholder="เช่น น้ำดื่ม 600ml">
@@ -673,6 +656,11 @@ async function loadProducts(){
   }catch(err){
     document.getElementById("productList").innerHTML =
       `<div class="empty">โหลดข้อมูลไม่สำเร็จ<br>${err.message}</div>`;
+
+    const select = document.getElementById("existingProductSelect");
+    if(select){
+      select.innerHTML = `<option value="">โหลดสินค้าจาก Google Sheet ไม่สำเร็จ</option>`;
+    }
   }
 }
 
@@ -825,40 +813,32 @@ function renderExistingProductSelect(){
   const select = document.getElementById("existingProductSelect");
   if(!select) return;
 
-  select.innerHTML = `<option value="">เลือกสินค้าเพื่อแก้ไข / ผูกบาร์โค้ด</option>` +
-    products.map(p => `
-      <option value="${p.product_id || p.id}">
-        ${p.name || "-"} ${p.barcode ? "· " + p.barcode : "· ยังไม่มีบาร์โค้ด"}
-      </option>
-    `).join("");
+  select.innerHTML = `<option value="">เลือกสินค้าที่มีอยู่</option>` + products.map(p => `
+    <option value="${p.id}">
+      ${p.name || "-"} ${p.barcode ? "· " + p.barcode : "· ยังไม่มีบาร์โค้ด"}
+    </option>
+  `).join("");
 }
 
-function selectExistingProduct(productId){
-  if(!productId) return;
+function selectExistingProduct(id){
+  if(!id) return;
 
-  const p = products.find(item => String(item.product_id || item.id) === String(productId));
+  const p = products.find(item => String(item.id) === String(id));
   if(!p) return;
 
-  // ใช้ฟังก์ชัน editProduct เดิม ถ้ามี
-  if(typeof editProduct === "function"){
-    editProduct(String(productId));
-    return;
-  }
-
-  // fallback: เติมฟอร์มเอง
-  if(document.getElementById("productId")) document.getElementById("productId").value = p.product_id || p.id || "";
-  if(document.getElementById("barcode")) document.getElementById("barcode").value = p.barcode || "";
-  if(document.getElementById("name")) document.getElementById("name").value = p.name || "";
-  if(document.getElementById("category")) document.getElementById("category").value = p.category || "";
-  if(document.getElementById("cost")) document.getElementById("cost").value = p.cost || 0;
-  if(document.getElementById("price")) document.getElementById("price").value = p.price || 0;
-  if(document.getElementById("stock")) document.getElementById("stock").value = p.stock || 0;
-  if(document.getElementById("reorder")) document.getElementById("reorder").value = p.reorder_point || p.reorder || 0;
-  if(document.getElementById("unit")) document.getElementById("unit").value = p.unit || "ชิ้น";
-  if(document.getElementById("status")) document.getElementById("status").value = p.status || "active";
+  document.getElementById("productId").value = p.id || "";
+  document.getElementById("barcode").value = p.barcode || "";
+  document.getElementById("name").value = p.name || "";
+  document.getElementById("category").value = p.category || "";
+  document.getElementById("cost").value = p.cost || 0;
+  document.getElementById("price").value = p.price || 0;
+  document.getElementById("stock").value = p.stock || 0;
+  document.getElementById("reorder").value = p.reorder || 0;
+  document.getElementById("unit").value = p.unit || "ชิ้น";
+  document.getElementById("status").value = p.status || "active";
 
   const title = document.getElementById("formTitle");
-  if(title) title.textContent = "แก้ไขสินค้า / ผูกบาร์โค้ด";
+  if(title) title.innerText = "แก้ไขสินค้า / ผูกบาร์โค้ด";
 }
 
 let barcodeScanner = null;
@@ -872,26 +852,14 @@ function setScanStatus(text){
 
 async function openBarcodeScanner(){
   const modal = document.getElementById("scannerModal");
-
-  if(!modal){
-    alert("ไม่พบหน้าต่าง scanner");
-    return;
-  }
-
   modal.classList.add("active");
   setScanStatus("กำลังเตรียมกล้อง...");
 
-  if(location.protocol !== "https:" && location.hostname !== "localhost"){
-    setScanStatus("ต้องเปิดผ่าน HTTPS เท่านั้น กล้องถึงจะใช้งานได้");
-    return;
-  }
-
   if(typeof Html5Qrcode === "undefined"){
-    setScanStatus("โหลดตัวสแกนไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ หรือเช็กอินเทอร์เน็ต");
+    setScanStatus("โหลดตัวสแกนไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ");
     return;
   }
 
-  // ให้ modal render ก่อน ค่อยเปิดกล้อง โดยเฉพาะ iPhone
   await new Promise(resolve => setTimeout(resolve, 350));
 
   try{
@@ -899,10 +867,7 @@ async function openBarcodeScanner(){
       barcodeScanner = new Html5Qrcode("barcodeReader");
     }
 
-    if(scannerRunning){
-      setScanStatus("กล้องเปิดอยู่แล้ว");
-      return;
-    }
+    if(scannerRunning) return;
 
     await barcodeScanner.start(
       { facingMode: "environment" },
@@ -914,8 +879,6 @@ async function openBarcodeScanner(){
         const input = document.getElementById("barcode");
         input.value = decodedText;
         input.classList.add("scan-success");
-
-        setScanStatus("สแกนสำเร็จ: " + decodedText);
 
         await closeBarcodeScanner(false);
 
@@ -948,9 +911,7 @@ async function closeBarcodeScanner(clearReader = true){
     if(barcodeScanner && clearReader){
       await barcodeScanner.clear();
     }
-  }catch(err){
-    console.warn(err);
-  }
+  }catch(err){}
 
   if(modal) modal.classList.remove("active");
 }
