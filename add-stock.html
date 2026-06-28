@@ -415,6 +415,23 @@ input,select{
     margin-top:6px;
   }
 }
+
+.staff-only-note{
+  display:none;
+  background:#fef3c7;
+  color:#92400e;
+  border:1px solid #fde68a;
+  padding:12px;
+  border-radius:14px;
+  font-weight:900;
+}
+body[data-role="staff"] .staff-only-note{
+  display:block;
+}
+body[data-role="staff"] .admin-price-fields{
+  display:none;
+}
+
 </style>
 </head>
 <body>
@@ -429,6 +446,7 @@ input,select{
     <div class="auth-box">
       <button class="auth-logout-btn" onclick="logout()">ออกจากระบบ</button>
       <div id="currentUserEmail" class="auth-user-email"></div>
+      <div id="currentUserRole" class="auth-user-email"></div>
     </div>
 
   </div>
@@ -474,10 +492,12 @@ input,select{
 
       <div id="productPreview" class="product-preview"></div>
 
+      <div id="staffOnlyNote" class="staff-only-note">โหมด Staff: เติมจำนวนสินค้าได้เท่านั้น ไม่สามารถแก้ต้นทุน/ราคาขายได้</div>
+
       <label>จำนวนรับเข้า</label>
       <input id="qtyIn" type="number" placeholder="เช่น 24">
 
-      <div class="form-grid">
+      <div class="form-grid admin-price-fields">
         <div>
           <label>ต้นทุนใหม่/ชิ้น</label>
           <input id="newCost" type="number" placeholder="เว้นว่าง = ใช้ทุนเดิม">
@@ -490,6 +510,9 @@ input,select{
 
       <label>Supplier</label>
       <input id="supplier" placeholder="เช่น Makro / ร้านส่ง / บริษัท">
+
+      <label>วันหมดอายุ (ถ้ามี)</label>
+      <input id="expiryDate" type="date">
 
       <button class="primary" onclick="saveRestock()">บันทึกเติมของเข้า</button>
 
@@ -674,9 +697,11 @@ async function saveRestock(){
     product_id:selectedProduct.id,
     product_name:selectedProduct.name,
     qty_in:qty,
-    cost:newCost || selectedProduct.cost,
-    price:newPrice || selectedProduct.price,
-    supplier:supplier
+    cost:(window.CURRENT_USER_ROLE === "staff" ? selectedProduct.cost : (newCost || selectedProduct.cost)),
+    price:(window.CURRENT_USER_ROLE === "staff" ? selectedProduct.price : (newPrice || selectedProduct.price)),
+    supplier:supplier,
+    expiry_date: document.getElementById("expiryDate") ? document.getElementById("expiryDate").value : "",
+    user_email: window.CURRENT_USER_EMAIL || ""
   };
 
   try{
@@ -688,7 +713,9 @@ async function saveRestock(){
       "&qty_in=" + encodeURIComponent(payload.qty_in) +
       "&cost=" + encodeURIComponent(payload.cost) +
       "&price=" + encodeURIComponent(payload.price) +
-      "&supplier=" + encodeURIComponent(payload.supplier || "");
+      "&supplier=" + encodeURIComponent(payload.supplier || "") +
+      "&expiry_date=" + encodeURIComponent(payload.expiry_date || "") +
+      "&user_email=" + encodeURIComponent(payload.user_email || "");
 
     const res = await fetch(url);
     const result = await res.json();
@@ -722,6 +749,7 @@ async function saveRestock(){
     document.getElementById("newCost").value = "";
     document.getElementById("newPrice").value = "";
     document.getElementById("supplier").value = "";
+    if(document.getElementById("expiryDate")) document.getElementById("expiryDate").value = "";
     document.getElementById("barcodeInput").value = "";
 
     await loadProducts();
@@ -764,6 +792,25 @@ function showModal(title, lines){
 
 function closeModal(){
   document.getElementById("resultModal").classList.remove("active");
+}
+
+function applyRoleUI(role){
+  const costInput = document.getElementById("newCost");
+  const priceInput = document.getElementById("newPrice");
+
+  if(role === "staff"){
+    if(costInput){
+      costInput.value = "";
+      costInput.disabled = true;
+    }
+    if(priceInput){
+      priceInput.value = "";
+      priceInput.disabled = true;
+    }
+  }else{
+    if(costInput) costInput.disabled = false;
+    if(priceInput) priceInput.disabled = false;
+  }
 }
 
 loadProducts();
