@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>จัดการสินค้า Barcode | ร้านของชำ</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;background:#f3f6fb;color:#182235}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:#f7f9fd;padding-bottom:28px}
+.hero{background:linear-gradient(145deg,#10245f,#1c3f8f);color:white;padding:24px 20px 28px;border-bottom-left-radius:34px;border-bottom-right-radius:34px;box-shadow:0 18px 35px rgba(16,36,95,.25)}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
+h1{margin:0;font-size:28px;line-height:1.15}.hero p{margin:6px 0 0;opacity:.78;font-size:14px}
+.icon-box{width:48px;height:48px;border-radius:17px;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:24px;border:1px solid rgba(255,255,255,.16)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stats.three{grid-template-columns:repeat(3,1fr)}
+.stat{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:13px 10px;backdrop-filter:blur(10px)}
+.stat .label{font-size:11px;opacity:.75;margin-bottom:5px}.stat .value{font-size:20px;font-weight:900}
+.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:16px 14px 2px;margin-top:-8px}
+.nav a{text-decoration:none;color:#31415f;background:white;border:1px solid #e7edf6;border-radius:18px;padding:11px 4px;text-align:center;font-size:11px;font-weight:800;box-shadow:0 8px 20px rgba(27,45,85,.06)}
+.nav a.active{color:white;background:#2f68e8;border-color:#2f68e8}.nav .icon{display:block;font-size:19px;margin-bottom:4px}
+.content{padding:16px}.section-title{display:flex;justify-content:space-between;align-items:end;margin:8px 2px 14px}
+.section-title h2{margin:0;font-size:22px}.section-title small{color:#72809a;font-weight:800}
+.card{background:white;border:1px solid #e7edf6;border-radius:24px;padding:14px;box-shadow:0 10px 24px rgba(27,45,85,.055);margin-bottom:12px}
+.search-card{background:white;border-radius:24px;padding:14px;box-shadow:0 12px 28px rgba(27,45,85,.07);border:1px solid #e8eef6;margin-bottom:14px}
+.search-box{display:flex;align-items:center;gap:10px;background:#f4f7fb;border:1px solid #e0e7f2;border-radius:18px;padding:10px 12px}
+.search-box span{font-size:18px;color:#74819a}.search-box input{border:0;outline:0;background:transparent;width:100%;font-size:15px;color:#182235}
+.search-btn,.primary{border:0;background:#2f68e8;color:white;border-radius:14px;padding:11px 14px;font-weight:900;cursor:pointer;white-space:nowrap}
+.secondary{border:0;background:#eef3ff;color:#245bd4;border-radius:14px;padding:11px 14px;font-weight:900;cursor:pointer}
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 14px;scrollbar-width:none}.filter-row::-webkit-scrollbar{display:none}
+.filter{border:1px solid #e7edf6;background:white;color:#53627d;border-radius:999px;padding:10px 14px;font-weight:900;white-space:nowrap;box-shadow:0 8px 20px rgba(27,45,85,.05);cursor:pointer}
+.filter.active{background:#eaf1ff;color:#245bd4;border-color:#bcd2ff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.product-card{min-height:150px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+.emoji{width:42px;height:42px;border-radius:16px;background:#f6f8fc;display:grid;place-items:center;font-size:23px;margin-bottom:10px}
+.name{font-size:16px;font-weight:950;line-height:1.35}.muted{color:#72809a;font-size:13px}.price{font-size:20px;font-weight:950;color:#0f766e}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.form{display:grid;gap:10px}.form input,.form select{width:100%;border:1px solid #e0e7f2;background:#f4f7fb;border-radius:16px;padding:13px 14px;font-size:15px;outline:0}
+.form label{font-size:13px;font-weight:900;color:#53627d}.barcode-pill{display:inline-block;background:#f1f5f9;color:#475569;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;margin-top:6px}
+.badge{border-radius:999px;padding:7px 10px;font-size:12px;font-weight:950;white-space:nowrap}.badge.ok{background:#dcfce7;color:#166534}.badge.low{background:#fee2e2;color:#b91c1c}.badge.out{background:#1f2937;color:white}
+.empty{text-align:center;padding:30px 18px;color:#72809a;background:white;border-radius:28px;border:1px solid #e7edf6;box-shadow:0 10px 24px rgba(27,45,85,.055)}
+.empty h3{margin:0 0 8px;font-size:20px;color:#182235}.empty p{margin:0 0 16px;font-size:14px;line-height:1.5}
+.table-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px 0;border-bottom:1px solid #eef2f7}.table-row:last-child{border-bottom:0}
+.cart-drawer{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(448px,calc(100% - 32px));background:white;border:1px solid #e2e8f0;border-radius:28px;box-shadow:0 18px 45px rgba(15,23,42,.20);padding:14px;z-index:10}
+.checkout-row{display:grid;grid-template-columns:1fr 1.6fr;gap:10px;align-items:center}.total{background:#f3f6fb;border-radius:18px;padding:12px}.total small{display:block;color:#7d89a0;font-size:11px}.total b{font-size:22px}
+.help{font-size:12px;color:#72809a;margin-top:8px;line-height:1.5}
+@media(min-width:768px){body{background:#dfe7f4}.app{box-shadow:0 0 60px rgba(15,23,42,.12)}}
+</style>
+</head>
+<body>
+
+<div class="app">
+<header class="hero"><div class="hero-top"><div><h1>จัดการสินค้า</h1><p>เพิ่มสินค้าใหม่ + ผูกบาร์โค้ด</p></div><div class="icon-box">🏷️</div></div><div class="stats"><div class="stat"><div class="label">สินค้าในระบบ</div><div class="value">8</div></div><div class="stat"><div class="label">รองรับ</div><div class="value">Barcode</div></div></div></header>
+
+<nav class="nav">
+  <a class="" href="index.html"><span class="icon">🧾</span>ขาย</a>
+  <a class="" href="stock.html"><span class="icon">📦</span>สต๊อก</a>
+  <a class="" href="add-stock.html"><span class="icon">➕</span>เติมของ</a>
+  <a class="active" href="product.html"><span class="icon">🏷️</span>สินค้า</a>
+  <a class="" href="report.html"><span class="icon">📊</span>รายงาน</a>
+</nav>
+
+<main class="content">
+ <div class="section-title"><h2>เพิ่มสินค้าใหม่</h2><small>Master data</small></div>
+ <div class="card form">
+  <label>ยิง/กรอกบาร์โค้ด</label><input id="barcode" placeholder="ยิงบาร์โค้ดตรงนี้ เช่น 885..." autofocus>
+  <label>ชื่อสินค้า</label><input id="name" placeholder="เช่น น้ำดื่ม 600ml">
+  <label>หมวดหมู่</label><select id="category"><option>เครื่องดื่ม</option><option>ขนม</option><option>ของแห้ง</option><option>นม/แช่เย็น</option><option>ของใช้</option></select>
+  <div class="grid2"><div><label>ต้นทุน</label><input id="cost" type="number"></div><div><label>ราคาขาย</label><input id="price" type="number"></div></div>
+  <div class="grid2"><div><label>สต๊อกเริ่มต้น</label><input id="stock" type="number"></div><div><label>จุดเตือนสั่งซื้อ</label><input id="reorder" type="number"></div></div>
+  <button class="primary" onclick="addProduct()">เพิ่มสินค้า</button>
+ </div>
+ <div class="section-title"><h2>สินค้าในระบบ</h2><small>ค้นบาร์โค้ดได้</small></div>
+ <div id="productList"></div>
+</main>
+</div>
+
+<script>
+const products = [
+  { id:1, barcode:"8850001000011", name:"น้ำดื่มคริสตัล 600ml", category:"เครื่องดื่ม", cost:5, price:7, stock:24, reorder:10, emoji:"💧" },
+  { id:2, barcode:"8850001000028", name:"โค้กกระป๋อง", category:"เครื่องดื่ม", cost:14, price:18, stock:18, reorder:8, emoji:"🥤" },
+  { id:3, barcode:"8850001000035", name:"โออิชิ 500ml", category:"เครื่องดื่ม", cost:16, price:22, stock:9, reorder:10, emoji:"🍵" },
+  { id:4, barcode:"8850001000042", name:"มาม่าต้มยำกุ้ง", category:"ของแห้ง", cost:6, price:8, stock:50, reorder:20, emoji:"🍜" },
+  { id:5, barcode:"8850001000059", name:"เลย์โนริ", category:"ขนม", cost:15, price:20, stock:12, reorder:10, emoji:"🍟" },
+  { id:6, barcode:"8850001000066", name:"นมถั่วเหลือง", category:"นม/แช่เย็น", cost:10, price:13, stock:6, reorder:8, emoji:"🥛" },
+  { id:7, barcode:"8850001000073", name:"สบู่ก้อน", category:"ของใช้", cost:18, price:25, stock:14, reorder:6, emoji:"🧼" },
+  { id:8, barcode:"8850001000080", name:"ทิชชู่ห่อเล็ก", category:"ของใช้", cost:9, price:12, stock:20, reorder:8, emoji:"🧻" }
+];
+function money(n){return Number(n).toLocaleString();}
+function statusOf(p){
+  if(p.stock<=0) return {text:"หมด",cls:"out"};
+  if(p.stock<=p.reorder) return {text:"ใกล้หมด",cls:"low"};
+  return {text:"ปกติ",cls:"ok"};
+}
+function matchProduct(p,q){
+  q = q.trim().toLowerCase();
+  return !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || String(p.barcode).includes(q);
+}
+</script>
+<script>
+function renderList(){productList.innerHTML=products.map(p=>`<div class="card"><div class="row"><div><div class="name">${p.name}</div><div class="muted">${p.category}</div><span class="barcode-pill">Barcode: ${p.barcode}</span></div><button class="secondary" onclick="alert('Demo: ต่อไปทำหน้าแก้ไข')">แก้ไข</button></div></div>`).join("");}
+function addProduct(){
+ if(!barcode.value||!name.value)return alert("กรอก/ยิงบาร์โค้ด และชื่อสินค้าก่อน");
+ products.unshift({id:Date.now(),barcode:barcode.value,name:name.value,category:category.value,cost:Number(cost.value||0),price:Number(price.value||0),stock:Number(stock.value||0),reorder:Number(reorder.value||0),emoji:"📦"});
+ renderList();alert("เพิ่มสินค้าแล้ว (Demo ยังไม่บันทึกถาวร)");barcode.value=name.value=cost.value=price.value=stock.value=reorder.value="";
+}
+renderList();
+</script>
+</body>
+</html>
