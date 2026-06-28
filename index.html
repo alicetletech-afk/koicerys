@@ -6,20 +6,20 @@
 <title>ขายสินค้า | Koicerys</title>
 <style>
 :root{
-  --blue:#173a8c;
-  --blue2:#316BFF;
-  --bg:#eef3fb;
-  --surface:#ffffff;
-  --soft:#f4f7fc;
-  --line:#dfe7f3;
+  --navy:#173A8C;
+  --blue:#316BFF;
+  --bg:#EEF3FB;
+  --page:#F8FAFF;
+  --card:#FFFFFF;
+  --line:#DEE8F5;
+  --soft:#F3F6FB;
   --text:#172033;
-  --muted:#6f7d95;
-  --green:#0f766e;
-  --red:#dc2626;
-  --shadow:0 14px 38px rgba(23,58,140,.08);
+  --muted:#6D7B93;
+  --green:#0F766E;
+  --red:#DC2626;
+  --shadow:0 14px 34px rgba(23,58,140,.08);
 }
 *{box-sizing:border-box}
-html{font-size:16px}
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;
@@ -27,25 +27,24 @@ body{
   color:var(--text);
 }
 .app{
-  width:min(100%,480px);
+  width:min(100%,1120px);
   margin:0 auto;
   min-height:100vh;
-  background:#f8faff;
-  padding-bottom:28px;
+  background:var(--page);
   box-shadow:0 0 55px rgba(15,23,42,.08);
 }
 .hero{
-  background:linear-gradient(145deg,#10245f,#1d4297);
-  color:white;
-  padding:28px 20px 34px;
+  background:linear-gradient(145deg,#10245F,#1D4297);
+  color:#fff;
+  padding:28px 24px 34px;
   border-bottom-left-radius:36px;
   border-bottom-right-radius:36px;
 }
 .hero-top{
   display:flex;
-  align-items:flex-start;
   justify-content:space-between;
-  gap:16px;
+  align-items:flex-start;
+  gap:18px;
   margin-bottom:22px;
 }
 h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
@@ -55,7 +54,7 @@ h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
   display:grid;place-items:center;
   background:rgba(255,255,255,.14);
   border:1px solid rgba(255,255,255,.18);
-  font-size:1.6rem;
+  font-size:1.55rem;
   flex:0 0 auto;
 }
 .stats{
@@ -74,19 +73,19 @@ h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
 .stat .value{font-size:1.45rem;font-weight:950}
 .nav{
   display:grid;
-  grid-template-columns:repeat(5,minmax(70px,1fr));
+  grid-template-columns:repeat(5,minmax(74px,120px));
   gap:10px;
-  padding:16px 16px 4px;
-  margin-top:-18px;
+  padding:16px 24px 6px;
+  margin-top:-20px;
   overflow-x:auto;
   scrollbar-width:none;
 }
 .nav::-webkit-scrollbar{display:none}
 .nav a{
-  min-height:72px;
+  min-height:74px;
   text-decoration:none;
-  color:#26344f;
-  background:white;
+  color:#26344F;
+  background:#fff;
   border:1px solid var(--line);
   border-radius:20px;
   padding:12px 8px;
@@ -100,33 +99,32 @@ h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
   align-items:center;
   gap:5px;
 }
-.nav a.active{background:var(--blue2);color:white;border-color:var(--blue2)}
+.nav a.active{background:var(--blue);color:white;border-color:var(--blue)}
 .nav .icon{font-size:1.4rem;line-height:1}
-.content{padding:18px 16px 28px}
+.content{padding:26px 24px 42px}
 .section-title{
   display:flex;
   justify-content:space-between;
   align-items:end;
   gap:12px;
-  margin:12px 2px 16px;
+  margin:10px 0 16px;
 }
 .section-title h2{margin:0;font-size:1.65rem;font-weight:950}
 .section-title small{color:var(--muted);font-weight:900;font-size:.95rem;white-space:nowrap}
 .card{
-  background:white;
+  background:var(--card);
   border:1px solid var(--line);
   border-radius:26px;
   padding:16px;
-  margin-bottom:14px;
   box-shadow:var(--shadow);
 }
 .search-card{
-  background:white;
+  background:var(--card);
   border:1px solid var(--line);
   border-radius:26px;
   padding:14px;
-  margin-bottom:16px;
   box-shadow:var(--shadow);
+  margin-bottom:16px;
 }
 .search-box{
   display:flex;
@@ -137,7 +135,7 @@ h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
   border-radius:20px;
   padding:10px 12px;
 }
-.search-box .search-icon{font-size:1.35rem;color:var(--muted);flex:0 0 auto}
+.search-icon{font-size:1.3rem;color:var(--muted);flex:0 0 auto}
 input,select{
   width:100%;
   min-width:0;
@@ -149,22 +147,13 @@ input,select{
   outline:none;
   color:var(--text);
 }
-.search-box input{
-  border:0;
-  background:transparent;
-  border-radius:0;
-  padding:10px 2px;
-}
+.search-box input{border:0;background:transparent;border-radius:0;padding:10px 2px}
 button,.primary,.secondary{
-  border:0;
-  border-radius:16px;
-  padding:13px 16px;
-  font-weight:950;
-  cursor:pointer;
-  font-size:.95rem;
+  border:0;border-radius:16px;padding:13px 16px;
+  font-weight:950;cursor:pointer;font-size:.95rem;white-space:nowrap;
 }
-.primary{background:var(--blue2);color:white}
-.secondary{background:#eef3ff;color:#245bd4}
+.primary{background:var(--blue);color:white}
+.secondary{background:#EEF3FF;color:#245BD4}
 .filter-row{
   display:flex;
   gap:10px;
@@ -175,54 +164,56 @@ button,.primary,.secondary{
 .filter-row::-webkit-scrollbar{display:none}
 .filter{
   border:1px solid var(--line);
-  background:white;
-  color:#53627d;
+  background:#fff;
+  color:#53627D;
   border-radius:999px;
   padding:11px 16px;
   font-weight:950;
   white-space:nowrap;
   box-shadow:0 8px 22px rgba(27,45,85,.05);
 }
-.filter.active{background:#eaf1ff;color:#245bd4;border-color:#bcd2ff}
-.grid-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.product-card{
-  min-height:158px;
+.filter.active{background:#EAF1FF;color:#245BD4;border-color:#BCD2FF}
+.layout-2{
+  display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(320px,.85fr);
+  gap:20px;
+  align-items:start;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+}
+.product-card,.stock-card{
+  min-height:205px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  cursor:pointer;
   position:relative;
   overflow:hidden;
 }
-.product-card:after{
+.product-card:after,.stock-card:after{
   content:"";
   position:absolute;
   right:-34px;top:-34px;
   width:96px;height:96px;
   border-radius:999px;
-  background:#f1f5ff;
+  background:#F1F5FF;
 }
-.product-card .add-dot{
-  position:absolute;
-  right:12px;top:12px;
-  z-index:2;
-  width:34px;height:34px;
-  border-radius:50%;
-  background:var(--blue2);
-  color:white;
-  display:grid;
-  place-items:center;
-  font-weight:950;
-  font-size:1.2rem;
+.add-dot{
+  position:absolute;right:12px;top:12px;z-index:2;
+  width:34px;height:34px;border-radius:50%;
+  background:var(--blue);color:white;
+  display:grid;place-items:center;
+  font-weight:950;font-size:1.2rem;
 }
 .emoji{
   width:44px;height:44px;border-radius:17px;
-  background:#f6f8fc;
+  background:#F6F8FC;
   display:grid;place-items:center;
   font-size:1.4rem;
   margin-bottom:10px;
-  position:relative;
-  z-index:1;
+  position:relative;z-index:1;
 }
 .name{font-size:1.08rem;font-weight:950;line-height:1.35}
 .muted{color:var(--muted);font-size:.9rem;line-height:1.45}
@@ -231,7 +222,7 @@ button,.primary,.secondary{
 .row-start{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .barcode-pill{
   display:inline-block;
-  background:#f1f5f9;
+  background:#F1F5F9;
   color:#475569;
   border-radius:999px;
   padding:6px 10px;
@@ -246,40 +237,41 @@ button,.primary,.secondary{
   font-weight:950;
   white-space:nowrap;
 }
-.badge.ok{background:#dcfce7;color:#166534}
-.badge.low{background:#fee2e2;color:#b91c1c}
-.badge.out{background:#1f2937;color:white}
-.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.badge.ok{background:#DCFCE7;color:#166534}
+.badge.low{background:#FEE2E2;color:#B91C1C}
+.badge.out{background:#1F2937;color:white}
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+  position:relative;
+  z-index:1;
+}
 .info-box{background:var(--soft);border-radius:20px;padding:13px}
 .info-box small{display:block;color:var(--muted);font-size:.78rem;font-weight:900;margin-bottom:6px}
-.info-box b{font-size:1.3rem;font-weight:950}
-.form{display:grid;gap:12px}
-.form label{font-size:.9rem;font-weight:950;color:#53627d}
-.form-grid{display:grid;grid-template-columns:1fr;gap:12px}
-.full{grid-column:1/-1}
-.cart-drawer{
+.info-box b{font-size:1.25rem;font-weight:950}
+.cart-card{
   position:sticky;
-  bottom:14px;
-  background:white;
-  border:1px solid var(--line);
-  border-radius:28px;
-  box-shadow:0 18px 45px rgba(15,23,42,.16);
-  padding:16px;
-  margin-top:16px;
-  z-index:10;
+  top:20px;
 }
-.checkout-row{display:grid;grid-template-columns:1fr 1.55fr;gap:10px;align-items:center}
 .total{background:var(--soft);border-radius:20px;padding:13px}
 .total small{display:block;color:var(--muted);font-size:.78rem;font-weight:800}
 .total b{font-size:1.35rem;font-weight:950}
+.checkout-row{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
 .table-row{
   display:grid;
   grid-template-columns:1fr auto;
   gap:10px;
   padding:12px 0;
-  border-bottom:1px solid #eef2f7;
+  border-bottom:1px solid #EEF2F7;
 }
 .table-row:last-child{border-bottom:0}
+.form{display:grid;gap:12px}
+.form label{font-size:.9rem;font-weight:950;color:#53627D}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.list{display:grid;gap:14px}
+.report-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .empty{
   text-align:center;
   padding:30px 18px;
@@ -292,37 +284,28 @@ button,.primary,.secondary{
 .empty h3{margin:0 0 8px;font-size:1.25rem;color:var(--text)}
 .empty p{margin:0 0 16px;font-size:.95rem;line-height:1.5}
 .help{font-size:.82rem;color:var(--muted);margin-top:8px;line-height:1.5}
-.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media (min-width: 700px){
+@media(max-width:900px){
   .app{width:min(100%,720px)}
-  .hero{padding:32px 28px 42px}
-  .content{padding:22px 28px 36px}
-  .nav{padding:18px 28px 6px}
-  .grid-products{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .form-grid{grid-template-columns:1fr 1fr}
-  .report-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .layout-2{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cart-card{position:static}
+  .hero{padding:28px 20px 34px}
+  .content{padding:22px 20px 34px}
+  .nav{padding:16px 20px 6px}
 }
-@media (min-width: 1100px){
-  .app{width:min(100%,1120px)}
-  .hero{
-    border-bottom-left-radius:40px;
-    border-bottom-right-radius:40px;
-    padding:34px 36px 44px;
-  }
-  .content{padding:26px 36px 42px}
-  .nav{padding:20px 36px 8px;grid-template-columns:repeat(5,120px)}
-  .grid-products{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .desktop-2col{display:grid;grid-template-columns:1.3fr .8fr;gap:18px;align-items:start}
-  .cart-drawer{position:sticky;top:24px;bottom:auto;margin-top:0}
-  .stock-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-  .stock-list .card{margin-bottom:0}
-}
-@media (max-width: 390px){
+@media(max-width:520px){
+  .app{width:100%}
   h1{font-size:1.75rem}
-  .stats.three{grid-template-columns:1fr}
-  .grid-products{grid-template-columns:1fr}
-  .checkout-row{grid-template-columns:1fr}
+  .hero{padding:24px 16px 32px}
+  .content{padding:20px 16px 32px}
+  .nav{padding:16px 16px 6px;grid-template-columns:repeat(5,minmax(78px,1fr))}
+  .stats,.stats.three{grid-template-columns:1fr}
+  .grid,.report-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
   .info-grid{grid-template-columns:1fr}
+  .search-box{align-items:stretch}
+  .search-btn{padding-left:14px;padding-right:14px}
 }
 </style>
 </head>
@@ -330,38 +313,22 @@ button,.primary,.secondary{
 
 <div class="app">
 <header class="hero">
-  <div class="hero-top">
-    <div><h1>ร้านของชำ</h1><p>ขายสินค้า / ยิงบาร์โค้ด / ค้นหาด้วยชื่อ</p></div>
-    <div class="icon-box">🛒</div>
-  </div>
-  <div class="stats">
-    <div class="stat"><div class="label">ยอดขายวันนี้</div><div class="value">฿<span id="todaySales">0</span></div></div>
-    <div class="stat"><div class="label">สินค้าใกล้หมด</div><div class="value"><span id="lowStock">0</span> รายการ</div></div>
-  </div>
+  <div class="hero-top"><div><h1>ร้านของชำ</h1><p>ขายสินค้า / ยิงบาร์โค้ด / ค้นหาด้วยชื่อ</p></div><div class="icon-box">🛒</div></div>
+  <div class="stats"><div class="stat"><div class="label">ยอดขายวันนี้</div><div class="value">฿<span id="todaySales">0</span></div></div><div class="stat"><div class="label">สินค้าใกล้หมด</div><div class="value"><span id="lowStock">0</span> รายการ</div></div></div>
 </header>
 <nav class="nav"><a class="active" href="index.html"><span class="icon">🧾</span>ขาย</a><a class="" href="stock.html"><span class="icon">📦</span>สต๊อก</a><a class="" href="add-stock.html"><span class="icon">➕</span>เติมของ</a><a class="" href="product.html"><span class="icon">🏷️</span>สินค้า</a><a class="" href="report.html"><span class="icon">📊</span>รายงาน</a></nav>
 <main class="content">
   <div class="section-title"><h2>ขายสินค้า</h2><small>Barcode-ready</small></div>
-  <div class="desktop-2col">
+  <div class="layout-2">
     <section>
-      <div class="search-card">
-        <div class="search-box">
-          <span class="search-icon">📷</span>
-          <input id="searchInput" placeholder="ยิงบาร์โค้ด หรือค้นหาชื่อสินค้า" autofocus onkeydown="handleScan(event)">
-          <button class="search-btn" onclick="renderProducts()">ค้นหา</button>
-        </div>
-        <div class="help">ถ้าใช้เครื่องยิงบาร์โค้ด ให้คลิกช่องนี้ไว้ เครื่องจะพิมพ์เลขและกด Enter อัตโนมัติ</div>
-      </div>
+      <div class="search-card"><div class="search-box"><span class="search-icon">📷</span><input id="searchInput" placeholder="ยิงบาร์โค้ด หรือค้นหาชื่อสินค้า" autofocus onkeydown="handleScan(event)"><button class="search-btn primary" onclick="renderProducts()">ค้นหา</button></div><div class="help">คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div></div>
       <div class="filter-row" id="categoryList"></div>
-      <div class="grid-products" id="productList"></div>
+      <div class="grid" id="productList"></div>
     </section>
-    <aside class="cart-drawer">
+    <aside class="card cart-card">
       <div class="row" style="font-weight:950;margin-bottom:10px"><span>ตะกร้าสินค้า</span><span><span id="cartCount">0</span> ชิ้น</span></div>
-      <div id="cartList" style="max-height:220px;overflow:auto"></div>
-      <div class="checkout-row">
-        <div class="total"><small>ยอดรวม</small><b>฿<span id="cartTotal">0</span></b></div>
-        <button class="primary" onclick="checkout()">ชำระเงิน / ตัดสต๊อก</button>
-      </div>
+      <div id="cartList" style="max-height:260px;overflow:auto"></div>
+      <div class="checkout-row"><div class="total"><small>ยอดรวม</small><b>฿<span id="cartTotal">0</span></b></div><button class="primary" onclick="checkout()">ชำระเงิน / ตัดสต๊อก</button></div>
     </aside>
   </div>
 </main>
