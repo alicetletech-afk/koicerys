@@ -348,6 +348,33 @@ input,select{
   font-size:1rem;
   cursor:pointer;
 }
+
+.auth-logout-btn{
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.16);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:14px;
+  font-weight:950;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.auth-logout-btn:hover{
+  background:rgba(255,255,255,.24);
+}
+.auth-user-email{
+  color:rgba(255,255,255,.78);
+  font-size:.82rem;
+  font-weight:850;
+  text-align:right;
+  margin-top:6px;
+}
+.auth-box{
+  display:grid;
+  gap:4px;
+  justify-items:end;
+}
+
 @media(max-width:1050px){
   .main{grid-template-columns:1fr}
 }
@@ -381,7 +408,12 @@ input,select{
       <h1>จัดการสินค้า</h1>
       <p>เพิ่มสินค้าใหม่ / แก้ราคา / เปิด-ปิดสินค้า</p>
     </div>
-    <div class="icon-box">🏷️</div>
+
+    <div class="auth-box">
+      <button class="auth-logout-btn" onclick="logout()">ออกจากระบบ</button>
+      <div id="currentUserEmail" class="auth-user-email"></div>
+    </div>
+
   </div>
 
   <div class="stats">
@@ -757,6 +789,13 @@ function closeModal(){
 
 loadProducts();
 </script>
+
+
+<!-- Firebase Auth Guard -->
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="guard.js"></script>
 
 </body>
 </html>

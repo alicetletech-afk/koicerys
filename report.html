@@ -118,13 +118,46 @@ input{padding:12px 14px;border-radius:14px;border:1px solid var(--line);backgrou
   cursor:pointer;
 }
 
+
+.auth-logout-btn{
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.16);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:14px;
+  font-weight:950;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.auth-logout-btn:hover{
+  background:rgba(255,255,255,.24);
+}
+.auth-user-email{
+  color:rgba(255,255,255,.78);
+  font-size:.82rem;
+  font-weight:850;
+  text-align:right;
+  margin-top:6px;
+}
+.auth-box{
+  display:grid;
+  gap:4px;
+  justify-items:end;
+}
+
 @media(max-width:960px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-2{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr}}
 @media(max-width:720px){.header{padding:26px 16px 36px}.stats{grid-template-columns:1fr}.nav{justify-content:flex-start;padding-left:16px;padding-right:16px}.nav a{min-width:105px;min-height:78px;font-size:.85rem}.main{padding:24px 16px 40px}.filter-box{display:grid;grid-template-columns:1fr;width:100%}.refresh-btn{width:100%}}
 </style>
 </head>
 <body>
 <header class="header">
-  <div class="header-top"><div><h1>รายงานร้าน</h1><p>ยอดขาย / กำไรขั้นต้น / สินค้าขายดี / ของใกล้หมด</p></div><div class="icon-box">📊</div></div>
+  <div class="header-top"><div><h1>รายงานร้าน</h1><p>ยอดขาย / กำไรขั้นต้น / สินค้าขายดี / ของใกล้หมด</p></div>
+
+    <div class="auth-box">
+      <button class="auth-logout-btn" onclick="logout()">ออกจากระบบ</button>
+      <div id="currentUserEmail" class="auth-user-email"></div>
+    </div>
+</div>
   <div class="stats">
     <div class="stat"><small>ยอดขายรวม</small><h2>฿<span id="totalSales">0</span></h2></div>
     <div class="stat"><small>กำไรขั้นต้น</small><h2>฿<span id="grossProfit">0</span></h2></div>
@@ -336,5 +369,12 @@ function closeBillModal(){
 function renderExpiry(items){document.getElementById("expiryList").innerHTML=items.length?items.map(item=>{const isOut=Number(item.qty)<=0;return `<div class="item-card ${isOut?'danger-card':''}"><h4>${item.product_name}</h4>${isOut?`<div class="danger-text">หมด!!</div>`:`<div class="muted">หมดอายุ: ${formatDate(item.expiry_date)}</div><div class="muted">เหลือ ${item.days_left} วัน · ${item.qty} ชิ้น</div>`}</div>`}).join(""):`<div class="empty">ไม่มีสินค้าใกล้หมดอายุ</div>`}
 setDefaultDates();loadReport();
 </script>
+
+<!-- Firebase Auth Guard -->
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="guard.js"></script>
+
 </body>
 </html>
