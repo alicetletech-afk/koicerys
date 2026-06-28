@@ -3,78 +3,367 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>เติมของเข้า Barcode | ร้านของชำ</title>
+<title>เติมของเข้า | Koicerys</title>
 <style>
+:root{
+  --blue:#173a8c;
+  --blue2:#316BFF;
+  --bg:#eef3fb;
+  --surface:#ffffff;
+  --soft:#f4f7fc;
+  --line:#dfe7f3;
+  --text:#172033;
+  --muted:#6f7d95;
+  --green:#0f766e;
+  --red:#dc2626;
+  --shadow:0 14px 38px rgba(23,58,140,.08);
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;background:#f3f6fb;color:#182235}
-.app{max-width:480px;margin:0 auto;min-height:100vh;background:#f7f9fd;padding-bottom:28px}
-.hero{background:linear-gradient(145deg,#10245f,#1c3f8f);color:white;padding:24px 20px 28px;border-bottom-left-radius:34px;border-bottom-right-radius:34px;box-shadow:0 18px 35px rgba(16,36,95,.25)}
-.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
-h1{margin:0;font-size:28px;line-height:1.15}.hero p{margin:6px 0 0;opacity:.78;font-size:14px}
-.icon-box{width:48px;height:48px;border-radius:17px;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:24px;border:1px solid rgba(255,255,255,.16)}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stats.three{grid-template-columns:repeat(3,1fr)}
-.stat{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:13px 10px;backdrop-filter:blur(10px)}
-.stat .label{font-size:11px;opacity:.75;margin-bottom:5px}.stat .value{font-size:20px;font-weight:900}
-.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:16px 14px 2px;margin-top:-8px}
-.nav a{text-decoration:none;color:#31415f;background:white;border:1px solid #e7edf6;border-radius:18px;padding:11px 4px;text-align:center;font-size:11px;font-weight:800;box-shadow:0 8px 20px rgba(27,45,85,.06)}
-.nav a.active{color:white;background:#2f68e8;border-color:#2f68e8}.nav .icon{display:block;font-size:19px;margin-bottom:4px}
-.content{padding:16px}.section-title{display:flex;justify-content:space-between;align-items:end;margin:8px 2px 14px}
-.section-title h2{margin:0;font-size:22px}.section-title small{color:#72809a;font-weight:800}
-.card{background:white;border:1px solid #e7edf6;border-radius:24px;padding:14px;box-shadow:0 10px 24px rgba(27,45,85,.055);margin-bottom:12px}
-.search-card{background:white;border-radius:24px;padding:14px;box-shadow:0 12px 28px rgba(27,45,85,.07);border:1px solid #e8eef6;margin-bottom:14px}
-.search-box{display:flex;align-items:center;gap:10px;background:#f4f7fb;border:1px solid #e0e7f2;border-radius:18px;padding:10px 12px}
-.search-box span{font-size:18px;color:#74819a}.search-box input{border:0;outline:0;background:transparent;width:100%;font-size:15px;color:#182235}
-.search-btn,.primary{border:0;background:#2f68e8;color:white;border-radius:14px;padding:11px 14px;font-weight:900;cursor:pointer;white-space:nowrap}
-.secondary{border:0;background:#eef3ff;color:#245bd4;border-radius:14px;padding:11px 14px;font-weight:900;cursor:pointer}
-.filter-row{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 14px;scrollbar-width:none}.filter-row::-webkit-scrollbar{display:none}
-.filter{border:1px solid #e7edf6;background:white;color:#53627d;border-radius:999px;padding:10px 14px;font-weight:900;white-space:nowrap;box-shadow:0 8px 20px rgba(27,45,85,.05);cursor:pointer}
+html{font-size:16px}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;
+  background:linear-gradient(90deg,#dfe8f6,#f7f9fd,#dfe8f6);
+  color:var(--text);
+}
+.app{
+  width:min(100%,480px);
+  margin:0 auto;
+  min-height:100vh;
+  background:#f8faff;
+  padding-bottom:28px;
+  box-shadow:0 0 55px rgba(15,23,42,.08);
+}
+.hero{
+  background:linear-gradient(145deg,#10245f,#1d4297);
+  color:white;
+  padding:28px 20px 34px;
+  border-bottom-left-radius:36px;
+  border-bottom-right-radius:36px;
+}
+.hero-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:22px;
+}
+h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
+.hero p{margin:8px 0 0;color:rgba(255,255,255,.78);font-size:.95rem}
+.icon-box{
+  width:56px;height:56px;border-radius:20px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.18);
+  font-size:1.6rem;
+  flex:0 0 auto;
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.stats.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.stat{
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:22px;
+  padding:16px;
+}
+.stat .label{font-size:.78rem;color:rgba(255,255,255,.75);font-weight:800;margin-bottom:6px}
+.stat .value{font-size:1.45rem;font-weight:950}
+.nav{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(70px,1fr));
+  gap:10px;
+  padding:16px 16px 4px;
+  margin-top:-18px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav a{
+  min-height:72px;
+  text-decoration:none;
+  color:#26344f;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:12px 8px;
+  text-align:center;
+  font-size:.8rem;
+  font-weight:900;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:5px;
+}
+.nav a.active{background:var(--blue2);color:white;border-color:var(--blue2)}
+.nav .icon{font-size:1.4rem;line-height:1}
+.content{padding:18px 16px 28px}
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:12px;
+  margin:12px 2px 16px;
+}
+.section-title h2{margin:0;font-size:1.65rem;font-weight:950}
+.section-title small{color:var(--muted);font-weight:900;font-size:.95rem;white-space:nowrap}
+.card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:var(--shadow);
+}
+.search-card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:14px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow);
+}
+.search-box{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:10px 12px;
+}
+.search-box .search-icon{font-size:1.35rem;color:var(--muted);flex:0 0 auto}
+input,select{
+  width:100%;
+  min-width:0;
+  border:1px solid var(--line);
+  background:var(--soft);
+  border-radius:18px;
+  padding:14px 16px;
+  font-size:1rem;
+  outline:none;
+  color:var(--text);
+}
+.search-box input{
+  border:0;
+  background:transparent;
+  border-radius:0;
+  padding:10px 2px;
+}
+button,.primary,.secondary{
+  border:0;
+  border-radius:16px;
+  padding:13px 16px;
+  font-weight:950;
+  cursor:pointer;
+  font-size:.95rem;
+}
+.primary{background:var(--blue2);color:white}
+.secondary{background:#eef3ff;color:#245bd4}
+.filter-row{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding:0 2px 14px;
+}
+.filter-row::-webkit-scrollbar{display:none}
+.filter{
+  border:1px solid var(--line);
+  background:white;
+  color:#53627d;
+  border-radius:999px;
+  padding:11px 16px;
+  font-weight:950;
+  white-space:nowrap;
+  box-shadow:0 8px 22px rgba(27,45,85,.05);
+}
 .filter.active{background:#eaf1ff;color:#245bd4;border-color:#bcd2ff}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.product-card{min-height:150px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
-.emoji{width:42px;height:42px;border-radius:16px;background:#f6f8fc;display:grid;place-items:center;font-size:23px;margin-bottom:10px}
-.name{font-size:16px;font-weight:950;line-height:1.35}.muted{color:#72809a;font-size:13px}.price{font-size:20px;font-weight:950;color:#0f766e}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.form{display:grid;gap:10px}.form input,.form select{width:100%;border:1px solid #e0e7f2;background:#f4f7fb;border-radius:16px;padding:13px 14px;font-size:15px;outline:0}
-.form label{font-size:13px;font-weight:900;color:#53627d}.barcode-pill{display:inline-block;background:#f1f5f9;color:#475569;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;margin-top:6px}
-.badge{border-radius:999px;padding:7px 10px;font-size:12px;font-weight:950;white-space:nowrap}.badge.ok{background:#dcfce7;color:#166534}.badge.low{background:#fee2e2;color:#b91c1c}.badge.out{background:#1f2937;color:white}
-.empty{text-align:center;padding:30px 18px;color:#72809a;background:white;border-radius:28px;border:1px solid #e7edf6;box-shadow:0 10px 24px rgba(27,45,85,.055)}
-.empty h3{margin:0 0 8px;font-size:20px;color:#182235}.empty p{margin:0 0 16px;font-size:14px;line-height:1.5}
-.table-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px 0;border-bottom:1px solid #eef2f7}.table-row:last-child{border-bottom:0}
-.cart-drawer{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(448px,calc(100% - 32px));background:white;border:1px solid #e2e8f0;border-radius:28px;box-shadow:0 18px 45px rgba(15,23,42,.20);padding:14px;z-index:10}
-.checkout-row{display:grid;grid-template-columns:1fr 1.6fr;gap:10px;align-items:center}.total{background:#f3f6fb;border-radius:18px;padding:12px}.total small{display:block;color:#7d89a0;font-size:11px}.total b{font-size:22px}
-.help{font-size:12px;color:#72809a;margin-top:8px;line-height:1.5}
-@media(min-width:768px){body{background:#dfe7f4}.app{box-shadow:0 0 60px rgba(15,23,42,.12)}}
+.grid-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.product-card{
+  min-height:158px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+.product-card:after{
+  content:"";
+  position:absolute;
+  right:-34px;top:-34px;
+  width:96px;height:96px;
+  border-radius:999px;
+  background:#f1f5ff;
+}
+.product-card .add-dot{
+  position:absolute;
+  right:12px;top:12px;
+  z-index:2;
+  width:34px;height:34px;
+  border-radius:50%;
+  background:var(--blue2);
+  color:white;
+  display:grid;
+  place-items:center;
+  font-weight:950;
+  font-size:1.2rem;
+}
+.emoji{
+  width:44px;height:44px;border-radius:17px;
+  background:#f6f8fc;
+  display:grid;place-items:center;
+  font-size:1.4rem;
+  margin-bottom:10px;
+  position:relative;
+  z-index:1;
+}
+.name{font-size:1.08rem;font-weight:950;line-height:1.35}
+.muted{color:var(--muted);font-size:.9rem;line-height:1.45}
+.price{font-size:1.55rem;font-weight:950;color:var(--green)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.row-start{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.barcode-pill{
+  display:inline-block;
+  background:#f1f5f9;
+  color:#475569;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:.78rem;
+  font-weight:950;
+  margin-top:8px;
+}
+.badge{
+  border-radius:999px;
+  padding:8px 11px;
+  font-size:.8rem;
+  font-weight:950;
+  white-space:nowrap;
+}
+.badge.ok{background:#dcfce7;color:#166534}
+.badge.low{background:#fee2e2;color:#b91c1c}
+.badge.out{background:#1f2937;color:white}
+.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.info-box{background:var(--soft);border-radius:20px;padding:13px}
+.info-box small{display:block;color:var(--muted);font-size:.78rem;font-weight:900;margin-bottom:6px}
+.info-box b{font-size:1.3rem;font-weight:950}
+.form{display:grid;gap:12px}
+.form label{font-size:.9rem;font-weight:950;color:#53627d}
+.form-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.full{grid-column:1/-1}
+.cart-drawer{
+  position:sticky;
+  bottom:14px;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:28px;
+  box-shadow:0 18px 45px rgba(15,23,42,.16);
+  padding:16px;
+  margin-top:16px;
+  z-index:10;
+}
+.checkout-row{display:grid;grid-template-columns:1fr 1.55fr;gap:10px;align-items:center}
+.total{background:var(--soft);border-radius:20px;padding:13px}
+.total small{display:block;color:var(--muted);font-size:.78rem;font-weight:800}
+.total b{font-size:1.35rem;font-weight:950}
+.table-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid #eef2f7;
+}
+.table-row:last-child{border-bottom:0}
+.empty{
+  text-align:center;
+  padding:30px 18px;
+  color:var(--muted);
+  background:white;
+  border-radius:28px;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+}
+.empty h3{margin:0 0 8px;font-size:1.25rem;color:var(--text)}
+.empty p{margin:0 0 16px;font-size:.95rem;line-height:1.5}
+.help{font-size:.82rem;color:var(--muted);margin-top:8px;line-height:1.5}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (min-width: 700px){
+  .app{width:min(100%,720px)}
+  .hero{padding:32px 28px 42px}
+  .content{padding:22px 28px 36px}
+  .nav{padding:18px 28px 6px}
+  .grid-products{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .form-grid{grid-template-columns:1fr 1fr}
+  .report-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media (min-width: 1100px){
+  .app{width:min(100%,1120px)}
+  .hero{
+    border-bottom-left-radius:40px;
+    border-bottom-right-radius:40px;
+    padding:34px 36px 44px;
+  }
+  .content{padding:26px 36px 42px}
+  .nav{padding:20px 36px 8px;grid-template-columns:repeat(5,120px)}
+  .grid-products{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .desktop-2col{display:grid;grid-template-columns:1.3fr .8fr;gap:18px;align-items:start}
+  .cart-drawer{position:sticky;top:24px;bottom:auto;margin-top:0}
+  .stock-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .stock-list .card{margin-bottom:0}
+}
+@media (max-width: 390px){
+  h1{font-size:1.75rem}
+  .stats.three{grid-template-columns:1fr}
+  .grid-products{grid-template-columns:1fr}
+  .checkout-row{grid-template-columns:1fr}
+  .info-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
 <div class="app">
-<header class="hero"><div class="hero-top"><div><h1>เติมของเข้า</h1><p>ยิงบาร์โค้ดเพื่อเลือกสินค้าเข้า</p></div><div class="icon-box">➕</div></div><div class="stats"><div class="stat"><div class="label">วันนี้รับเข้า</div><div class="value">0</div></div><div class="stat"><div class="label">สถานะ</div><div class="value">Demo</div></div></div></header>
-
-<nav class="nav">
-  <a class="" href="index.html"><span class="icon">🧾</span>ขาย</a>
-  <a class="" href="stock.html"><span class="icon">📦</span>สต๊อก</a>
-  <a class="active" href="add-stock.html"><span class="icon">➕</span>เติมของ</a>
-  <a class="" href="product.html"><span class="icon">🏷️</span>สินค้า</a>
-  <a class="" href="report.html"><span class="icon">📊</span>รายงาน</a>
-</nav>
-
+<header class="hero">
+  <div class="hero-top"><div><h1>เติมของเข้า</h1><p>ยิงบาร์โค้ดเพื่อเลือกสินค้าเข้า</p></div><div class="icon-box">➕</div></div>
+  <div class="stats"><div class="stat"><div class="label">วันนี้รับเข้า</div><div class="value">0</div></div><div class="stat"><div class="label">สถานะ</div><div class="value">Demo</div></div></div>
+</header>
+<nav class="nav"><a class="" href="index.html"><span class="icon">🧾</span>ขาย</a><a class="" href="stock.html"><span class="icon">📦</span>สต๊อก</a><a class="active" href="add-stock.html"><span class="icon">➕</span>เติมของ</a><a class="" href="product.html"><span class="icon">🏷️</span>สินค้า</a><a class="" href="report.html"><span class="icon">📊</span>รายงาน</a></nav>
 <main class="content">
- <div class="section-title"><h2>รับสินค้าเข้า</h2><small>Barcode input</small></div>
- <div class="card form">
-  <label>ยิงบาร์โค้ด</label><input id="barcode" placeholder="ยิงบาร์โค้ดแล้วกด Enter" onkeydown="handleRestockScan(event)" autofocus>
-  <label>สินค้า</label><select id="productSelect"></select>
-  <label>จำนวนเข้า</label><input id="qty" type="number" placeholder="เช่น 24">
-  <label>ต้นทุนใหม่/ชิ้น</label><input id="cost" type="number" placeholder="ถ้าไม่เปลี่ยน เว้นว่างได้">
-  <label>ราคาขายใหม่/ชิ้น</label><input id="price" type="number" placeholder="ถ้าไม่เปลี่ยน เว้นว่างได้">
-  <label>Supplier</label><input id="supplier" placeholder="เช่น แม็คโคร / ร้านส่ง">
-  <button class="primary" onclick="saveRestock()">บันทึกเติมของเข้า</button>
- </div>
- <div class="card"><div class="name">ประวัติรับเข้า</div><div id="history" class="muted" style="margin-top:10px">ยังไม่มีรายการ</div></div>
+  <div class="section-title"><h2>รับสินค้าเข้า</h2><small>Barcode input</small></div>
+  <div class="desktop-2col">
+    <section>
+      <div class="card form">
+        <label>ยิงบาร์โค้ด</label>
+        <input id="barcode" placeholder="ยิงบาร์โค้ดแล้วกด Enter" onkeydown="handleRestockScan(event)" autofocus>
+        <label>สินค้า</label>
+        <select id="productSelect"></select>
+        <label>จำนวนเข้า</label>
+        <input id="qty" type="number" placeholder="เช่น 24">
+        <div class="form-grid">
+          <div><label>ต้นทุนใหม่/ชิ้น</label><input id="cost" type="number" placeholder="เว้นว่าง = ใช้ทุนเดิม"></div>
+          <div><label>ราคาขายใหม่/ชิ้น</label><input id="price" type="number" placeholder="เว้นว่าง = ใช้ราคาเดิม"></div>
+        </div>
+        <label>Supplier</label>
+        <input id="supplier" placeholder="เช่น แม็คโคร / ร้านส่ง">
+        <button class="primary" onclick="saveRestock()">บันทึกเติมของเข้า</button>
+      </div>
+    </section>
+    <aside class="card">
+      <div class="name">ประวัติรับเข้า</div>
+      <div id="history" class="muted" style="margin-top:10px">ยังไม่มีรายการ</div>
+    </aside>
+  </div>
 </main>
 </div>
 
 <script>
-const products = [
+let products = [
   { id:1, barcode:"8850001000011", name:"น้ำดื่มคริสตัล 600ml", category:"เครื่องดื่ม", cost:5, price:7, stock:24, reorder:10, emoji:"💧" },
   { id:2, barcode:"8850001000028", name:"โค้กกระป๋อง", category:"เครื่องดื่ม", cost:14, price:18, stock:18, reorder:8, emoji:"🥤" },
   { id:3, barcode:"8850001000035", name:"โออิชิ 500ml", category:"เครื่องดื่ม", cost:16, price:22, stock:9, reorder:10, emoji:"🍵" },
@@ -91,15 +380,28 @@ function statusOf(p){
   return {text:"ปกติ",cls:"ok"};
 }
 function matchProduct(p,q){
-  q = q.trim().toLowerCase();
+  q = String(q || "").trim().toLowerCase();
   return !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || String(p.barcode).includes(q);
 }
 </script>
 <script>
-function init(){productSelect.innerHTML=products.map(p=>`<option value="${p.id}">${p.name} · ${p.barcode} · เหลือ ${p.stock} · ทุน ฿${p.cost} · ขาย ฿${p.price}</option>`).join("");}
-function handleRestockScan(e){if(e.key==="Enter"){const p=products.find(x=>x.barcode===barcode.value.trim());if(p)productSelect.value=p.id;else alert("ไม่พบบาร์โค้ดนี้ในระบบ");}}
-function saveRestock(){const p=products.find(x=>x.id==productSelect.value);const q=Number(qty.value||0),c=Number(cost.value||0),newPrice=Number(price.value||0);if(!q)return alert("กรอกจำนวนก่อน");p.stock+=q;if(c>0)p.cost=c;
- if(newPrice>0)p.price=newPrice;history.innerHTML=`รับเข้า ${p.name} (${p.barcode}) จำนวน ${q} ชิ้น จาก ${supplier.value||"-"} (Demo)`;init();qty.value=cost.value=price.value=supplier.value=barcode.value="";}
+function init(){
+ productSelect.innerHTML=products.map(p=>`<option value="${p.id}">${p.name} · ${p.barcode} · เหลือ ${p.stock} · ทุน ฿${p.cost} · ขาย ฿${p.price}</option>`).join("");
+}
+function handleRestockScan(e){
+ if(e.key==="Enter"){
+  const p=products.find(x=>x.barcode===barcode.value.trim());
+  if(p) productSelect.value=p.id; else alert("ไม่พบบาร์โค้ดนี้ในระบบ");
+ }
+}
+function saveRestock(){
+ const p=products.find(x=>x.id==productSelect.value);
+ const q=Number(qty.value||0), c=Number(cost.value||0), newPrice=Number(price.value||0);
+ if(!q)return alert("กรอกจำนวนก่อน");
+ p.stock+=q; if(c>0)p.cost=c; if(newPrice>0)p.price=newPrice;
+ history.innerHTML=`รับเข้า ${p.name} (${p.barcode}) จำนวน ${q} ชิ้น<br>ต้นทุน ฿${p.cost} · ราคาขาย ฿${p.price}<br>Supplier: ${supplier.value||"-"} (Demo)`;
+ init(); qty.value=cost.value=price.value=supplier.value=barcode.value="";
+}
 init();
 </script>
 </body>
