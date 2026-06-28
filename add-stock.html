@@ -470,7 +470,9 @@ body[data-role="staff"] .admin-price-fields{
   background:#fee2e2;
   color:#b91c1c;
 }
+.refill-btn:active{transform:scale(.98)}
 .refill-btn{
+  transition:.15s ease;
   margin-top:10px;
   width:100%;
   border:0;
@@ -675,13 +677,13 @@ function renderRefillList(){
           จุดเตือน ${money(p.reorder)} ${p.unit}
         </div>
         <span class="refill-badge">${isOut ? "หมด!!" : "กำลังจะหมด"}</span>
-        <button class="refill-btn" onclick="selectRefillProduct('${p.id}')">เติมของนี้</button>
+        <button type="button" class="refill-btn" onclick="event.preventDefault(); event.stopPropagation(); selectRefillProduct('${p.id}', this)">เติมของนี้</button>
       </div>
     `;
   }).join("") : `<div class="empty">ยังไม่มีสินค้าใกล้หมด</div>`;
 }
 
-function selectRefillProduct(id){
+function selectRefillProduct(id, btn){
   selectedProduct = products.find(p => p.id === String(id)) || null;
 
   if(selectedProduct){
@@ -689,10 +691,17 @@ function selectRefillProduct(id){
     document.getElementById("barcodeInput").value = selectedProduct.name;
     renderPreview();
 
-    const qtyInput = document.getElementById("qtyIn");
-    if(qtyInput) qtyInput.focus();
+    // response ตอนกด: ไม่ focus / ไม่ scroll / ไม่เด้งขึ้นบน
+    if(btn){
+      const originalText = btn.textContent;
+      btn.textContent = "เลือกแล้ว ✓";
+      btn.style.background = "#0f766e";
 
-    window.scrollTo({top: 0, behavior: "smooth"});
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = "#3468f5";
+      }, 1200);
+    }
   }
 }
 
