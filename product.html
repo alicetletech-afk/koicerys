@@ -348,33 +348,6 @@ input,select{
   font-size:1rem;
   cursor:pointer;
 }
-
-.auth-logout-btn{
-  border:1px solid rgba(255,255,255,.28);
-  background:rgba(255,255,255,.16);
-  color:#fff;
-  padding:10px 14px;
-  border-radius:14px;
-  font-weight:950;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.auth-logout-btn:hover{
-  background:rgba(255,255,255,.24);
-}
-.auth-user-email{
-  color:rgba(255,255,255,.78);
-  font-size:.82rem;
-  font-weight:850;
-  text-align:right;
-  margin-top:6px;
-}
-.auth-box{
-  display:grid;
-  gap:4px;
-  justify-items:end;
-}
-
 @media(max-width:1050px){
   .main{grid-template-columns:1fr}
 }
@@ -398,6 +371,90 @@ input,select{
   .search-wrap{display:block}
   .search-wrap button{width:100%;margin-top:10px}
 }
+
+.scanner-btn{
+  margin-top:8px;
+  width:100%;
+  padding:13px 16px;
+  border-radius:14px;
+  border:1px solid #bcd2ff;
+  background:#eaf1ff;
+  color:#245bd4;
+  font-weight:950;
+  cursor:pointer;
+}
+.scanner-modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.58);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+  padding:20px;
+}
+.scanner-modal-overlay.active{display:flex}
+.scanner-modal-card{
+  width:min(94vw,520px);
+  background:#fff;
+  border-radius:28px;
+  border:1px solid var(--line);
+  box-shadow:0 28px 80px rgba(15,23,42,.28);
+  overflow:hidden;
+}
+.scanner-modal-head{
+  padding:20px 20px 10px;
+  text-align:center;
+}
+.scanner-modal-head h3{
+  margin:0;
+  font-size:1.25rem;
+  font-weight:950;
+}
+.scanner-modal-head p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.scanner-reader{
+  padding:16px;
+}
+#barcodeReader{
+  width:100%;
+  overflow:hidden;
+  border-radius:20px;
+  background:#0f172a;
+}
+.scanner-modal-footer{
+  padding:0 20px 20px;
+}
+.scanner-close-btn{
+  width:100%;
+  border:0;
+  border-radius:16px;
+  padding:15px;
+  background:#fee2e2;
+  color:#b91c1c;
+  font-weight:950;
+  cursor:pointer;
+}
+.scan-status{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:#f1f5fb;
+  color:#475569;
+  font-size:.9rem;
+  font-weight:850;
+  text-align:center;
+}
+
+
+.scan-success{
+  border-color:#6ee7b7 !important;
+  background:#ecfdf5 !important;
+}
+
 </style>
 </head>
 <body>
@@ -408,12 +465,7 @@ input,select{
       <h1>จัดการสินค้า</h1>
       <p>เพิ่มสินค้าใหม่ / แก้ราคา / เปิด-ปิดสินค้า</p>
     </div>
-
-    <div class="auth-box">
-      <button class="auth-logout-btn" onclick="logout()">ออกจากระบบ</button>
-      <div id="currentUserEmail" class="auth-user-email"></div>
-    </div>
-
+    <div class="icon-box">🏷️</div>
   </div>
 
   <div class="stats">
@@ -448,6 +500,7 @@ input,select{
 
       <label>บาร์โค้ด</label>
       <input id="barcode" placeholder="เช่น 8850001000097">
+      <button type="button" class="scanner-btn" onclick="openBarcodeScanner()">📷 สแกนบาร์โค้ด</button>
 
       <label>ชื่อสินค้า</label>
       <input id="name" placeholder="เช่น น้ำดื่ม 600ml">
@@ -536,6 +589,25 @@ input,select{
   </div>
 </div>
 
+
+<div id="scannerModal" class="scanner-modal-overlay">
+  <div class="scanner-modal-card">
+    <div class="scanner-modal-head">
+      <h3>สแกนบาร์โค้ดสินค้า</h3>
+      <p>เล็งกล้องไปที่บาร์โค้ด ระบบจะเติมเลขให้ในช่องบาร์โค้ดอัตโนมัติ</p>
+      <div id="scanStatus" class="scan-status">กำลังเปิดกล้อง...</div>
+    </div>
+    <div class="scanner-reader">
+      <div id="barcodeReader"></div>
+    </div>
+    <div class="scanner-modal-footer">
+      <button class="scanner-close-btn" onclick="closeBarcodeScanner()">ปิดกล้อง</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
 
@@ -720,7 +792,87 @@ async function saveProduct(){
     ]);
 
     resetForm();
-    await loadProducts();
+    await 
+let barcodeScanner = null;
+let scannerRunning = false;
+
+async function openBarcodeScanner(){
+  const modal = document.getElementById("scannerModal");
+  const status = document.getElementById("scanStatus");
+
+  if(!modal || typeof Html5Qrcode === "undefined"){
+    alert("ไม่สามารถเปิด scanner ได้ กรุณาเช็กอินเทอร์เน็ตหรือ browser");
+    return;
+  }
+
+  modal.classList.add("active");
+  status.textContent = "กำลังเปิดกล้อง...";
+
+  try{
+    if(!barcodeScanner){
+      barcodeScanner = new Html5Qrcode("barcodeReader");
+    }
+
+    const config = {
+      fps: 10,
+      qrbox: { width: 260, height: 140 },
+      formatsToSupport: [
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.EAN_8,
+        Html5QrcodeSupportedFormats.CODE_128,
+        Html5QrcodeSupportedFormats.UPC_A,
+        Html5QrcodeSupportedFormats.UPC_E
+      ]
+    };
+
+    await barcodeScanner.start(
+      { facingMode: "environment" },
+      config,
+      async (decodedText) => {
+        document.getElementById("barcode").value = decodedText;
+        status.textContent = "สแกนสำเร็จ: " + decodedText;
+
+        await closeBarcodeScanner(false);
+
+        const barcodeInput = document.getElementById("barcode");
+        if(barcodeInput){
+          barcodeInput.classList.add("scan-success");
+        }
+
+        showModal("สแกนบาร์โค้ดสำเร็จ", [
+          {label:"Barcode", value:decodedText},
+          {label:"ขั้นตอนต่อไป", value:"กดบันทึกสินค้าเพื่อผูกบาร์โค้ดกับสินค้านี้"}
+        ]);
+      }
+    );
+
+    scannerRunning = true;
+    status.textContent = "พร้อมสแกนแล้ว";
+  }catch(err){
+    status.textContent = "เปิดกล้องไม่สำเร็จ: " + err.message;
+  }
+}
+
+async function closeBarcodeScanner(clearReader = true){
+  const modal = document.getElementById("scannerModal");
+
+  try{
+    if(barcodeScanner && scannerRunning){
+      await barcodeScanner.stop();
+      scannerRunning = false;
+    }
+
+    if(barcodeScanner && clearReader){
+      barcodeScanner.clear();
+    }
+  }catch(err){
+    console.warn(err);
+  }
+
+  if(modal) modal.classList.remove("active");
+}
+
+loadProducts();
 
   }catch(err){
     showModal("เชื่อมต่อไม่สำเร็จ", [
@@ -789,13 +941,6 @@ function closeModal(){
 
 loadProducts();
 </script>
-
-
-<!-- Firebase Auth Guard -->
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
-<script src="firebase-config.js"></script>
-<script src="guard.js"></script>
 
 </body>
 </html>
