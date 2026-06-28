@@ -5,257 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Koicerys POS | รายงาน</title>
 <style>
-:root{
-  --blue:#3468f5;
-  --navy:#173b92;
-  --bg:#f3f5fb;
-  --card:#ffffff;
-  --line:#dce2f0;
-  --muted:#64748b;
-  --text:#111827;
-  --green:#0f766e;
-  --red:#dc2626;
-  --soft:#f1f5fb;
-  --shadow:0 16px 38px rgba(30,58,138,.08);
-}
+:root{--blue:#3468f5;--bg:#f3f5fb;--line:#dce2f0;--muted:#64748b;--text:#111827;--soft:#f1f5fb;--shadow:0 16px 38px rgba(30,58,138,.08)}
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-.header{
-  background:linear-gradient(145deg,#10245f,#1d4297);
-  color:white;
-  padding:34px clamp(20px,4vw,56px) 56px;
-  border-radius:0 0 36px 36px;
-}
-.header-top{
-  display:flex;
-  justify-content:space-between;
-  gap:16px;
-  align-items:flex-start;
-}
-.header h1{
-  margin:0;
-  font-size:clamp(1.8rem,2.5vw,2.4rem);
-  font-weight:950;
-}
-.header p{
-  margin:10px 0 0;
-  opacity:.85;
-}
-.icon-box{
-  width:58px;
-  height:58px;
-  border-radius:20px;
-  display:grid;
-  place-items:center;
-  background:rgba(255,255,255,.14);
-  border:1px solid rgba(255,255,255,.2);
-  font-size:1.5rem;
-}
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:16px;
-  margin-top:24px;
-}
-.stat{
-  background:rgba(255,255,255,.15);
-  padding:20px;
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.16);
-}
-.stat small{
-  opacity:.72;
-  font-weight:800;
-}
-.stat h2{
-  margin:10px 0 0;
-  font-size:1.42rem;
-}
-.nav{
-  display:flex;
-  justify-content:center;
-  gap:16px;
-  padding:26px 20px 0;
-  overflow-x:auto;
-  scrollbar-width:none;
-}
-.nav::-webkit-scrollbar{display:none}
-.nav a{
-  min-width:132px;
-  min-height:88px;
-  border-radius:22px;
-  border:1px solid var(--line);
-  background:white;
-  font-weight:950;
-  color:var(--text);
-  text-decoration:none;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  flex-shrink:0;
-  box-shadow:var(--shadow);
-}
-.nav a.active{
-  background:var(--blue);
-  color:white;
-  border-color:var(--blue);
-}
-.main{
-  padding:34px clamp(20px,4vw,56px) 48px;
-}
-.toolbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  margin-bottom:18px;
-}
-.toolbar h2{
-  margin:0;
-  font-size:1.65rem;
-}
-.toolbar small{
-  color:var(--muted);
-  font-weight:900;
-}
-.refresh-btn{
-  border:1px solid #bcd2ff;
-  background:#fff;
-  color:#245bd4;
-  padding:13px 16px;
-  border-radius:14px;
-  font-weight:950;
-  cursor:pointer;
-}
-.grid-2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-}
-.card{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:24px;
-  padding:18px;
-  box-shadow:var(--shadow);
-}
-.card h3{
-  margin:0 0 14px;
-  font-size:1.28rem;
-}
-.report-row{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:12px;
-  align-items:center;
-  padding:12px 0;
-  border-bottom:1px solid #edf2f7;
-}
-.report-row:last-child{border-bottom:0}
-.report-row b{
-  text-align:right;
-}
-.muted{
-  color:var(--muted);
-  font-size:.9rem;
-  line-height:1.45;
-}
-.badge{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:.78rem;
-  font-weight:950;
-  background:#eaf1ff;
-  color:#245bd4;
-}
-.low{
-  background:#fee2e2;
-  color:#b91c1c;
-}
-.table{
-  display:grid;
-  gap:10px;
-}
-.item-card{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:14px;
-}
-.item-card h4{
-  margin:0 0 5px;
-  font-size:1rem;
-}
-.loading,.empty{
-  color:var(--muted);
-  padding:26px 12px;
-  text-align:center;
-  background:white;
-  border-radius:22px;
-  border:1px solid var(--line);
-}
-@media(max-width:960px){
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .grid-2{grid-template-columns:1fr}
-}
-@media(max-width:720px){
-  .header{padding:26px 16px 36px}
-  .stats{grid-template-columns:1fr}
-  .nav{
-    justify-content:flex-start;
-    padding-left:16px;
-    padding-right:16px;
-  }
-  .nav a{
-    min-width:105px;
-    min-height:78px;
-    font-size:.85rem;
-  }
-  .main{padding:24px 16px 40px}
-  .toolbar{display:block}
-  .refresh-btn{width:100%;margin-top:12px}
-}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:linear-gradient(145deg,#10245f,#1d4297);color:white;padding:34px clamp(20px,4vw,56px) 56px;border-radius:0 0 36px 36px}
+.header-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.header h1{margin:0;font-size:clamp(1.8rem,2.5vw,2.4rem);font-weight:950}
+.header p{margin:10px 0 0;opacity:.85}
+.icon-box{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);font-size:1.5rem}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:24px}
+.stat{background:rgba(255,255,255,.15);padding:20px;border-radius:22px;border:1px solid rgba(255,255,255,.16)}
+.stat small{opacity:.72;font-weight:800}.stat h2{margin:10px 0 0;font-size:1.42rem}
+.nav{display:flex;justify-content:center;gap:16px;padding:26px 20px 0;overflow-x:auto;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
+.nav a{min-width:132px;min-height:88px;border-radius:22px;border:1px solid var(--line);background:white;font-weight:950;color:var(--text);text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;box-shadow:var(--shadow)}
+.nav a.active{background:var(--blue);color:white;border-color:var(--blue)}
+.main{padding:34px clamp(20px,4vw,56px) 48px}
+.toolbar{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:end;margin-bottom:18px}
+.toolbar h2{margin:0;font-size:1.65rem}.toolbar small{color:var(--muted);font-weight:900}
+.filter-box{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.filter-field{display:grid;gap:6px}.filter-field label{color:var(--muted);font-weight:900;font-size:.82rem}
+input{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:white;font-size:1rem}
+.refresh-btn{border:1px solid #bcd2ff;background:var(--blue);color:white;padding:13px 16px;border-radius:14px;font-weight:950;cursor:pointer}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:white;border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow)}.card h3{margin:0 0 14px;font-size:1.28rem}
+.report-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #edf2f7}.report-row:last-child{border-bottom:0}.report-row b{text-align:right}
+.muted{color:var(--muted);font-size:.9rem;line-height:1.45}.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:.78rem;font-weight:950;background:#eaf1ff;color:#245bd4}.low{background:#fee2e2;color:#b91c1c}
+.table{display:grid;gap:10px}.item-card{background:white;border:1px solid var(--line);border-radius:18px;padding:14px}.item-card h4{margin:0 0 5px;font-size:1rem}
+.danger-card{border:2px solid #ff4d4f;background:#fff1f0}.danger-text{color:#ff2d2d;font-weight:950;font-size:22px;margin-top:8px}
+.loading,.empty{color:var(--muted);padding:26px 12px;text-align:center;background:white;border-radius:22px;border:1px solid var(--line)}
+@media(max-width:960px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-2{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr}}
+@media(max-width:720px){.header{padding:26px 16px 36px}.stats{grid-template-columns:1fr}.nav{justify-content:flex-start;padding-left:16px;padding-right:16px}.nav a{min-width:105px;min-height:78px;font-size:.85rem}.main{padding:24px 16px 40px}.filter-box{display:grid;grid-template-columns:1fr;width:100%}.refresh-btn{width:100%}}
 </style>
 </head>
 <body>
-
 <header class="header">
-  <div class="header-top">
-    <div>
-      <h1>รายงานร้าน</h1>
-      <p>ยอดขาย / กำไรขั้นต้น / สินค้าขายดี / ของใกล้หมด</p>
-    </div>
-    <div class="icon-box">📊</div>
-  </div>
-
+  <div class="header-top"><div><h1>รายงานร้าน</h1><p>ยอดขาย / กำไรขั้นต้น / สินค้าขายดี / ของใกล้หมด</p></div><div class="icon-box">📊</div></div>
   <div class="stats">
-    <div class="stat">
-      <small>ยอดขายรวม</small>
-      <h2>฿<span id="totalSales">0</span></h2>
-    </div>
-    <div class="stat">
-      <small>กำไรขั้นต้น</small>
-      <h2>฿<span id="grossProfit">0</span></h2>
-    </div>
-    <div class="stat">
-      <small>จำนวนบิล</small>
-      <h2><span id="billCount">0</span> บิล</h2>
-    </div>
-    <div class="stat">
-      <small>ของใกล้หมด</small>
-      <h2><span id="lowStockCount">0</span> รายการ</h2>
-    </div>
+    <div class="stat"><small>ยอดขายรวม</small><h2>฿<span id="totalSales">0</span></h2></div>
+    <div class="stat"><small>กำไรขั้นต้น</small><h2>฿<span id="grossProfit">0</span></h2></div>
+    <div class="stat"><small>จำนวนบิล</small><h2><span id="billCount">0</span> บิล</h2></div>
+    <div class="stat"><small>ของใกล้หมด</small><h2><span id="lowStockCount">0</span> รายการ</h2></div>
   </div>
 </header>
-
 <nav class="nav">
   <a href="index.html"><span>🧾</span>ขาย</a>
   <a href="stock.html"><span>📦</span>สต๊อก</a>
@@ -263,144 +53,53 @@ body{
   <a href="product.html"><span>🏷️</span>สินค้า</a>
   <a class="active" href="report.html"><span>📊</span>รายงาน</a>
 </nav>
-
 <main class="main">
   <div class="toolbar">
-    <div>
-      <h2>ภาพรวมรายงาน</h2>
-      <small id="lastUpdated">กำลังโหลดข้อมูลจาก Google Sheet...</small>
+    <div><h2>ภาพรวมรายงาน</h2><small id="lastUpdated">กำลังโหลดข้อมูลจาก Google Sheet...</small></div>
+    <div class="filter-box">
+      <div class="filter-field"><label>วันที่เริ่มต้น</label><input id="startDate" type="date"></div>
+      <div class="filter-field"><label>วันที่สิ้นสุด</label><input id="endDate" type="date"></div>
+      <button class="refresh-btn" onclick="loadReport()">ค้นหารายงาน</button>
     </div>
-    <button class="refresh-btn" onclick="loadReport()">รีเฟรชรายงาน</button>
   </div>
-
   <div class="grid-2">
-    <section class="card">
-      <h3>ช่องทางชำระเงิน</h3>
-      <div id="paymentSummary" class="table">
-        <div class="loading">กำลังโหลด...</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>สินค้าขายดี</h3>
-      <div id="topProducts" class="table">
-        <div class="loading">กำลังโหลด...</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>สินค้าใกล้หมด</h3>
-      <div id="lowStockList" class="table">
-        <div class="loading">กำลังโหลด...</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>บิลล่าสุด</h3>
-      <div id="latestSales" class="table">
-        <div class="loading">กำลังโหลด...</div>
-      </div>
-    </section>
+    <section class="card"><h3>ช่องทางชำระเงิน</h3><div id="paymentSummary" class="table"><div class="loading">กำลังโหลด...</div></div></section>
+    <section class="card"><h3>สินค้าขายดี</h3><div id="topProducts" class="table"><div class="loading">กำลังโหลด...</div></div></section>
+    <section class="card"><h3>สินค้าใกล้หมด</h3><div id="lowStockList" class="table"><div class="loading">กำลังโหลด...</div></div></section>
+    <section class="card"><h3>บิลล่าสุด</h3><div id="latestSales" class="table"><div class="loading">กำลังโหลด...</div></div></section>
+    <section class="card"><h3>สินค้าใกล้หมดอายุ</h3><div id="expiryList" class="table"><div class="loading">กำลังโหลด...</div></div></section>
   </div>
 </main>
-
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
-
-function money(n){
-  return Number(n || 0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2});
-}
-
-function formatDate(value){
-  if(!value) return "-";
-  const d = new Date(value);
-  if(isNaN(d.getTime())) return value;
-  return d.toLocaleString("th-TH");
-}
-
+function money(n){return Number(n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})}
+function todayStr(){return new Date().toISOString().split("T")[0]}
+function setDefaultDates(){const today=todayStr();document.getElementById("startDate").value=today;document.getElementById("endDate").value=today}
+function formatDate(value){if(!value)return "-";const d=new Date(value);if(isNaN(d.getTime()))return value;return d.toLocaleString("th-TH")}
 async function loadReport(){
   try{
-    document.getElementById("lastUpdated").innerText = "กำลังโหลดข้อมูลจาก Google Sheet...";
-
-    const res = await fetch(API_URL + "?action=getReport");
-    const json = await res.json();
-
-    if(!json.success){
-      throw new Error(json.message || "โหลดรายงานไม่สำเร็จ");
-    }
-
+    document.getElementById("lastUpdated").innerText="กำลังโหลดข้อมูลจาก Google Sheet...";
+    const startDate=document.getElementById("startDate").value;
+    const endDate=document.getElementById("endDate").value;
+    const res=await fetch(API_URL+"?action=getReport&start_date="+encodeURIComponent(startDate)+"&end_date="+encodeURIComponent(endDate));
+    const json=await res.json();
+    if(!json.success)throw new Error(json.message||"โหลดรายงานไม่สำเร็จ");
     renderSummary(json.data);
-    renderPayment(json.data.payment_summary || {});
-    renderTopProducts(json.data.top_products || []);
-    renderLowStock(json.data.low_stock || []);
-    renderLatestSales(json.data.latest_sales || []);
-
-    document.getElementById("lastUpdated").innerText =
-      "อัปเดตล่าสุด: " + new Date().toLocaleString("th-TH");
-
-  }catch(err){
-    document.getElementById("lastUpdated").innerText = "โหลดรายงานไม่สำเร็จ: " + err.message;
-  }
+    renderPayment(json.data.payment_summary||{});
+    renderTopProducts(json.data.top_products||[]);
+    renderLowStock(json.data.low_stock||[]);
+    renderLatestSales(json.data.latest_sales||[]);
+    renderExpiry(json.data.expiry_warning||[]);
+    document.getElementById("lastUpdated").innerText="ช่วงวันที่: "+startDate+" ถึง "+endDate+" · อัปเดตล่าสุด: "+new Date().toLocaleString("th-TH");
+  }catch(err){document.getElementById("lastUpdated").innerText="โหลดรายงานไม่สำเร็จ: "+err.message}
 }
-
-function renderSummary(data){
-  document.getElementById("totalSales").innerText = money(data.total_sales);
-  document.getElementById("grossProfit").innerText = money(data.gross_profit);
-  document.getElementById("billCount").innerText = money(data.bill_count);
-  document.getElementById("lowStockCount").innerText = money((data.low_stock || []).length);
-}
-
-function renderPayment(payment){
-  const labels = {
-    cash:"เงินสด",
-    transfer:"เงินโอน"
-  };
-
-  const rows = Object.keys(payment).map(key => `
-    <div class="report-row">
-      <span>${labels[key] || key}</span>
-      <b>฿${money(payment[key])}</b>
-    </div>
-  `).join("");
-
-  document.getElementById("paymentSummary").innerHTML =
-    rows || `<div class="empty">ยังไม่มีข้อมูลช่องทางชำระเงิน</div>`;
-}
-
-function renderTopProducts(items){
-  document.getElementById("topProducts").innerHTML = items.length ? items.map((item,index) => `
-    <div class="item-card">
-      <h4>${index + 1}. ${item.product_name}</h4>
-      <div class="muted">ขายได้ ${money(item.qty)} ชิ้น · ยอดขาย ฿${money(item.sales)}</div>
-    </div>
-  `).join("") : `<div class="empty">ยังไม่มีรายการขาย</div>`;
-}
-
-function renderLowStock(items){
-  document.getElementById("lowStockList").innerHTML = items.length ? items.map(item => `
-    <div class="item-card">
-      <h4>${item.name}</h4>
-      <div class="muted">${item.category || "-"} · คงเหลือ ${money(item.stock)} ${item.unit}</div>
-      <span class="badge low">ใกล้หมด</span>
-    </div>
-  `).join("") : `<div class="empty">ยังไม่มีสินค้าใกล้หมด</div>`;
-}
-
-function renderLatestSales(items){
-  document.getElementById("latestSales").innerHTML = items.length ? items.map(item => `
-    <div class="item-card">
-      <h4>${item.sale_id}</h4>
-      <div class="muted">${formatDate(item.datetime)}</div>
-      <div class="report-row">
-        <span>${item.payment_method === "cash" ? "เงินสด" : "เงินโอน"}</span>
-        <b>฿${money(item.total)}</b>
-      </div>
-    </div>
-  `).join("") : `<div class="empty">ยังไม่มีบิลขาย</div>`;
-}
-
-loadReport();
+function renderSummary(data){document.getElementById("totalSales").innerText=money(data.total_sales);document.getElementById("grossProfit").innerText=money(data.gross_profit);document.getElementById("billCount").innerText=money(data.bill_count);document.getElementById("lowStockCount").innerText=money((data.low_stock||[]).length)}
+function renderPayment(payment){const labels={cash:"เงินสด",transfer:"เงินโอน"};const rows=Object.keys(payment).map(key=>`<div class="report-row"><span>${labels[key]||key}</span><b>฿${money(payment[key])}</b></div>`).join("");document.getElementById("paymentSummary").innerHTML=rows||`<div class="empty">ยังไม่มีข้อมูลช่องทางชำระเงินในช่วงวันที่นี้</div>`}
+function renderTopProducts(items){document.getElementById("topProducts").innerHTML=items.length?items.map((item,index)=>`<div class="item-card"><h4>${index+1}. ${item.product_name}</h4><div class="muted">ขายได้ ${money(item.qty)} ชิ้น · ยอดขาย ฿${money(item.sales)}</div></div>`).join(""):`<div class="empty">ยังไม่มีรายการขายในช่วงวันที่นี้</div>`}
+function renderLowStock(items){document.getElementById("lowStockList").innerHTML=items.length?items.map(item=>{const isOut=Number(item.stock)<=0;return `<div class="item-card ${isOut?'danger-card':''}"><h4>${item.name}</h4><div class="muted">${item.category||"-"} · คงเหลือ ${money(item.stock)} ${item.unit||"ชิ้น"}</div>${isOut?`<div class="danger-text">หมด!!</div>`:`<span class="badge low">ใกล้หมด</span>`}</div>`}).join(""):`<div class="empty">ยังไม่มีสินค้าใกล้หมด</div>`}
+function renderLatestSales(items){document.getElementById("latestSales").innerHTML=items.length?items.map(item=>`<div class="item-card"><h4>${item.sale_id}</h4><div class="muted">${formatDate(item.datetime)}</div><div class="report-row"><span>${item.payment_method==="cash"?"เงินสด":"เงินโอน"}</span><b>฿${money(item.total)}</b></div></div>`).join(""):`<div class="empty">ยังไม่มีบิลขายในช่วงวันที่นี้</div>`}
+function renderExpiry(items){document.getElementById("expiryList").innerHTML=items.length?items.map(item=>{const isOut=Number(item.qty)<=0;return `<div class="item-card ${isOut?'danger-card':''}"><h4>${item.product_name}</h4>${isOut?`<div class="danger-text">หมด!!</div>`:`<div class="muted">หมดอายุ: ${formatDate(item.expiry_date)}</div><div class="muted">เหลือ ${item.days_left} วัน · ${item.qty} ชิ้น</div>`}</div>`}).join(""):`<div class="empty">ไม่มีสินค้าใกล้หมดอายุ</div>`}
+setDefaultDates();loadReport();
 </script>
-
 </body>
 </html>
