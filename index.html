@@ -366,6 +366,88 @@ select,input{
   text-align:center;
   padding:30px;
 }
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.52);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+}
+.modal-overlay.active{
+  display:flex;
+}
+.modal-card{
+  width:min(92vw,460px);
+  background:#fff;
+  border-radius:28px;
+  box-shadow:0 28px 80px rgba(15,23,42,.28);
+  border:1px solid var(--line);
+  overflow:hidden;
+  animation:popIn .18s ease-out;
+}
+@keyframes popIn{
+  from{transform:scale(.96);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+.modal-head{
+  padding:22px 22px 14px;
+  text-align:center;
+}
+.modal-icon{
+  width:58px;
+  height:58px;
+  border-radius:999px;
+  background:#dcfce7;
+  color:#166534;
+  display:grid;
+  place-items:center;
+  font-size:1.65rem;
+  margin:0 auto 12px;
+}
+.modal-head h3{
+  margin:0;
+  font-size:1.35rem;
+  font-weight:950;
+}
+.modal-body{
+  padding:0 22px 20px;
+  display:grid;
+  gap:10px;
+}
+.modal-line{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:12px 14px;
+  background:var(--soft);
+  border-radius:16px;
+  font-weight:850;
+}
+.modal-line span:first-child{
+  color:var(--muted);
+}
+.modal-line strong{
+  text-align:right;
+}
+.modal-footer{
+  padding:0 22px 22px;
+}
+.modal-btn{
+  width:100%;
+  border:0;
+  border-radius:16px;
+  padding:15px;
+  background:var(--blue);
+  color:#fff;
+  font-weight:950;
+  font-size:1rem;
+  cursor:pointer;
+}
+
 @media(max-width:1050px){
   .main{
     grid-template-columns:1fr;
@@ -509,6 +591,20 @@ select,input{
     <div id="successBox" class="success"></div>
   </aside>
 </main>
+
+
+<div id="paymentModal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-icon">✓</div>
+      <h3>ชำระเงินสำเร็จ</h3>
+    </div>
+    <div id="paymentModalBody" class="modal-body"></div>
+    <div class="modal-footer">
+      <button class="modal-btn" onclick="closePaymentModal()">ตกลง</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzzkIqWxnmrFj48bTks8tC4KgOuhjfTomH6RRGUtdSgjFLrBpAbGcYuPlr2karfeXzuqQ/exec";
@@ -711,48 +807,73 @@ function calculateChange(){
   document.getElementById("changeAmount").innerText = money(change);
 }
 
+
+function showPaymentModal(lines){
+  const body = document.getElementById("paymentModalBody");
+  body.innerHTML = lines.map(item => `
+    <div class="modal-line">
+      <span>${item.label}</span>
+      <strong>${item.value}</strong>
+    </div>
+  `).join("");
+
+  document.getElementById("paymentModal").classList.add("active");
+}
+
+function closePaymentModal(){
+  document.getElementById("paymentModal").classList.remove("active");
+}
+
 function checkout(){
   if(cart.length === 0){
-    alert("ยังไม่มีสินค้าในตะกร้า");
+    showPaymentModal([
+      {label:"สถานะ", value:"ยังไม่มีสินค้าในตะกร้า"}
+    ]);
     return;
   }
 
   const total = cartTotal();
   const method = document.getElementById("paymentMethod").value;
-  let popup = "";
+  let modalLines = [];
 
   if(method === "cash"){
     const received = Number(document.getElementById("cashReceived").value || 0);
     const change = received - total;
 
     if(received < total){
-      alert("รับเงินยังไม่พอ\\nยอดรวม: ฿" + money(total) + "\\nรับมา: ฿" + money(received));
+      showPaymentModal([
+        {label:"สถานะ", value:"รับเงินยังไม่พอ"},
+        {label:"ยอดรวม", value:"฿" + money(total)},
+        {label:"รับมา", value:"฿" + money(received)}
+      ]);
       return;
     }
 
-    popup =
-      "ชำระเงินสำเร็จ\\n" +
-      "ช่องทาง: เงินสด\\n" +
-      "ยอดรวม: ฿" + money(total) + "\\n" +
-      "รับเงิน: ฿" + money(received) + "\\n" +
-      "เงินทอน: ฿" + money(change) + "\\n" +
-      "ตัดสต๊อกสำเร็จ";
+    modalLines = [
+      {label:"ช่องทาง", value:"เงินสด"},
+      {label:"ยอดรวม", value:"฿" + money(total)},
+      {label:"รับเงิน", value:"฿" + money(received)},
+      {label:"เงินทอน", value:"฿" + money(change)},
+      {label:"สต๊อก", value:"ตัดสต๊อกสำเร็จ"}
+    ];
   }
 
   if(method === "transfer"){
     const ref = document.getElementById("transferRef").value.trim();
 
     if(!ref){
-      alert("กรอกเลขอ้างอิงการโอนก่อน");
+      showPaymentModal([
+        {label:"สถานะ", value:"กรอกเลขอ้างอิงการโอนก่อน"}
+      ]);
       return;
     }
 
-    popup =
-      "ชำระเงินสำเร็จ\\n" +
-      "ช่องทาง: เงินโอน\\n" +
-      "ยอดรวม: ฿" + money(total) + "\\n" +
-      "Ref: " + ref + "\\n" +
-      "ตัดสต๊อกสำเร็จ";
+    modalLines = [
+      {label:"ช่องทาง", value:"เงินโอน"},
+      {label:"ยอดรวม", value:"฿" + money(total)},
+      {label:"Ref", value:ref},
+      {label:"สต๊อก", value:"ตัดสต๊อกสำเร็จ"}
+    ];
   }
 
   cart.forEach(item => {
@@ -764,9 +885,9 @@ function checkout(){
   document.getElementById("todaySales").innerText = money(todaySales);
 
   document.getElementById("successBox").style.display = "block";
-  document.getElementById("successBox").innerHTML = popup.replaceAll("\\n","<br>");
+  document.getElementById("successBox").innerHTML = "ชำระเงินสำเร็จ";
 
-  alert(popup);
+  showPaymentModal(modalLines);
 
   cart = [];
   document.getElementById("cashReceived").value = "";
