@@ -432,6 +432,56 @@ body[data-role="staff"] .admin-price-fields{
   display:none;
 }
 
+
+.refill-panel{
+  display:grid;
+  gap:12px;
+}
+.refill-card{
+  border:2px solid #facc15;
+  background:#fefce8;
+  border-radius:18px;
+  padding:14px;
+}
+.refill-card.out{
+  border-color:#ff4d4f;
+  background:#fff1f0;
+}
+.refill-card h3{
+  margin:0 0 6px;
+  font-size:1.05rem;
+}
+.refill-meta{
+  color:#64748b;
+  font-size:.9rem;
+  line-height:1.45;
+}
+.refill-badge{
+  display:inline-block;
+  margin-top:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:950;
+  font-size:.78rem;
+  background:#fef3c7;
+  color:#b45309;
+}
+.refill-card.out .refill-badge{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+.refill-btn{
+  margin-top:10px;
+  width:100%;
+  border:0;
+  border-radius:14px;
+  padding:12px;
+  background:#3468f5;
+  color:white;
+  font-weight:950;
+  cursor:pointer;
+}
+
 </style>
 </head>
 <body>
@@ -522,6 +572,15 @@ body[data-role="staff"] .admin-price-fields{
 
   <aside>
     <div class="section-title">
+      <h2>ของที่ต้องเติม</h2>
+      <small>ดูจากจุดเตือนสั่งซื้อ</small>
+    </div>
+
+    <div id="refillList" class="refill-panel">
+      <div class="loading">กำลังโหลดของที่ต้องเติม...</div>
+    </div>
+
+    <div class="section-title" style="margin-top:22px;">
       <h2>ประวัติรับเข้า</h2>
       <small>เฉพาะรอบนี้</small>
     </div>
@@ -593,6 +652,48 @@ function renderProductSelect(){
   select.innerHTML = `<option value="">เลือกสินค้า</option>` + products.map(p => `
     <option value="${p.id}">${p.name} · ${p.barcode} · เหลือ ${money(p.stock)} ${p.unit}</option>
   `).join("");
+
+  renderRefillList();
+}
+
+function renderRefillList(){
+  const box = document.getElementById("refillList");
+  if(!box) return;
+
+  const refillItems = products
+    .filter(p => Number(p.stock || 0) <= Number(p.reorder || 0))
+    .sort((a,b) => Number(a.stock || 0) - Number(b.stock || 0));
+
+  box.innerHTML = refillItems.length ? refillItems.map(p => {
+    const isOut = Number(p.stock || 0) <= 0;
+
+    return `
+      <div class="refill-card ${isOut ? "out" : ""}">
+        <h3>${p.name}</h3>
+        <div class="refill-meta">
+          ${p.category || "-"} · คงเหลือ ${money(p.stock)} ${p.unit}<br>
+          จุดเตือน ${money(p.reorder)} ${p.unit}
+        </div>
+        <span class="refill-badge">${isOut ? "หมด!!" : "กำลังจะหมด"}</span>
+        <button class="refill-btn" onclick="selectRefillProduct('${p.id}')">เติมของนี้</button>
+      </div>
+    `;
+  }).join("") : `<div class="empty">ยังไม่มีสินค้าใกล้หมด</div>`;
+}
+
+function selectRefillProduct(id){
+  selectedProduct = products.find(p => p.id === String(id)) || null;
+
+  if(selectedProduct){
+    document.getElementById("productSelect").value = selectedProduct.id;
+    document.getElementById("barcodeInput").value = selectedProduct.name;
+    renderPreview();
+
+    const qtyInput = document.getElementById("qtyIn");
+    if(qtyInput) qtyInput.focus();
+
+    window.scrollTo({top: 0, behavior: "smooth"});
+  }
 }
 
 function selectProductById(id){
