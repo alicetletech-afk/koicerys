@@ -11,19 +11,9 @@ body{margin:0;font-family:Arial,sans-serif;background:#f3f5fb;color:#111827;}
 .stat{background:rgba(255,255,255,.15);padding:20px;border-radius:18px;}
 .nav{display:flex;justify-content:center;gap:16px;padding:24px;overflow-x:auto;}
 .nav a{
-  min-width:130px;
-  height:90px;
-  border-radius:18px;
-  border:1px solid #dce2f0;
-  background:white;
-  font-weight:bold;
-  color:#111827;
-  text-decoration:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  flex-shrink:0;
+  min-width:130px;height:90px;border-radius:18px;border:1px solid #dce2f0;background:white;
+  font-weight:bold;color:#111827;text-decoration:none;display:flex;align-items:center;justify-content:center;
+  text-align:center;flex-shrink:0;
 }
 .nav a.active{background:#3468f5;color:white;}
 .main{display:grid;grid-template-columns:2fr 1fr;gap:20px;padding:24px;}
@@ -32,25 +22,18 @@ body{margin:0;font-family:Arial,sans-serif;background:#f3f5fb;color:#111827;}
 .search{flex:1;padding:14px;border-radius:14px;border:1px solid #ddd;}
 .search-btn{padding:14px 20px;border:none;border-radius:14px;background:#3468f5;color:white;font-weight:bold;}
 .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:20px;}
-.product{background:white;padding:16px;border-radius:16px;}
+.product{background:white;padding:16px;border-radius:16px;cursor:pointer;border:1px solid #eef2f7;}
+.product:hover{border-color:#3468f5;}
 input,select{width:100%;padding:14px;margin-top:12px;border-radius:12px;border:1px solid #ddd;box-sizing:border-box;}
-.pay-btn{width:100%;padding:16px;margin-top:16px;border:none;border-radius:14px;background:#3468f5;color:white;font-weight:bold;}
+.pay-btn{width:100%;padding:16px;margin-top:16px;border:none;border-radius:14px;background:#3468f5;color:white;font-weight:bold;cursor:pointer;}
+.pay-btn:disabled{background:#9ca3af;cursor:not-allowed;}
 .hidden{display:none;}
+.cart-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #eef2f7;}
+.cart-row button{border:none;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:4px 8px;cursor:pointer;}
+.summary{background:#f3f5fb;padding:14px;border-radius:14px;margin:14px 0;}
+.success{background:#dcfce7;color:#166534;padding:12px;border-radius:12px;margin-top:12px;display:none;font-weight:bold;}
 @media(max-width:900px){.main{grid-template-columns:1fr;}.nav{justify-content:flex-start;}}
 </style>
-<script>
-function togglePayment(){
-  let method=document.getElementById("payment").value;
-  document.getElementById("cash-box").style.display = method==="เงินสด" ? "block":"none";
-  document.getElementById("transfer-box").style.display = method==="เงินโอน" ? "block":"none";
-}
-function calcChange(){
-  let total=14;
-  let received=parseFloat(document.getElementById("cash").value)||0;
-  let change=received-total;
-  document.getElementById("change").value=change>=0?change:0;
-}
-</script>
 </head>
 <body>
 
@@ -58,7 +41,7 @@ function calcChange(){
 <h1>ร้านของชำ</h1>
 <p>ขายสินค้า / ยิงบาร์โค้ด / ค้นหาด้วยชื่อ</p>
 <div class="stats">
-<div class="stat">ยอดขายวันนี้<br><h2>฿0</h2></div>
+<div class="stat">ยอดขายวันนี้<br><h2>฿<span id="todaySales">0</span></h2></div>
 <div class="stat">สินค้าใกล้หมด<br><h2>2 รายการ</h2></div>
 </div>
 </div>
@@ -75,42 +58,232 @@ function calcChange(){
 <div>
 <div class="box">
 <div class="search-wrap">
-<input class="search" placeholder="ยิงบาร์โค้ด หรือค้นหาชื่อสินค้า">
-<button class="search-btn">ค้นหา</button>
+<input id="searchInput" class="search" placeholder="ยิงบาร์โค้ด หรือค้นหาชื่อสินค้า" onkeydown="handleSearchEnter(event)">
+<button class="search-btn" onclick="searchProduct()">ค้นหา</button>
 </div>
 </div>
 
-<div class="products">
-<div class="product">น้ำดื่มคริสตัล<br>฿7</div>
-<div class="product">โค้กกระป๋อง<br>฿18</div>
-<div class="product">โออิชิ 500ml<br>฿22</div>
-<div class="product">มาม่าต้มยำกุ้ง<br>฿8</div>
-</div>
+<div class="products" id="productList"></div>
 </div>
 
 <div class="box">
 <h3>ตะกร้าสินค้า</h3>
-<p>น้ำดื่มคริสตัล x2</p>
-<h2>รวม ฿14</h2>
+<div id="cartList"></div>
+
+<div class="summary">
+<p>จำนวนสินค้า: <b><span id="cartCount">0</span> ชิ้น</b></p>
+<h2>รวม ฿<span id="cartTotal">0</span></h2>
+</div>
 
 <label>ช่องทางชำระเงิน</label>
 <select id="payment" onchange="togglePayment()">
-<option>เงินสด</option>
-<option>เงินโอน</option>
+<option value="cash">เงินสด</option>
+<option value="transfer">เงินโอน</option>
 </select>
 
 <div id="cash-box">
-<input id="cash" placeholder="รับเงินจากลูกค้า" oninput="calcChange()">
+<input id="cash" type="number" placeholder="รับเงินจากลูกค้า" oninput="calcChange()">
 <input id="change" placeholder="เงินทอน" readonly>
 </div>
 
 <div id="transfer-box" class="hidden">
-<input placeholder="เลขอ้างอิงการโอน">
+<input id="transferRef" placeholder="เลขอ้างอิงการโอน">
 </div>
 
-<button class="pay-btn">ชำระเงิน / ตัดสต๊อก</button>
+<button class="pay-btn" onclick="checkout()">ชำระเงิน / ตัดสต๊อก</button>
+<div id="successBox" class="success"></div>
 </div>
 </div>
+
+<script>
+const products = [
+  {id:1, name:"น้ำดื่มคริสตัล", barcode:"8850001000011", price:7, stock:24},
+  {id:2, name:"โค้กกระป๋อง", barcode:"8850001000028", price:18, stock:18},
+  {id:3, name:"โออิชิ 500ml", barcode:"8850001000035", price:22, stock:9},
+  {id:4, name:"มาม่าต้มยำกุ้ง", barcode:"8850001000042", price:8, stock:50}
+];
+
+let cart = [{id:1, name:"น้ำดื่มคริสตัล", price:7, qty:2}];
+let todaySales = 0;
+
+function money(n){
+  return Number(n || 0).toLocaleString();
+}
+
+function renderProducts(list = products){
+  document.getElementById("productList").innerHTML = list.map(p => `
+    <div class="product" onclick="addToCart(${p.id})">
+      <b>${p.name}</b><br>
+      Barcode: ${p.barcode}<br>
+      ฿${p.price}<br>
+      <small>เหลือ ${p.stock} ชิ้น</small>
+    </div>
+  `).join("");
+}
+
+function searchProduct(){
+  const q = document.getElementById("searchInput").value.trim().toLowerCase();
+  if(!q){
+    renderProducts();
+    return;
+  }
+  const result = products.filter(p => 
+    p.name.toLowerCase().includes(q) || p.barcode.includes(q)
+  );
+  renderProducts(result);
+}
+
+function handleSearchEnter(e){
+  if(e.key === "Enter"){
+    const q = document.getElementById("searchInput").value.trim();
+    const found = products.find(p => p.barcode === q);
+    if(found){
+      addToCart(found.id);
+      document.getElementById("searchInput").value = "";
+      renderProducts();
+    }else{
+      searchProduct();
+    }
+  }
+}
+
+function addToCart(id){
+  const product = products.find(p => p.id === id);
+  if(!product || product.stock <= 0){
+    alert("สินค้าหมด");
+    return;
+  }
+
+  const item = cart.find(i => i.id === id);
+  if(item){
+    if(item.qty >= product.stock){
+      alert("จำนวนเกินสต๊อก");
+      return;
+    }
+    item.qty++;
+  }else{
+    cart.push({id:product.id, name:product.name, price:product.price, qty:1});
+  }
+  renderCart();
+}
+
+function removeFromCart(id){
+  cart = cart.filter(i => i.id !== id);
+  renderCart();
+}
+
+function getCartTotal(){
+  return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+}
+
+function renderCart(){
+  const cartList = document.getElementById("cartList");
+  const total = getCartTotal();
+  const count = cart.reduce((sum, item) => sum + item.qty, 0);
+
+  document.getElementById("cartCount").innerText = count;
+  document.getElementById("cartTotal").innerText = money(total);
+
+  if(cart.length === 0){
+    cartList.innerHTML = "<p style='color:#6b7280'>ยังไม่มีสินค้าในตะกร้า</p>";
+  }else{
+    cartList.innerHTML = cart.map(item => `
+      <div class="cart-row">
+        <span>${item.name} x${item.qty}</span>
+        <span>฿${money(item.price * item.qty)} <button onclick="removeFromCart(${item.id})">ลบ</button></span>
+      </div>
+    `).join("");
+  }
+  calcChange();
+}
+
+function togglePayment(){
+  const method = document.getElementById("payment").value;
+  document.getElementById("cash-box").style.display = method === "cash" ? "block" : "none";
+  document.getElementById("transfer-box").style.display = method === "transfer" ? "block" : "none";
+}
+
+function calcChange(){
+  const total = getCartTotal();
+  const received = parseFloat(document.getElementById("cash").value) || 0;
+  const change = received - total;
+  document.getElementById("change").value = change >= 0 ? money(change) : "0";
+}
+
+function checkout(){
+  const total = getCartTotal();
+  const method = document.getElementById("payment").value;
+  const successBox = document.getElementById("successBox");
+
+  if(cart.length === 0){
+    alert("ยังไม่มีสินค้าในตะกร้า");
+    return;
+  }
+
+  let popupMessage = "";
+
+  if(method === "cash"){
+    const received = parseFloat(document.getElementById("cash").value) || 0;
+    const change = received - total;
+
+    if(received < total){
+      alert("รับเงินยังไม่พอ\nยอดรวม: ฿" + money(total) + "\nรับมา: ฿" + money(received));
+      return;
+    }
+
+    popupMessage =
+      "ชำระเงินสำเร็จ\n" +
+      "ช่องทาง: เงินสด\n" +
+      "ยอดรวม: ฿" + money(total) + "\n" +
+      "รับเงิน: ฿" + money(received) + "\n" +
+      "เงินทอน: ฿" + money(change) + "\n" +
+      "ตัดสต๊อกสำเร็จ";
+  }
+
+  if(method === "transfer"){
+    const ref = document.getElementById("transferRef").value.trim();
+
+    if(!ref){
+      alert("กรอกเลขอ้างอิงการโอนก่อน");
+      return;
+    }
+
+    popupMessage =
+      "ชำระเงินสำเร็จ\n" +
+      "ช่องทาง: เงินโอน\n" +
+      "ยอดรวม: ฿" + money(total) + "\n" +
+      "Ref: " + ref + "\n" +
+      "ตัดสต๊อกสำเร็จ";
+  }
+
+  cart.forEach(item => {
+    const product = products.find(p => p.id === item.id);
+    if(product){
+      product.stock -= item.qty;
+    }
+  });
+
+  todaySales += total;
+  document.getElementById("todaySales").innerText = money(todaySales);
+
+  successBox.style.display = "block";
+  successBox.innerHTML = popupMessage.replaceAll("\n", "<br>");
+
+  alert(popupMessage);
+
+  cart = [];
+  document.getElementById("cash").value = "";
+  document.getElementById("change").value = "";
+  document.getElementById("transferRef").value = "";
+
+  renderCart();
+  renderProducts();
+}
+
+renderProducts();
+renderCart();
+togglePayment();
+</script>
 
 </body>
 </html>
