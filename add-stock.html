@@ -648,11 +648,17 @@ async function saveRestock(){
   };
 
   try{
-    const res = await fetch(API_URL, {
-      method:"POST",
-      body:JSON.stringify(payload)
-    });
+    const url =
+      API_URL +
+      "?action=restock" +
+      "&product_id=" + encodeURIComponent(payload.product_id) +
+      "&product_name=" + encodeURIComponent(payload.product_name) +
+      "&qty_in=" + encodeURIComponent(payload.qty_in) +
+      "&cost=" + encodeURIComponent(payload.cost) +
+      "&price=" + encodeURIComponent(payload.price) +
+      "&supplier=" + encodeURIComponent(payload.supplier || "");
 
+    const res = await fetch(url);
     const result = await res.json();
 
     if(!result.success){
