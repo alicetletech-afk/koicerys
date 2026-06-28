@@ -6,56 +6,253 @@
 <title>Koicerys POS | รายงาน</title>
 <style>
 :root{
-  --blue:#3468f5;--bg:#f3f5fb;--line:#dce2f0;--muted:#64748b;--text:#111827;--soft:#f1f5fb;
+  --blue:#3468f5;
+  --navy:#173b92;
+  --bg:#f3f5fb;
+  --card:#ffffff;
+  --line:#dce2f0;
+  --muted:#64748b;
+  --text:#111827;
+  --green:#0f766e;
+  --red:#dc2626;
+  --soft:#f1f5fb;
   --shadow:0 16px 38px rgba(30,58,138,.08);
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;background:var(--bg);color:var(--text)}
-.header{background:linear-gradient(145deg,#10245f,#1d4297);color:white;padding:34px clamp(20px,4vw,56px) 56px;border-radius:0 0 36px 36px}
-.header-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
-.header h1{margin:0;font-size:clamp(1.8rem,2.5vw,2.4rem);font-weight:950}.header p{margin:10px 0 0;opacity:.85}
-.icon-box{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);font-size:1.5rem}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:24px}
-.stat{background:rgba(255,255,255,.15);padding:20px;border-radius:22px;border:1px solid rgba(255,255,255,.16)}
-.stat small{opacity:.72;font-weight:800}.stat h2{margin:10px 0 0;font-size:1.42rem}
-.nav{display:flex;justify-content:center;gap:16px;padding:26px 20px 0;overflow-x:auto;scrollbar-width:none}.nav::-webkit-scrollbar{display:none}
-.nav a{min-width:132px;min-height:88px;border-radius:22px;border:1px solid var(--line);background:white;font-weight:950;color:var(--text);text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;box-shadow:var(--shadow)}
-.nav a.active{background:var(--blue);color:white;border-color:var(--blue)}
-.main{padding:34px clamp(20px,4vw,56px) 48px}
-.toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px}.toolbar h2{margin:0;font-size:1.65rem}.toolbar small{color:var(--muted);font-weight:900}
-.filter-card{background:white;border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow);margin-bottom:22px}
-.filter-grid{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}
-.field label{display:block;font-weight:950;color:#475569;margin-bottom:8px}
-select,input{width:100%;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:var(--soft);font-size:1rem}
-.search-btn,.refresh-btn{border:0;background:var(--blue);color:white;padding:14px 18px;border-radius:14px;font-weight:950;cursor:pointer}
-.refresh-btn{background:white;color:#245bd4;border:1px solid #bcd2ff}
-.custom-dates{display:none;grid-template-columns:1fr auto;gap:12px;margin-top:12px;align-items:end}.custom-dates.active{display:grid}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.card{background:white;border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow)}
-.card h3{margin:0 0 14px;font-size:1.28rem}
-.report-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #edf2f7}.report-row:last-child{border-bottom:0}.report-row b{text-align:right}
-.muted{color:var(--muted);font-size:.9rem;line-height:1.45}.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:.78rem;font-weight:950;background:#eaf1ff;color:#245bd4}.low{background:#fee2e2;color:#b91c1c}
-.table{display:grid;gap:10px}.item-card{background:white;border:1px solid var(--line);border-radius:18px;padding:14px}.item-card h4{margin:0 0 5px;font-size:1rem}
-.loading,.empty{color:var(--muted);padding:26px 12px;text-align:center;background:white;border-radius:22px;border:1px solid var(--line)}
-details{background:white;border:1px solid var(--line);border-radius:18px;overflow:hidden}
-summary{cursor:pointer;list-style:none;padding:16px;font-weight:950;display:flex;justify-content:space-between;align-items:center}summary::-webkit-details-marker{display:none}
-.summary-count{color:var(--muted);font-size:.9rem}.sales-list{padding:0 14px 14px;display:grid;gap:10px}
-@media(max-width:960px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-2{grid-template-columns:1fr}.filter-grid,.custom-dates{grid-template-columns:1fr}}
-@media(max-width:720px){.header{padding:26px 16px 36px}.stats{grid-template-columns:1fr}.nav{justify-content:flex-start;padding-left:16px;padding-right:16px}.nav a{min-width:105px;min-height:78px;font-size:.85rem}.main{padding:24px 16px 40px}.toolbar{display:block}.refresh-btn{width:100%;margin-top:12px}.search-btn{width:100%}}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+.header{
+  background:linear-gradient(145deg,#10245f,#1d4297);
+  color:white;
+  padding:34px clamp(20px,4vw,56px) 56px;
+  border-radius:0 0 36px 36px;
+}
+.header-top{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:flex-start;
+}
+.header h1{
+  margin:0;
+  font-size:clamp(1.8rem,2.5vw,2.4rem);
+  font-weight:950;
+}
+.header p{
+  margin:10px 0 0;
+  opacity:.85;
+}
+.icon-box{
+  width:58px;
+  height:58px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.2);
+  font-size:1.5rem;
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:16px;
+  margin-top:24px;
+}
+.stat{
+  background:rgba(255,255,255,.15);
+  padding:20px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.16);
+}
+.stat small{
+  opacity:.72;
+  font-weight:800;
+}
+.stat h2{
+  margin:10px 0 0;
+  font-size:1.42rem;
+}
+.nav{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  padding:26px 20px 0;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav a{
+  min-width:132px;
+  min-height:88px;
+  border-radius:22px;
+  border:1px solid var(--line);
+  background:white;
+  font-weight:950;
+  color:var(--text);
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  flex-shrink:0;
+  box-shadow:var(--shadow);
+}
+.nav a.active{
+  background:var(--blue);
+  color:white;
+  border-color:var(--blue);
+}
+.main{
+  padding:34px clamp(20px,4vw,56px) 48px;
+}
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  margin-bottom:18px;
+}
+.toolbar h2{
+  margin:0;
+  font-size:1.65rem;
+}
+.toolbar small{
+  color:var(--muted);
+  font-weight:900;
+}
+.refresh-btn{
+  border:1px solid #bcd2ff;
+  background:#fff;
+  color:#245bd4;
+  padding:13px 16px;
+  border-radius:14px;
+  font-weight:950;
+  cursor:pointer;
+}
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.card h3{
+  margin:0 0 14px;
+  font-size:1.28rem;
+}
+.report-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #edf2f7;
+}
+.report-row:last-child{border-bottom:0}
+.report-row b{
+  text-align:right;
+}
+.muted{
+  color:var(--muted);
+  font-size:.9rem;
+  line-height:1.45;
+}
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.78rem;
+  font-weight:950;
+  background:#eaf1ff;
+  color:#245bd4;
+}
+.low{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+.table{
+  display:grid;
+  gap:10px;
+}
+.item-card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+}
+.item-card h4{
+  margin:0 0 5px;
+  font-size:1rem;
+}
+.loading,.empty{
+  color:var(--muted);
+  padding:26px 12px;
+  text-align:center;
+  background:white;
+  border-radius:22px;
+  border:1px solid var(--line);
+}
+@media(max-width:960px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-2{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .header{padding:26px 16px 36px}
+  .stats{grid-template-columns:1fr}
+  .nav{
+    justify-content:flex-start;
+    padding-left:16px;
+    padding-right:16px;
+  }
+  .nav a{
+    min-width:105px;
+    min-height:78px;
+    font-size:.85rem;
+  }
+  .main{padding:24px 16px 40px}
+  .toolbar{display:block}
+  .refresh-btn{width:100%;margin-top:12px}
+}
 </style>
 </head>
 <body>
 
 <header class="header">
   <div class="header-top">
-    <div><h1>รายงานร้าน</h1><p>ยอดขาย / กำไร / ช่องทางชำระเงิน / สินค้าใกล้หมดอายุ</p></div>
+    <div>
+      <h1>รายงานร้าน</h1>
+      <p>ยอดขาย / กำไรขั้นต้น / สินค้าขายดี / ของใกล้หมด</p>
+    </div>
     <div class="icon-box">📊</div>
   </div>
+
   <div class="stats">
-    <div class="stat"><small>ยอดขาย</small><h2>฿<span id="totalSales">0</span></h2></div>
-    <div class="stat"><small>กำไรขั้นต้น</small><h2>฿<span id="grossProfit">0</span></h2></div>
-    <div class="stat"><small>จำนวนบิล</small><h2><span id="billCount">0</span> บิล</h2></div>
-    <div class="stat"><small>ใกล้หมดอายุ</small><h2><span id="expiryCount">0</span> รายการ</h2></div>
+    <div class="stat">
+      <small>ยอดขายรวม</small>
+      <h2>฿<span id="totalSales">0</span></h2>
+    </div>
+    <div class="stat">
+      <small>กำไรขั้นต้น</small>
+      <h2>฿<span id="grossProfit">0</span></h2>
+    </div>
+    <div class="stat">
+      <small>จำนวนบิล</small>
+      <h2><span id="billCount">0</span> บิล</h2>
+    </div>
+    <div class="stat">
+      <small>ของใกล้หมด</small>
+      <h2><span id="lowStockCount">0</span> รายการ</h2>
+    </div>
   </div>
 </header>
 
@@ -69,62 +266,40 @@ summary{cursor:pointer;list-style:none;padding:16px;font-weight:950;display:flex
 
 <main class="main">
   <div class="toolbar">
-    <div><h2>ภาพรวมรายงาน</h2><small id="lastUpdated">กำลังโหลดข้อมูล...</small></div>
-    <button class="refresh-btn" onclick="loadReport()">รีเฟรช</button>
-  </div>
-
-  <div class="filter-card">
-    <div class="filter-grid">
-      <div class="field">
-        <label>ช่วงวันที่</label>
-        <select id="periodFilter" onchange="handlePeriodChange()">
-          <option value="today">วันนี้</option>
-          <option value="7days">7 วันล่าสุด</option>
-          <option value="30days">30 วันล่าสุด</option>
-          <option value="custom">กำหนดเอง</option>
-        </select>
-      </div>
-
-      <button id="mainSearchBtn" class="search-btn" onclick="loadReport()">ค้นหา</button>
+    <div>
+      <h2>ภาพรวมรายงาน</h2>
+      <small id="lastUpdated">กำลังโหลดข้อมูลจาก Google Sheet...</small>
     </div>
-
-    <div id="customDates" class="custom-dates">
-      <div class="field">
-        <label>วันที่เริ่มต้น</label>
-        <input id="startDate" type="date">
-      </div>
-      <div class="field">
-        <label>วันที่สิ้นสุด</label>
-        <input id="endDate" type="date">
-      </div>    </div>
+    <button class="refresh-btn" onclick="loadReport()">รีเฟรชรายงาน</button>
   </div>
 
   <div class="grid-2">
     <section class="card">
-      <h3>สรุปช่องทางชำระเงินตามช่วงวันที่</h3>
-      <div id="paymentSummary" class="table"><div class="loading">กำลังโหลด...</div></div>
+      <h3>ช่องทางชำระเงิน</h3>
+      <div id="paymentSummary" class="table">
+        <div class="loading">กำลังโหลด...</div>
+      </div>
     </section>
 
     <section class="card">
       <h3>สินค้าขายดี</h3>
-      <div id="topProducts" class="table"><div class="loading">กำลังโหลด...</div></div>
+      <div id="topProducts" class="table">
+        <div class="loading">กำลังโหลด...</div>
+      </div>
     </section>
 
     <section class="card">
       <h3>สินค้าใกล้หมด</h3>
-      <div id="lowStockList" class="table"><div class="loading">กำลังโหลด...</div></div>
+      <div id="lowStockList" class="table">
+        <div class="loading">กำลังโหลด...</div>
+      </div>
     </section>
 
     <section class="card">
-      <h3>สินค้าใกล้หมดอายุ</h3>
-      <div id="expiryList" class="table"><div class="loading">กำลังโหลด...</div></div>
-    </section>
-
-    <section class="card" style="grid-column:1/-1">
-      <details>
-        <summary><span>บิลล่าสุด</span><span class="summary-count" id="latestCount">กดเพื่อดูรายการ</span></summary>
-        <div id="latestSales" class="sales-list"><div class="loading">กำลังโหลด...</div></div>
-      </details>
+      <h3>บิลล่าสุด</h3>
+      <div id="latestSales" class="table">
+        <div class="loading">กำลังโหลด...</div>
+      </div>
     </section>
   </div>
 </main>
@@ -132,42 +307,37 @@ summary{cursor:pointer;list-style:none;padding:16px;font-weight:950;display:flex
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
 
-function money(n){return Number(n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})}
-function formatDate(value){if(!value)return "-"; const d=new Date(value); return isNaN(d.getTime()) ? value : d.toLocaleString("th-TH")}
-
-function handlePeriodChange(){
-  const period = document.getElementById("periodFilter").value;
-  document.getElementById("customDates").classList.toggle("active", period === "custom");
-  document.getElementById("mainSearchBtn").innerText = period === "custom" ? "ค้นหา" : "ค้นหา";
-  if(period !== "custom") loadReport();
+function money(n){
+  return Number(n || 0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2});
 }
 
-function buildReportUrl(){
-  const period = document.getElementById("periodFilter").value;
-  let url = API_URL + "?action=getReport&period=" + encodeURIComponent(period);
-
-  if(period === "custom"){
-    url += "&start_date=" + encodeURIComponent(document.getElementById("startDate").value || "");
-    url += "&end_date=" + encodeURIComponent(document.getElementById("endDate").value || "");
-  }
-  return url;
+function formatDate(value){
+  if(!value) return "-";
+  const d = new Date(value);
+  if(isNaN(d.getTime())) return value;
+  return d.toLocaleString("th-TH");
 }
 
 async function loadReport(){
   try{
-    document.getElementById("lastUpdated").innerText = "กำลังโหลดข้อมูล...";
-    const res = await fetch(buildReportUrl());
+    document.getElementById("lastUpdated").innerText = "กำลังโหลดข้อมูลจาก Google Sheet...";
+
+    const res = await fetch(API_URL + "?action=getReport");
     const json = await res.json();
-    if(!json.success) throw new Error(json.message || "โหลดรายงานไม่สำเร็จ");
+
+    if(!json.success){
+      throw new Error(json.message || "โหลดรายงานไม่สำเร็จ");
+    }
 
     renderSummary(json.data);
     renderPayment(json.data.payment_summary || {});
     renderTopProducts(json.data.top_products || []);
     renderLowStock(json.data.low_stock || []);
-    renderExpiry(json.data.expiry_warning || []);
     renderLatestSales(json.data.latest_sales || []);
 
-    document.getElementById("lastUpdated").innerText = "อัปเดตล่าสุด: " + new Date().toLocaleString("th-TH");
+    document.getElementById("lastUpdated").innerText =
+      "อัปเดตล่าสุด: " + new Date().toLocaleString("th-TH");
+
   }catch(err){
     document.getElementById("lastUpdated").innerText = "โหลดรายงานไม่สำเร็จ: " + err.message;
   }
@@ -177,52 +347,60 @@ function renderSummary(data){
   document.getElementById("totalSales").innerText = money(data.total_sales);
   document.getElementById("grossProfit").innerText = money(data.gross_profit);
   document.getElementById("billCount").innerText = money(data.bill_count);
-  document.getElementById("expiryCount").innerText = money((data.expiry_warning || []).length);
+  document.getElementById("lowStockCount").innerText = money((data.low_stock || []).length);
 }
 
 function renderPayment(payment){
-  const cash = Number(payment.cash || 0);
-  const transfer = Number(payment.transfer || 0);
-  const total = cash + transfer + Number(payment.unknown || 0);
+  const labels = {
+    cash:"เงินสด",
+    transfer:"เงินโอน"
+  };
 
-  document.getElementById("paymentSummary").innerHTML = `
-    <div class="report-row"><span>เงินสด</span><b>฿${money(cash)}</b></div>
-    <div class="report-row"><span>เงินโอน</span><b>฿${money(transfer)}</b></div>
-    ${payment.unknown ? `<div class="report-row"><span>ไม่ระบุ</span><b>฿${money(payment.unknown)}</b></div>` : ""}
-    <div class="report-row"><span><b>รวม</b></span><b>฿${money(total)}</b></div>
-  `;
+  const rows = Object.keys(payment).map(key => `
+    <div class="report-row">
+      <span>${labels[key] || key}</span>
+      <b>฿${money(payment[key])}</b>
+    </div>
+  `).join("");
+
+  document.getElementById("paymentSummary").innerHTML =
+    rows || `<div class="empty">ยังไม่มีข้อมูลช่องทางชำระเงิน</div>`;
 }
 
 function renderTopProducts(items){
-  document.getElementById("topProducts").innerHTML = items.length ? items.map((item,index)=>`
-    <div class="item-card"><h4>${index+1}. ${item.product_name}</h4><div class="muted">ขายได้ ${money(item.qty)} ชิ้น · ยอดขาย ฿${money(item.sales)}</div></div>
+  document.getElementById("topProducts").innerHTML = items.length ? items.map((item,index) => `
+    <div class="item-card">
+      <h4>${index + 1}. ${item.product_name}</h4>
+      <div class="muted">ขายได้ ${money(item.qty)} ชิ้น · ยอดขาย ฿${money(item.sales)}</div>
+    </div>
   `).join("") : `<div class="empty">ยังไม่มีรายการขาย</div>`;
 }
 
 function renderLowStock(items){
-  document.getElementById("lowStockList").innerHTML = items.length ? items.map(item=>`
-    <div class="item-card"><h4>${item.name}</h4><div class="muted">${item.category || "-"} · คงเหลือ ${money(item.stock)} ${item.unit}</div><span class="badge low">ใกล้หมด</span></div>
+  document.getElementById("lowStockList").innerHTML = items.length ? items.map(item => `
+    <div class="item-card">
+      <h4>${item.name}</h4>
+      <div class="muted">${item.category || "-"} · คงเหลือ ${money(item.stock)} ${item.unit}</div>
+      <span class="badge low">ใกล้หมด</span>
+    </div>
   `).join("") : `<div class="empty">ยังไม่มีสินค้าใกล้หมด</div>`;
 }
 
-function renderExpiry(items){
-  document.getElementById("expiryList").innerHTML = items.length ? items.map(item=>`
-    <div class="item-card"><h4>${item.product_name}</h4><div class="muted">${item.days_left < 0 ? "หมดอายุแล้ว" : "เหลือ " + item.days_left + " วัน"} · ${item.qty} ชิ้น</div><span class="badge low">${formatDate(item.expiry_date)}</span></div>
-  `).join("") : `<div class="empty">ไม่มีสินค้าใกล้หมดอายุ</div>`;
-}
-
 function renderLatestSales(items){
-  document.getElementById("latestCount").innerText = `${items.length} บิล`;
-  document.getElementById("latestSales").innerHTML = items.length ? items.map(item=>`
+  document.getElementById("latestSales").innerHTML = items.length ? items.map(item => `
     <div class="item-card">
       <h4>${item.sale_id}</h4>
       <div class="muted">${formatDate(item.datetime)}</div>
-      <div class="report-row"><span>${item.payment_method === "cash" ? "เงินสด" : item.payment_method === "transfer" ? "เงินโอน" : "ไม่ระบุ"}</span><b>฿${money(item.total)}</b></div>
+      <div class="report-row">
+        <span>${item.payment_method === "cash" ? "เงินสด" : "เงินโอน"}</span>
+        <b>฿${money(item.total)}</b>
+      </div>
     </div>
   `).join("") : `<div class="empty">ยังไม่มีบิลขาย</div>`;
 }
 
-handlePeriodChange();
+loadReport();
 </script>
+
 </body>
 </html>
