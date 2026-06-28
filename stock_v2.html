@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock ระบบร้านของชำ</title>
+<style>
+body{
+  font-family: Arial,sans-serif;
+  margin:0;
+  background:#f5f7fb;
+}
+.container{
+  max-width:480px;
+  margin:auto;
+  padding:20px;
+}
+.search-box{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+}
+.search-box input{
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+}
+.search-btn{
+  border:0;
+  background:#2f68e8;
+  color:white;
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:bold;
+}
+.filter-row{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  margin-bottom:10px;
+}
+.filter{
+  border:0;
+  padding:10px 14px;
+  border-radius:20px;
+  background:white;
+  font-weight:bold;
+}
+.stock-card{
+  background:white;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.05);
+}
+.empty{
+  text-align:center;
+  padding:30px;
+  background:white;
+  border-radius:20px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>📦 สต๊อกสินค้า</h2>
+
+<div class="search-box">
+  <input id="searchInput" placeholder="ค้นหาสินค้า...">
+  <button class="search-btn" onclick="renderStock()">ค้นหา</button>
+</div>
+
+<div class="filter-row" id="filterRow"></div>
+
+<div class="filter-row">
+  <button class="filter" onclick="sortStock('az')">A-Z</button>
+  <button class="filter" onclick="sortStock('low')">คงเหลือน้อย</button>
+  <button class="filter" onclick="sortStock('highValue')">มูลค่าสูง</button>
+</div>
+
+<div id="stockList"></div>
+</div>
+
+<script>
+let products = [
+ {name:"น้ำดื่ม",category:"เครื่องดื่ม",stock:20,cost:5},
+ {name:"โค้ก",category:"เครื่องดื่ม",stock:5,cost:14},
+ {name:"มาม่า",category:"ของแห้ง",stock:50,cost:6},
+ {name:"เลย์",category:"ขนม",stock:8,cost:15},
+ {name:"สบู่",category:"ของใช้",stock:12,cost:18}
+];
+
+let currentFilter = "ทั้งหมด";
+
+function renderFilters(){
+ const cats = ["ทั้งหมด", ...new Set(products.map(p=>p.category))];
+ document.getElementById("filterRow").innerHTML = cats.map(c=>
+  `<button class="filter" onclick="currentFilter='${c}';renderStock()">${c}</button>`
+ ).join("");
+}
+
+function renderStock(){
+ const q = document.getElementById("searchInput").value.toLowerCase();
+
+ let filtered = products.filter(p=>{
+   const matchSearch = p.name.toLowerCase().includes(q);
+   const matchFilter = currentFilter==="ทั้งหมด" || p.category===currentFilter;
+   return matchSearch && matchFilter;
+ });
+
+ if(filtered.length===0){
+   document.getElementById("stockList").innerHTML=`
+    <div class="empty">
+      <h3>ไม่มีสินค้านี้ในสต๊อก</h3>
+      <p>ลองค้นหาชื่ออื่น หรือเพิ่มสินค้าใหม่</p>
+    </div>`;
+   return;
+ }
+
+ document.getElementById("stockList").innerHTML = filtered.map(p=>`
+   <div class="stock-card">
+     <h3>${p.name}</h3>
+     <p>${p.category}</p>
+     <p>คงเหลือ: ${p.stock} ชิ้น</p>
+     <p>ทุน: ฿${p.cost}</p>
+   </div>
+ `).join("");
+}
+
+function sortStock(type){
+ if(type==="az"){
+   products.sort((a,b)=>a.name.localeCompare(b.name));
+ }
+ if(type==="low"){
+   products.sort((a,b)=>a.stock-b.stock);
+ }
+ if(type==="highValue"){
+   products.sort((a,b)=>(b.stock*b.cost)-(a.stock*a.cost));
+ }
+ renderStock();
+}
+
+renderFilters();
+renderStock();
+</script>
+
+</body>
+</html>
