@@ -503,7 +503,7 @@ select,input{
 <header class="header">
   <div class="header-top">
     <div>
-      <h1>ร้านมีสุข</h1>
+      <h1>ร้านของชำ</h1>
       <p>ขายสินค้า / ยิงบาร์โค้ด / ค้นหาด้วยชื่อ</p>
     </div>
     <div class="icon-box">🛒</div>
@@ -824,7 +824,7 @@ function closePaymentModal(){
   document.getElementById("paymentModal").classList.remove("active");
 }
 
-function checkout(){
+async function checkout(){
   if(cart.length === 0){
     showPaymentModal([
       {label:"สถานะ", value:"ยังไม่มีสินค้าในตะกร้า"}
@@ -834,67 +834,93 @@ function checkout(){
 
   const total = cartTotal();
   const method = document.getElementById("paymentMethod").value;
-  let modalLines = [];
+  const received = method === "cash" ? Number(document.getElementById("cashReceived").value || 0) : 0;
+  const change = method === "cash" ? received - total : 0;
+  const transferRef = method === "transfer" ? document.getElementById("transferRef").value.trim() : "";
 
-  if(method === "cash"){
-    const received = Number(document.getElementById("cashReceived").value || 0);
-    const change = received - total;
+  if(method === "cash" && received < total){
+    showPaymentModal([
+      {label:"สถานะ", value:"รับเงินยังไม่พอ"},
+      {label:"ยอดรวม", value:"฿" + money(total)},
+      {label:"รับมา", value:"฿" + money(received)}
+    ]);
+    return;
+  }
 
-    if(received < total){
+  if(method === "transfer" && !transferRef){
+    showPaymentModal([
+      {label:"สถานะ", value:"กรอกเลขอ้างอิงการโอนก่อน"}
+    ]);
+    return;
+  }
+
+  const payload = {
+    action: "checkout",
+    total: total,
+    payment_method: method,
+    received: received,
+    change: method === "cash" ? change : 0,
+    transfer_ref: transferRef,
+    items: cart.map(item => ({
+      product_id: item.id,
+      name: item.name,
+      qty: item.qty,
+      price: item.price
+    }))
+  };
+
+  try{
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+
+    if(!result.success){
       showPaymentModal([
-        {label:"สถานะ", value:"รับเงินยังไม่พอ"},
-        {label:"ยอดรวม", value:"฿" + money(total)},
-        {label:"รับมา", value:"฿" + money(received)}
+        {label:"สถานะ", value:"ชำระเงินไม่สำเร็จ"},
+        {label:"ข้อความ", value: result.message || "เกิดข้อผิดพลาด"}
       ]);
       return;
     }
 
-    modalLines = [
+    const modalLines = method === "cash" ? [
+      {label:"เลขบิล", value: result.sale_id},
       {label:"ช่องทาง", value:"เงินสด"},
       {label:"ยอดรวม", value:"฿" + money(total)},
       {label:"รับเงิน", value:"฿" + money(received)},
       {label:"เงินทอน", value:"฿" + money(change)},
       {label:"สต๊อก", value:"ตัดสต๊อกสำเร็จ"}
-    ];
-  }
-
-  if(method === "transfer"){
-    const ref = document.getElementById("transferRef").value.trim();
-
-    if(!ref){
-      showPaymentModal([
-        {label:"สถานะ", value:"กรอกเลขอ้างอิงการโอนก่อน"}
-      ]);
-      return;
-    }
-
-    modalLines = [
+    ] : [
+      {label:"เลขบิล", value: result.sale_id},
       {label:"ช่องทาง", value:"เงินโอน"},
       {label:"ยอดรวม", value:"฿" + money(total)},
-      {label:"Ref", value:ref},
+      {label:"Ref", value: transferRef},
       {label:"สต๊อก", value:"ตัดสต๊อกสำเร็จ"}
     ];
+
+    todaySales += total;
+    document.getElementById("todaySales").innerText = money(todaySales);
+
+    document.getElementById("successBox").style.display = "block";
+    document.getElementById("successBox").innerHTML = "ชำระเงินสำเร็จ";
+
+    showPaymentModal(modalLines);
+
+    cart = [];
+    document.getElementById("cashReceived").value = "";
+    document.getElementById("transferRef").value = "";
+
+    renderCart();
+    await loadProducts();
+
+  }catch(err){
+    showPaymentModal([
+      {label:"สถานะ", value:"เชื่อมต่อไม่สำเร็จ"},
+      {label:"ข้อความ", value: err.message}
+    ]);
   }
-
-  cart.forEach(item => {
-    const p = products.find(x => x.id === item.id);
-    if(p) p.stock -= item.qty;
-  });
-
-  todaySales += total;
-  document.getElementById("todaySales").innerText = money(todaySales);
-
-  document.getElementById("successBox").style.display = "block";
-  document.getElementById("successBox").innerHTML = "ชำระเงินสำเร็จ";
-
-  showPaymentModal(modalLines);
-
-  cart = [];
-  document.getElementById("cashReceived").value = "";
-  document.getElementById("transferRef").value = "";
-  renderCart();
-  renderProducts();
-  updateStats();
 }
 
 function updateStats(){
