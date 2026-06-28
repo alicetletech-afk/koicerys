@@ -813,7 +813,7 @@ function addToCart(id){
   const p = products.find(x => x.id === id);
 
   if(!p || p.stock <= 0){
-    alert("สินค้าหมดหรือไม่มีในสต๊อก");
+    showErrorPopup("จำนวนสินค้าไม่พอจำหน่าย หรือสินค้าหมดสต๊อก");
     return;
   }
 
@@ -821,7 +821,7 @@ function addToCart(id){
 
   if(existing){
     if(existing.qty >= p.stock){
-      alert("จำนวนในตะกร้าเกินสต๊อก");
+      showErrorPopup("จำนวนในตะกร้าเกินสต๊อก");
       return;
     }
     existing.qty += 1;
@@ -969,10 +969,7 @@ async function checkout(){
     const result = await res.json();
 
     if(!result.success){
-      showPaymentModal([
-        {label:"สถานะ", value:"ชำระเงินไม่สำเร็จ"},
-        {label:"ข้อความ", value: result.message || "เกิดข้อผิดพลาด"}
-      ], "ชำระไม่สำเร็จ", "!");
+      showErrorPopup(result.message || "จำนวนสินค้าไม่พอจำหน่าย หรือกรอกเกินสต๊อก");
       return;
     }
 
