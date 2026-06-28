@@ -19,7 +19,6 @@
   --shadow:0 14px 38px rgba(23,58,140,.08);
 }
 *{box-sizing:border-box}
-html{font-size:16px}
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans Thai",Arial,sans-serif;
@@ -60,10 +59,9 @@ h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
 }
 .stats{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:12px;
 }
-.stats.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .stat{
   background:rgba(255,255,255,.14);
   border:1px solid rgba(255,255,255,.18);
@@ -112,14 +110,6 @@ h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
 }
 .section-title h2{margin:0;font-size:1.65rem;font-weight:950}
 .section-title small{color:var(--muted);font-weight:900;font-size:.95rem;white-space:nowrap}
-.card{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:26px;
-  padding:16px;
-  margin-bottom:14px;
-  box-shadow:var(--shadow);
-}
 .search-card{
   background:white;
   border:1px solid var(--line);
@@ -138,33 +128,26 @@ h1{margin:0;font-size:2rem;line-height:1.1;font-weight:950}
   padding:10px 12px;
 }
 .search-box .search-icon{font-size:1.35rem;color:var(--muted);flex:0 0 auto}
-input,select{
+.search-box input{
   width:100%;
   min-width:0;
-  border:1px solid var(--line);
-  background:var(--soft);
-  border-radius:18px;
-  padding:14px 16px;
+  border:0;
+  outline:0;
+  background:transparent;
+  padding:10px 2px;
   font-size:1rem;
-  outline:none;
   color:var(--text);
 }
-.search-box input{
+.search-btn{
   border:0;
-  background:transparent;
-  border-radius:0;
-  padding:10px 2px;
-}
-button,.primary,.secondary{
-  border:0;
+  background:var(--blue2);
+  color:white;
   border-radius:16px;
   padding:13px 16px;
   font-weight:950;
   cursor:pointer;
   font-size:.95rem;
 }
-.primary{background:var(--blue2);color:white}
-.secondary{background:#eef3ff;color:#245bd4}
 .filter-row{
   display:flex;
   gap:10px;
@@ -182,19 +165,28 @@ button,.primary,.secondary{
   font-weight:950;
   white-space:nowrap;
   box-shadow:0 8px 22px rgba(27,45,85,.05);
+  cursor:pointer;
 }
 .filter.active{background:#eaf1ff;color:#245bd4;border-color:#bcd2ff}
-.grid-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.product-card{
-  min-height:158px;
+.stock-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.stock-card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:16px;
+  box-shadow:var(--shadow);
+  min-height:205px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  cursor:pointer;
   position:relative;
   overflow:hidden;
 }
-.product-card:after{
+.stock-card:after{
   content:"";
   position:absolute;
   right:-34px;top:-34px;
@@ -202,33 +194,16 @@ button,.primary,.secondary{
   border-radius:999px;
   background:#f1f5ff;
 }
-.product-card .add-dot{
-  position:absolute;
-  right:12px;top:12px;
-  z-index:2;
-  width:34px;height:34px;
-  border-radius:50%;
-  background:var(--blue2);
-  color:white;
-  display:grid;
-  place-items:center;
-  font-weight:950;
-  font-size:1.2rem;
-}
-.emoji{
-  width:44px;height:44px;border-radius:17px;
-  background:#f6f8fc;
-  display:grid;place-items:center;
-  font-size:1.4rem;
-  margin-bottom:10px;
+.stock-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
   position:relative;
   z-index:1;
 }
 .name{font-size:1.08rem;font-weight:950;line-height:1.35}
 .muted{color:var(--muted);font-size:.9rem;line-height:1.45}
-.price{font-size:1.55rem;font-weight:950;color:var(--green)}
-.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.row-start{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .barcode-pill{
   display:inline-block;
   background:#f1f5f9;
@@ -245,42 +220,25 @@ button,.primary,.secondary{
   font-size:.8rem;
   font-weight:950;
   white-space:nowrap;
+  position:relative;
+  z-index:1;
 }
 .badge.ok{background:#dcfce7;color:#166534}
 .badge.low{background:#fee2e2;color:#b91c1c}
 .badge.out{background:#1f2937;color:white}
-.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
-.info-box{background:var(--soft);border-radius:20px;padding:13px}
-.info-box small{display:block;color:var(--muted);font-size:.78rem;font-weight:900;margin-bottom:6px}
-.info-box b{font-size:1.3rem;font-weight:950}
-.form{display:grid;gap:12px}
-.form label{font-size:.9rem;font-weight:950;color:#53627d}
-.form-grid{display:grid;grid-template-columns:1fr;gap:12px}
-.full{grid-column:1/-1}
-.cart-drawer{
-  position:sticky;
-  bottom:14px;
-  background:white;
-  border:1px solid var(--line);
-  border-radius:28px;
-  box-shadow:0 18px 45px rgba(15,23,42,.16);
-  padding:16px;
-  margin-top:16px;
-  z-index:10;
-}
-.checkout-row{display:grid;grid-template-columns:1fr 1.55fr;gap:10px;align-items:center}
-.total{background:var(--soft);border-radius:20px;padding:13px}
-.total small{display:block;color:var(--muted);font-size:.78rem;font-weight:800}
-.total b{font-size:1.35rem;font-weight:950}
-.table-row{
+.info-grid{
   display:grid;
-  grid-template-columns:1fr auto;
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:10px;
-  padding:12px 0;
-  border-bottom:1px solid #eef2f7;
+  margin-top:14px;
+  position:relative;
+  z-index:1;
 }
-.table-row:last-child{border-bottom:0}
+.info-box{background:var(--soft);border-radius:20px;padding:13px}
+.info-box small{display:block;color:var(--muted);font-size:.75rem;font-weight:900;margin-bottom:6px}
+.info-box b{font-size:1.15rem;font-weight:950}
 .empty{
+  grid-column:1/-1;
   text-align:center;
   padding:30px 18px;
   color:var(--muted);
@@ -291,18 +249,23 @@ button,.primary,.secondary{
 }
 .empty h3{margin:0 0 8px;font-size:1.25rem;color:var(--text)}
 .empty p{margin:0 0 16px;font-size:.95rem;line-height:1.5}
-.help{font-size:.82rem;color:var(--muted);margin-top:8px;line-height:1.5}
-.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media (min-width: 700px){
+.primary{
+  border:0;
+  background:var(--blue2);
+  color:white;
+  border-radius:16px;
+  padding:13px 16px;
+  font-weight:950;
+  cursor:pointer;
+}
+@media (min-width:700px){
   .app{width:min(100%,720px)}
   .hero{padding:32px 28px 42px}
   .content{padding:22px 28px 36px}
   .nav{padding:18px 28px 6px}
-  .grid-products{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .form-grid{grid-template-columns:1fr 1fr}
-  .report-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-@media (min-width: 1100px){
+@media (min-width:1100px){
   .app{width:min(100%,1120px)}
   .hero{
     border-bottom-left-radius:40px;
@@ -311,35 +274,49 @@ button,.primary,.secondary{
   }
   .content{padding:26px 36px 42px}
   .nav{padding:20px 36px 8px;grid-template-columns:repeat(5,120px)}
-  .grid-products{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .desktop-2col{display:grid;grid-template-columns:1.3fr .8fr;gap:18px;align-items:start}
-  .cart-drawer{position:sticky;top:24px;bottom:auto;margin-top:0}
-  .stock-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-  .stock-list .card{margin-bottom:0}
+  .stock-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stock-card{min-height:230px}
+  .info-grid{grid-template-columns:1fr}
 }
-@media (max-width: 390px){
+@media (max-width:390px){
   h1{font-size:1.75rem}
-  .stats.three{grid-template-columns:1fr}
-  .grid-products{grid-template-columns:1fr}
-  .checkout-row{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .stock-grid{grid-template-columns:1fr}
   .info-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
-
 <div class="app">
 <header class="hero">
-  <div class="hero-top"><div><h1>สต๊อกสินค้า</h1><p>ค้นด้วยชื่อ / หมวด / บาร์โค้ด</p></div><div class="icon-box">📦</div></div>
-  <div class="stats three">
+  <div class="hero-top">
+    <div>
+      <h1>สต๊อกสินค้า</h1>
+      <p>ค้นด้วยชื่อ / หมวด / บาร์โค้ด</p>
+    </div>
+    <div class="icon-box">📦</div>
+  </div>
+  <div class="stats">
     <div class="stat"><div class="label">สินค้าทั้งหมด</div><div class="value"><span id="totalSku">0</span></div></div>
     <div class="stat"><div class="label">ใกล้หมด</div><div class="value"><span id="lowCount">0</span></div></div>
     <div class="stat"><div class="label">มูลค่าสต๊อก</div><div class="value">฿<span id="stockValue">0</span></div></div>
   </div>
 </header>
-<nav class="nav"><a class="" href="index.html"><span class="icon">🧾</span>ขาย</a><a class="active" href="stock.html"><span class="icon">📦</span>สต๊อก</a><a class="" href="add-stock.html"><span class="icon">➕</span>เติมของ</a><a class="" href="product.html"><span class="icon">🏷️</span>สินค้า</a><a class="" href="report.html"><span class="icon">📊</span>รายงาน</a></nav>
+
+<nav class="nav">
+  <a href="index.html"><span class="icon">🧾</span>ขาย</a>
+  <a class="active" href="stock.html"><span class="icon">📦</span>สต๊อก</a>
+  <a href="add-stock.html"><span class="icon">➕</span>เติมของ</a>
+  <a href="product.html"><span class="icon">🏷️</span>สินค้า</a>
+  <a href="report.html"><span class="icon">📊</span>รายงาน</a>
+</nav>
+
 <main class="content">
-  <div class="section-title"><h2>รายการสินค้า</h2><small>มี Barcode</small></div>
+  <div class="section-title">
+    <h2>รายการสินค้า</h2>
+    <small>มี Barcode</small>
+  </div>
+
   <div class="search-card">
     <div class="search-box">
       <span class="search-icon">🔎</span>
@@ -347,27 +324,32 @@ button,.primary,.secondary{
       <button class="search-btn" onclick="renderStock()">ค้นหา</button>
     </div>
   </div>
+
   <div class="filter-row" id="filterRow"></div>
   <div class="filter-row">
     <button class="filter" onclick="sortStock('az')">A-Z</button>
     <button class="filter" onclick="sortStock('low')">คงเหลือน้อย</button>
     <button class="filter" onclick="sortStock('highValue')">มูลค่าสูง</button>
   </div>
-  <div class="stock-list" id="stockList"></div>
+
+  <div class="stock-grid" id="stockList"></div>
 </main>
 </div>
 
 <script>
 let products = [
-  { id:1, barcode:"8850001000011", name:"น้ำดื่มคริสตัล 600ml", category:"เครื่องดื่ม", cost:5, price:7, stock:24, reorder:10, emoji:"💧" },
-  { id:2, barcode:"8850001000028", name:"โค้กกระป๋อง", category:"เครื่องดื่ม", cost:14, price:18, stock:18, reorder:8, emoji:"🥤" },
-  { id:3, barcode:"8850001000035", name:"โออิชิ 500ml", category:"เครื่องดื่ม", cost:16, price:22, stock:9, reorder:10, emoji:"🍵" },
-  { id:4, barcode:"8850001000042", name:"มาม่าต้มยำกุ้ง", category:"ของแห้ง", cost:6, price:8, stock:50, reorder:20, emoji:"🍜" },
-  { id:5, barcode:"8850001000059", name:"เลย์โนริ", category:"ขนม", cost:15, price:20, stock:12, reorder:10, emoji:"🍟" },
-  { id:6, barcode:"8850001000066", name:"นมถั่วเหลือง", category:"นม/แช่เย็น", cost:10, price:13, stock:6, reorder:8, emoji:"🥛" },
-  { id:7, barcode:"8850001000073", name:"สบู่ก้อน", category:"ของใช้", cost:18, price:25, stock:14, reorder:6, emoji:"🧼" },
-  { id:8, barcode:"8850001000080", name:"ทิชชู่ห่อเล็ก", category:"ของใช้", cost:9, price:12, stock:20, reorder:8, emoji:"🧻" }
+  { id:1, barcode:"8850001000011", name:"น้ำดื่มคริสตัล 600ml", category:"เครื่องดื่ม", cost:5, price:7, stock:24, reorder:10 },
+  { id:2, barcode:"8850001000028", name:"โค้กกระป๋อง", category:"เครื่องดื่ม", cost:14, price:18, stock:18, reorder:8 },
+  { id:3, barcode:"8850001000035", name:"โออิชิ 500ml", category:"เครื่องดื่ม", cost:16, price:22, stock:9, reorder:10 },
+  { id:4, barcode:"8850001000042", name:"มาม่าต้มยำกุ้ง", category:"ของแห้ง", cost:6, price:8, stock:50, reorder:20 },
+  { id:5, barcode:"8850001000059", name:"เลย์โนริ", category:"ขนม", cost:15, price:20, stock:12, reorder:10 },
+  { id:6, barcode:"8850001000066", name:"นมถั่วเหลือง", category:"นม/แช่เย็น", cost:10, price:13, stock:6, reorder:8 },
+  { id:7, barcode:"8850001000073", name:"สบู่ก้อน", category:"ของใช้", cost:18, price:25, stock:14, reorder:6 },
+  { id:8, barcode:"8850001000080", name:"ทิชชู่ห่อเล็ก", category:"ของใช้", cost:9, price:12, stock:20, reorder:8 }
 ];
+
+let currentFilter="ทั้งหมด";
+
 function money(n){return Number(n).toLocaleString();}
 function statusOf(p){
   if(p.stock<=0) return {text:"หมด",cls:"out"};
@@ -378,39 +360,50 @@ function matchProduct(p,q){
   q = String(q || "").trim().toLowerCase();
   return !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || String(p.barcode).includes(q);
 }
-</script>
-<script>
-let currentFilter="ทั้งหมด";
 function renderFilters(){
- const cats=["ทั้งหมด","ใกล้หมด",...new Set(products.map(p=>p.category))];
- filterRow.innerHTML=cats.map(c=>`<button class="filter ${c===currentFilter?'active':''}" onclick="currentFilter='${c}';renderFilters();renderStock()">${c}</button>`).join("");
+  const cats=["ทั้งหมด","ใกล้หมด",...new Set(products.map(p=>p.category))];
+  filterRow.innerHTML=cats.map(c=>`<button class="filter ${c===currentFilter?'active':''}" onclick="currentFilter='${c}';renderFilters();renderStock()">${c}</button>`).join("");
 }
 function renderSummary(){
- totalSku.innerText=products.length;
- lowCount.innerText=products.filter(p=>p.stock<=p.reorder).length;
- stockValue.innerText=money(products.reduce((s,p)=>s+p.cost*p.stock,0));
+  totalSku.innerText=products.length;
+  lowCount.innerText=products.filter(p=>p.stock<=p.reorder).length;
+  stockValue.innerText=money(products.reduce((s,p)=>s+p.cost*p.stock,0));
 }
 function renderStock(){
- const q=searchInput.value;
- const filtered=products.filter(p=>matchProduct(p,q)&&(currentFilter==="ทั้งหมด"||(currentFilter==="ใกล้หมด"&&p.stock<=p.reorder)||p.category===currentFilter));
- stockList.innerHTML=filtered.length?filtered.map(p=>{const st=statusOf(p);return `
-  <div class="card">
-    <div class="row-start">
-      <div><div class="name">${p.name}</div><div class="muted">${p.category}</div><span class="barcode-pill">Barcode: ${p.barcode}</span></div>
-      <span class="badge ${st.cls}">${st.text}</span>
-    </div>
-    <div class="info-grid">
-      <div class="info-box"><small>คงเหลือ</small><b>${p.stock} ชิ้น</b></div>
-      <div class="info-box"><small>ต้นทุน</small><b>฿${p.cost}</b></div>
-      <div class="info-box"><small>ราคาขาย</small><b>฿${p.price}</b></div>
-    </div>
-  </div>`}).join(""):`<div class="empty"><h3>ไม่มีสินค้านี้ในสต๊อก</h3><p>ลองค้นหาชื่ออื่น ยิงบาร์โค้ดใหม่ หรือเพิ่มสินค้าใหม่</p><button class="primary" onclick="searchInput.value='';currentFilter='ทั้งหมด';renderFilters();renderStock()">ล้างคำค้นหา</button></div>`;
+  const q=searchInput.value;
+  const filtered=products.filter(p=>matchProduct(p,q)&&(currentFilter==="ทั้งหมด"||(currentFilter==="ใกล้หมด"&&p.stock<=p.reorder)||p.category===currentFilter));
+  stockList.innerHTML=filtered.length?filtered.map(p=>{
+    const st=statusOf(p);
+    return `
+      <article class="stock-card">
+        <div>
+          <div class="stock-head">
+            <div>
+              <div class="name">${p.name}</div>
+              <div class="muted">${p.category}</div>
+              <span class="barcode-pill">Barcode: ${p.barcode}</span>
+            </div>
+            <span class="badge ${st.cls}">${st.text}</span>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-box"><small>คงเหลือ</small><b>${p.stock} ชิ้น</b></div>
+          <div class="info-box"><small>ต้นทุน</small><b>฿${p.cost}</b></div>
+          <div class="info-box"><small>ราคาขาย</small><b>฿${p.price}</b></div>
+        </div>
+      </article>
+    `;
+  }).join(""):`<div class="empty">
+    <h3>ไม่มีสินค้านี้ในสต๊อก</h3>
+    <p>ลองค้นหาชื่ออื่น ยิงบาร์โค้ดใหม่ หรือเพิ่มสินค้าใหม่</p>
+    <button class="primary" onclick="searchInput.value='';currentFilter='ทั้งหมด';renderFilters();renderStock()">ล้างคำค้นหา</button>
+  </div>`;
 }
 function sortStock(type){
- if(type==="az")products.sort((a,b)=>a.name.localeCompare(b.name));
- if(type==="low")products.sort((a,b)=>a.stock-b.stock);
- if(type==="highValue")products.sort((a,b)=>(b.stock*b.cost)-(a.stock*a.cost));
- renderStock();
+  if(type==="az")products.sort((a,b)=>a.name.localeCompare(b.name));
+  if(type==="low")products.sort((a,b)=>a.stock-b.stock);
+  if(type==="highValue")products.sort((a,b)=>(b.stock*b.cost)-(a.stock*a.cost));
+  renderStock();
 }
 renderFilters();renderSummary();renderStock();
 </script>
