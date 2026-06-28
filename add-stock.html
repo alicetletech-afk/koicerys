@@ -343,6 +343,31 @@ input,select{
   font-size:1rem;
   cursor:pointer;
 }
+
+.expiry-toggle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 14px;
+  border-radius:16px;
+  background:var(--soft);
+  border:1px solid var(--line);
+  cursor:pointer;
+  font-weight:900;
+  color:#475569;
+}
+.expiry-toggle input{
+  width:20px;
+  height:20px;
+  accent-color:var(--blue);
+}
+.expiry-field{
+  display:none;
+}
+.expiry-field.active{
+  display:block;
+}
+
 @media(max-width:1050px){
   .main{
     grid-template-columns:1fr;
@@ -458,6 +483,16 @@ input,select{
 
       <label>Supplier</label>
       <input id="supplier" placeholder="เช่น Makro / ร้านส่ง / บริษัท">
+
+      <label class="expiry-toggle">
+        <input id="hasExpiry" type="checkbox" onchange="toggleExpiryField()">
+        สินค้านี้มีวันหมดอายุ
+      </label>
+
+      <div id="expiryField" class="expiry-field">
+        <label>วันหมดอายุ</label>
+        <input id="expiryDate" type="date">
+      </div>
 
       <button class="primary" onclick="saveRestock()">บันทึกเติมของเข้า</button>
 
@@ -617,6 +652,16 @@ function renderPreview(){
   `;
 }
 
+
+function toggleExpiryField(){
+  const checked = document.getElementById("hasExpiry").checked;
+  document.getElementById("expiryField").classList.toggle("active", checked);
+
+  if(!checked){
+    document.getElementById("expiryDate").value = "";
+  }
+}
+
 async function saveRestock(){
   if(!selectedProduct){
     showModal("บันทึกไม่สำเร็จ", [
@@ -629,10 +674,18 @@ async function saveRestock(){
   const newCost = Number(document.getElementById("newCost").value || 0);
   const newPrice = Number(document.getElementById("newPrice").value || 0);
   const supplier = document.getElementById("supplier").value.trim();
+  const expiryDate = document.getElementById("hasExpiry").checked ? document.getElementById("expiryDate").value : "";
 
   if(qty <= 0){
     showModal("บันทึกไม่สำเร็จ", [
       {label:"ข้อความ", value:"กรอกจำนวนรับเข้าให้ถูกต้อง"}
+    ]);
+    return;
+  }
+
+  if(document.getElementById("hasExpiry").checked && !expiryDate){
+    showModal("บันทึกไม่สำเร็จ", [
+      {label:"ข้อความ", value:"กรอกวันหมดอายุก่อน"}
     ]);
     return;
   }
@@ -644,7 +697,8 @@ async function saveRestock(){
     qty_in:qty,
     cost:newCost || selectedProduct.cost,
     price:newPrice || selectedProduct.price,
-    supplier:supplier
+    supplier:supplier,
+    expiry_date:expiryDate
   };
 
   try{
@@ -656,7 +710,8 @@ async function saveRestock(){
       "&qty_in=" + encodeURIComponent(payload.qty_in) +
       "&cost=" + encodeURIComponent(payload.cost) +
       "&price=" + encodeURIComponent(payload.price) +
-      "&supplier=" + encodeURIComponent(payload.supplier || "");
+      "&supplier=" + encodeURIComponent(payload.supplier || "") +
+      "&expiry_date=" + encodeURIComponent(payload.expiry_date || "");
 
     const res = await fetch(url);
     const result = await res.json();
@@ -673,7 +728,8 @@ async function saveRestock(){
       qty:qty,
       cost:payload.cost,
       price:payload.price,
-      supplier:supplier || "-"
+      supplier:supplier,
+    expiry_date:expiryDate || "-"
     });
 
     document.getElementById("todayIn").innerText = history.length;
@@ -683,13 +739,17 @@ async function saveRestock(){
       {label:"รับเข้า", value:money(qty) + " " + selectedProduct.unit},
       {label:"สต๊อกใหม่", value:money(result.new_stock) + " " + selectedProduct.unit},
       {label:"ต้นทุน", value:"฿" + money(payload.cost)},
-      {label:"ราคาขาย", value:"฿" + money(payload.price)}
+      {label:"ราคาขาย", value:"฿" + money(payload.price)},
+      {label:"วันหมดอายุ", value:expiryDate || "-"}
     ]);
 
     document.getElementById("qtyIn").value = "";
     document.getElementById("newCost").value = "";
     document.getElementById("newPrice").value = "";
     document.getElementById("supplier").value = "";
+    document.getElementById("hasExpiry").checked = false;
+    document.getElementById("expiryDate").value = "";
+    toggleExpiryField();
     document.getElementById("barcodeInput").value = "";
 
     await loadProducts();
