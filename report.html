@@ -24,12 +24,12 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Sarabun","Noto Sans 
 .main{padding:34px clamp(20px,4vw,56px) 48px}
 .toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px}.toolbar h2{margin:0;font-size:1.65rem}.toolbar small{color:var(--muted);font-weight:900}
 .filter-card{background:white;border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow);margin-bottom:22px}
-.filter-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+.filter-grid{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}
 .field label{display:block;font-weight:950;color:#475569;margin-bottom:8px}
 select,input{width:100%;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:var(--soft);font-size:1rem}
 .search-btn,.refresh-btn{border:0;background:var(--blue);color:white;padding:14px 18px;border-radius:14px;font-weight:950;cursor:pointer}
 .refresh-btn{background:white;color:#245bd4;border:1px solid #bcd2ff}
-.custom-dates{display:none;grid-template-columns:1fr 1fr auto;gap:12px;margin-top:12px;align-items:end}.custom-dates.active{display:grid}
+.custom-dates{display:none;grid-template-columns:1fr auto;gap:12px;margin-top:12px;align-items:end}.custom-dates.active{display:grid}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .card{background:white;border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow)}
 .card h3{margin:0 0 14px;font-size:1.28rem}
@@ -85,16 +85,7 @@ summary{cursor:pointer;list-style:none;padding:16px;font-weight:950;display:flex
         </select>
       </div>
 
-      <div class="field">
-        <label>ช่องทางชำระเงิน</label>
-        <select id="paymentFilter" onchange="loadReport()">
-          <option value="all">รวมทั้งหมด</option>
-          <option value="cash">เงินสด</option>
-          <option value="transfer">เงินโอน</option>
-        </select>
-      </div>
-
-      <button class="search-btn" onclick="loadReport()">ค้นหา</button>
+      <button id="mainSearchBtn" class="search-btn" onclick="loadReport()">ค้นหา</button>
     </div>
 
     <div id="customDates" class="custom-dates">
@@ -105,14 +96,12 @@ summary{cursor:pointer;list-style:none;padding:16px;font-weight:950;display:flex
       <div class="field">
         <label>วันที่สิ้นสุด</label>
         <input id="endDate" type="date">
-      </div>
-      <button class="search-btn" onclick="loadReport()">ค้นหาตามวันที่</button>
-    </div>
+      </div>    </div>
   </div>
 
   <div class="grid-2">
     <section class="card">
-      <h3>สรุปช่องทางชำระเงิน</h3>
+      <h3>สรุปช่องทางชำระเงินตามช่วงวันที่</h3>
       <div id="paymentSummary" class="table"><div class="loading">กำลังโหลด...</div></div>
     </section>
 
@@ -149,14 +138,13 @@ function formatDate(value){if(!value)return "-"; const d=new Date(value); return
 function handlePeriodChange(){
   const period = document.getElementById("periodFilter").value;
   document.getElementById("customDates").classList.toggle("active", period === "custom");
+  document.getElementById("mainSearchBtn").innerText = period === "custom" ? "ค้นหา" : "ค้นหา";
   if(period !== "custom") loadReport();
 }
 
 function buildReportUrl(){
   const period = document.getElementById("periodFilter").value;
-  const payment = document.getElementById("paymentFilter").value;
-
-  let url = API_URL + "?action=getReport&period=" + encodeURIComponent(period) + "&payment_method=" + encodeURIComponent(payment);
+  let url = API_URL + "?action=getReport&period=" + encodeURIComponent(period);
 
   if(period === "custom"){
     url += "&start_date=" + encodeURIComponent(document.getElementById("startDate").value || "");
