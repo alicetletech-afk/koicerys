@@ -12,3 +12,10 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+
+
+// Force Firebase Auth persistence for iPad/Safari stability
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(error) {
+  console.warn("Firebase persistence setup failed:", error);
+});
+
