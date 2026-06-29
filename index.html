@@ -802,7 +802,7 @@ select,input{
     <div class="sell-scanner-head">
       <h3>สแกนขายสินค้า</h3>
       <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะเพิ่มเข้าตะกร้าอัตโนมัติ</p>
-      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง</div>
+      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · sellscan-camera-v2</div>
     </div>
     <div class="sell-scanner-reader">
       <div id="sellBarcodeReader"></div>
@@ -1139,6 +1139,7 @@ async function checkout(){
 
     renderCart();
     await 
+
 let sellScanner = null;
 let sellScannerRunning = false;
 let lastSellScannedCode = "";
@@ -1160,35 +1161,73 @@ async function openSellScanner(){
     return;
   }
 
-  await new Promise(resolve => setTimeout(resolve, 450));
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    setSellScanStatus("Browser นี้ไม่รองรับการเปิดกล้อง");
+    return;
+  }
+
+  // ให้ modal แสดงผลก่อน โดยเฉพาะ iPhone Safari
+  await new Promise(resolve => setTimeout(resolve, 650));
 
   try{
-    if(!sellScanner){
-      sellScanner = new Html5Qrcode("sellBarcodeReader");
-    }
-
     if(sellScannerRunning){
       setSellScanStatus("กล้องเปิดอยู่แล้ว");
       return;
     }
 
-    await sellScanner.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 260, height: 140 } },
-      async (decodedText) => {
-        if(decodedText === lastSellScannedCode) return;
-        lastSellScannedCode = decodedText;
+    if(!sellScanner){
+      sellScanner = new Html5Qrcode("sellBarcodeReader", { verbose:false });
+    }
 
-        const found = products.find(p => String(p.barcode || "").trim() === String(decodedText).trim());
+    setSellScanStatus("กำลังขอสิทธิ์กล้อง...");
+
+    const cameras = await Html5Qrcode.getCameras();
+
+    if(!cameras || cameras.length === 0){
+      setSellScanStatus("ไม่พบกล้องในอุปกรณ์นี้");
+      return;
+    }
+
+    // มือถือส่วนใหญ่ กล้องหลังมักอยู่ตัวท้าย ๆ
+    let cameraId = cameras[cameras.length - 1].id;
+
+    const backCamera = cameras.find(cam => {
+      const label = String(cam.label || "").toLowerCase();
+      return label.includes("back") || label.includes("rear") || label.includes("environment");
+    });
+
+    if(backCamera) cameraId = backCamera.id;
+
+    setSellScanStatus("กำลังเปิดกล้อง...");
+
+    await sellScanner.start(
+      cameraId,
+      {
+        fps: 10,
+        qrbox: function(viewfinderWidth, viewfinderHeight){
+          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+          const width = Math.floor(minEdge * 0.82);
+          const height = Math.floor(width * 0.52);
+          return { width, height };
+        },
+        aspectRatio: 1.777
+      },
+      async (decodedText) => {
+        const code = String(decodedText || "").trim();
+
+        if(!code || code === lastSellScannedCode) return;
+        lastSellScannedCode = code;
+
+        const found = products.find(p => String(p.barcode || "").trim() === code);
 
         if(!found){
-          setSellScanStatus("ไม่พบสินค้า: " + decodedText);
-          showErrorPopup("ไม่พบสินค้านี้ในระบบ: " + decodedText);
-          setTimeout(() => { lastSellScannedCode = ""; }, 1200);
+          setSellScanStatus("ไม่พบสินค้า: " + code);
+          showErrorPopup("ไม่พบสินค้านี้ในระบบ: " + code);
+          setTimeout(() => { lastSellScannedCode = ""; }, 1500);
           return;
         }
 
-        document.getElementById("searchInput").value = decodedText;
+        document.getElementById("searchInput").value = code;
         addToCart(found.id);
         setSellScanStatus("เพิ่มเข้าตะกร้าแล้ว: " + found.name);
 
@@ -1201,8 +1240,21 @@ async function openSellScanner(){
 
     sellScannerRunning = true;
     setSellScanStatus("พร้อมสแกนแล้ว");
+
   }catch(err){
-    setSellScanStatus("เปิดกล้องไม่สำเร็จ: " + (err.message || err));
+    console.error(err);
+
+    let msg = err && err.message ? err.message : String(err);
+
+    if(msg.includes("NotAllowedError") || msg.includes("Permission")){
+      msg = "ยังไม่ได้อนุญาตกล้อง กรุณากด Allow Camera";
+    }else if(msg.includes("NotFoundError")){
+      msg = "ไม่พบกล้องในอุปกรณ์นี้";
+    }else if(msg.includes("NotReadableError")){
+      msg = "กล้องถูกใช้งานอยู่ในแอป/แท็บอื่น";
+    }
+
+    setSellScanStatus("เปิดกล้องไม่สำเร็จ: " + msg);
   }
 }
 
