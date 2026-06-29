@@ -220,25 +220,13 @@ body{
   margin:0;
   font-size:1.05rem;
 }
-.product .sold-badge{
-  display:inline-block;
-  margin-top:7px;
-  padding:5px 9px;
-  border-radius:999px;
-  background:#d1fae5;
-  color:#047857;
-  border:1px solid #6ee7b7;
-  font-size:.75rem;
-  font-weight:900;
-}
 .product .barcode{
   display:inline-block;
   margin-top:7px;
   padding:5px 9px;
   border-radius:999px;
-  background:#ffffff;
-  color:#173b92;
-  border:1px solid #bfdbfe;
+  background:#edf2f7;
+  color:#475569;
   font-size:.75rem;
   font-weight:900;
   word-break:break-all;
@@ -487,123 +475,6 @@ select,input{
   justify-items:end;
 }
 
-
-.scan-sell-btn{
-  padding:15px 18px;
-  border:none;
-  border-radius:16px;
-  background:#eaf1ff;
-  color:#245bd4;
-  border:1px solid #bcd2ff;
-  font-weight:950;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.sell-scanner-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(15,23,42,.58);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:10000;
-  padding:20px;
-}
-.sell-scanner-overlay.active{display:flex}
-.sell-scanner-card{
-  width:min(94vw,520px);
-  background:#fff;
-  border-radius:28px;
-  border:1px solid var(--line);
-  box-shadow:0 28px 80px rgba(15,23,42,.28);
-  overflow:hidden;
-}
-.sell-scanner-head{
-  padding:20px 20px 10px;
-  text-align:center;
-}
-.sell-scanner-head h3{
-  margin:0;
-  font-size:1.25rem;
-  font-weight:950;
-}
-.sell-scanner-head p{
-  margin:8px 0 0;
-  color:var(--muted);
-  font-size:.9rem;
-}
-.sell-scan-status{
-  margin-top:10px;
-  padding:10px 12px;
-  border-radius:14px;
-  background:#f1f5fb;
-  color:#475569;
-  font-size:.9rem;
-  font-weight:850;
-  text-align:center;
-}
-.sell-scanner-reader{
-  padding:16px;
-}
-#sellBarcodeReader{
-  width:100%;
-  min-height:280px;
-  overflow:hidden;
-  border-radius:20px;
-  background:#0f172a;
-}
-.sell-scanner-footer{
-  padding:0 20px 20px;
-}
-.sell-scanner-close{
-  width:100%;
-  border:0;
-  border-radius:16px;
-  padding:15px;
-  background:#fee2e2;
-  color:#b91c1c;
-  font-weight:950;
-  cursor:pointer;
-}
-.popup-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:10001;
-}
-.popup-card{
-  width:min(90%,360px);
-  background:#fff;
-  border-radius:22px;
-  padding:24px;
-  text-align:center;
-  box-shadow:0 20px 40px rgba(0,0,0,.18);
-}
-.popup-icon{font-size:2rem;margin-bottom:10px}
-.popup-card h3{margin:0 0 8px;color:#dc2626}
-.popup-card p{color:#475569;margin-bottom:18px;line-height:1.5}
-.popup-card button{
-  border:0;
-  background:#dc2626;
-  color:white;
-  padding:12px 18px;
-  border-radius:14px;
-  font-weight:800;
-  cursor:pointer;
-}
-@media(max-width:720px){
-  .search-wrap{
-    display:grid;
-    grid-template-columns:1fr;
-  }
-  .scan-sell-btn,.search-btn{
-    width:100%;
-  }
-}
-
 @media(max-width:1050px){
   .main{
     grid-template-columns:1fr;
@@ -652,126 +523,7 @@ select,input{
   }
 }
 
-.all-products-btn{
-  padding:15px 18px;
-  border:none;
-  border-radius:16px;
-  background:#fff;
-  color:#173b92;
-  border:1px solid #bfdbfe;
-  font-weight:950;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.sold-badge{
-  display:inline-block;
-  margin-top:7px;
-  padding:5px 9px;
-  border-radius:999px;
-  background:#d1fae5;
-  color:#047857;
-  border:1px solid #6ee7b7;
-  font-size:.75rem;
-  font-weight:900;
-}
-.all-products-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(15,23,42,.58);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:10002;
-  padding:18px;
-}
-.all-products-overlay.active{display:flex}
-.all-products-card{
-  width:min(96vw,980px);
-  height:min(88vh,760px);
-  background:#fff;
-  border-radius:28px;
-  border:1px solid var(--line);
-  box-shadow:0 28px 80px rgba(15,23,42,.28);
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
-.all-products-head{
-  padding:20px;
-  border-bottom:1px solid var(--line);
-  display:grid;
-  gap:12px;
-}
-.all-products-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
-.all-products-title h3{
-  margin:0;
-  font-size:1.35rem;
-  font-weight:950;
-}
-.all-products-close{
-  border:0;
-  background:#fee2e2;
-  color:#b91c1c;
-  border-radius:14px;
-  padding:10px 14px;
-  font-weight:950;
-  cursor:pointer;
-}
-.all-products-search{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:10px;
-}
-.all-products-search input{
-  width:100%;
-}
-.all-products-body{
-  padding:18px;
-  overflow:auto;
-}
-.all-products-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  gap:14px;
-}
-.all-products-filter{
-  display:flex;
-  gap:10px;
-  overflow:auto;
-  scrollbar-width:none;
-  padding-bottom:2px;
-}
-.all-products-filter::-webkit-scrollbar{display:none}
-.all-products-filter button{
-  border:1px solid var(--line);
-  background:white;
-  padding:10px 14px;
-  border-radius:999px;
-  font-weight:950;
-  color:#475569;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.all-products-filter button.active{
-  background:#eaf1ff;
-  color:#245bd4;
-  border-color:#bcd2ff;
-}
-@media(max-width:720px){
-  .all-products-card{
-    width:100vw;
-    height:100vh;
-    border-radius:0;
-  }
-  .all-products-search{
-    grid-template-columns:1fr;
-  }
-}
+.scan-sell-btn,.all-products-btn{padding:15px 18px;border:none;border-radius:16px;font-weight:950;cursor:pointer;white-space:nowrap}.scan-sell-btn{background:#eaf1ff;color:#245bd4;border:1px solid #bcd2ff}.all-products-btn{background:#fff;color:#173b92;border:1px solid #bfdbfe}.sold-badge{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:999px;background:#d1fae5;color:#047857;border:1px solid #6ee7b7;font-size:.75rem;font-weight:900}.sell-scanner-overlay,.all-products-overlay{position:fixed;inset:0;background:rgba(15,23,42,.58);display:none;align-items:center;justify-content:center;z-index:10000;padding:18px}.sell-scanner-overlay.active,.all-products-overlay.active{display:flex}.sell-scanner-card,.all-products-card{background:#fff;border-radius:28px;border:1px solid var(--line);box-shadow:0 28px 80px rgba(15,23,42,.28);overflow:hidden}.sell-scanner-card{width:min(94vw,520px)}.all-products-card{width:min(96vw,980px);height:min(88vh,760px);display:flex;flex-direction:column}.sell-scanner-head,.all-products-head{padding:20px;border-bottom:1px solid var(--line)}.sell-scanner-head{text-align:center}.sell-scanner-head h3,.all-products-title h3{margin:0;font-size:1.3rem;font-weight:950}.sell-scanner-head p{margin:8px 0 0;color:var(--muted);font-size:.9rem}.sell-scan-status{margin-top:10px;padding:10px 12px;border-radius:14px;background:#f1f5fb;color:#475569;font-size:.9rem;font-weight:850;text-align:center}.sell-scanner-reader{padding:16px}#sellBarcodeReader{width:100%;min-height:280px;overflow:hidden;border-radius:20px;background:#0f172a}.sell-scanner-footer{padding:0 20px 20px}.sell-scanner-close,.all-products-close{border:0;border-radius:16px;padding:13px 16px;font-weight:950;cursor:pointer}.sell-scanner-close{width:100%;background:#fee2e2;color:#b91c1c}.all-products-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.all-products-close{background:#fee2e2;color:#b91c1c}.all-products-search{display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:12px}.all-products-filter{display:flex;gap:10px;overflow:auto;scrollbar-width:none}.all-products-filter::-webkit-scrollbar{display:none}.all-products-filter button{border:1px solid var(--line);background:white;padding:10px 14px;border-radius:999px;font-weight:950;color:#475569;cursor:pointer;white-space:nowrap}.all-products-filter button.active{background:#eaf1ff;color:#245bd4;border-color:#bcd2ff}.all-products-body{padding:18px;overflow:auto}.all-products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:10001}.popup-card{width:min(90%,360px);background:#fff;border-radius:22px;padding:24px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.18)}.popup-icon{font-size:2rem;margin-bottom:10px}.popup-card h3{margin:0 0 8px;color:#dc2626}.popup-card p{color:#475569;margin-bottom:18px;line-height:1.5}.popup-card button{border:0;background:#dc2626;color:white;padding:12px 18px;border-radius:14px;font-weight:800;cursor:pointer}@media(max-width:720px){.search-wrap{display:grid;grid-template-columns:1fr}.search-btn,.scan-sell-btn,.all-products-btn{width:100%}.all-products-card{width:100vw;height:100vh;border-radius:0}.all-products-search{grid-template-columns:1fr}}
 
 </style>
 </head>
@@ -821,11 +573,11 @@ select,input{
     <div class="box">
       <div class="search-wrap">
         <input id="searchInput" class="search" placeholder="ยิงบาร์โค้ด หรือค้นหาชื่อสินค้า" oninput="renderProducts()" onkeydown="handleSearchEnter(event)">
-        <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนแล้วขายทันที</button>
-        <button type="button" class="all-products-btn" onclick="openAllProductsModal()">📦 ดูสินค้าทั้งหมด</button>
         <button class="search-btn" onclick="renderProducts()">ค้นหา</button>
+        <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนขาย</button>
+        <button type="button" class="all-products-btn" onclick="openAllProductsModal()">📦 ดูสินค้าทั้งหมด</button>
       </div>
-      <div class="help">ไฟล์เวอร์ชัน: index-popup-products-v8 · ไฟล์เวอร์ชัน: index-scanfilter-v7 · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ · index-clean-scan-v6</div>
+      <div class="help">คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
     </div>
 
     <div class="category-wrap" id="categoryWrap"></div>
@@ -878,42 +630,8 @@ select,input{
 
 
 
-<div id="sellScannerModal" class="sell-scanner-overlay">
-  <div class="sell-scanner-card">
-    <div class="sell-scanner-head">
-      <h3>สแกนขายสินค้า</h3>
-      <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะเพิ่มเข้าตะกร้าอัตโนมัติ</p>
-      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · index-clean-scan-v6</div>
-    </div>
-    <div class="sell-scanner-reader">
-      <div id="sellBarcodeReader"></div>
-    </div>
-    <div class="sell-scanner-footer">
-      <button class="sell-scanner-close" onclick="closeSellScanner()">ปิดกล้อง</button>
-    </div>
-  </div>
-</div>
-
-
-<div id="allProductsModal" class="all-products-overlay">
-  <div class="all-products-card">
-    <div class="all-products-head">
-      <div class="all-products-title">
-        <h3>สินค้าทั้งหมด</h3>
-        <button class="all-products-close" onclick="closeAllProductsModal()">ปิด</button>
-      </div>
-      <div class="all-products-search">
-        <input id="allProductsSearch" placeholder="ค้นหาชื่อสินค้า / บาร์โค้ด / หมวดหมู่" oninput="renderAllProductsModal()">
-        <button class="search-btn" onclick="renderAllProductsModal()">ค้นหา</button>
-      </div>
-      <div id="allProductsCategory" class="all-products-filter"></div>
-    </div>
-    <div class="all-products-body">
-      <div id="allProductsGrid" class="all-products-grid"></div>
-    </div>
-  </div>
-</div>
-
+<div id="sellScannerModal" class="sell-scanner-overlay"><div class="sell-scanner-card"><div class="sell-scanner-head"><h3>สแกนขายสินค้า</h3><p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะเพิ่มเข้าตะกร้าอัตโนมัติ</p><div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · index-clean-popup-v9</div></div><div class="sell-scanner-reader"><div id="sellBarcodeReader"></div></div><div class="sell-scanner-footer"><button class="sell-scanner-close" onclick="closeSellScanner()">ปิดกล้อง</button></div></div></div>
+<div id="allProductsModal" class="all-products-overlay"><div class="all-products-card"><div class="all-products-head"><div class="all-products-title"><h3>สินค้าทั้งหมด</h3><button class="all-products-close" onclick="closeAllProductsModal()">ปิด</button></div><div class="all-products-search"><input id="allProductsSearch" placeholder="ค้นหาชื่อสินค้า / บาร์โค้ด / หมวดหมู่" oninput="renderAllProductsModal()"><button class="search-btn" onclick="renderAllProductsModal()">ค้นหา</button></div><div id="allProductsCategory" class="all-products-filter"></div></div><div class="all-products-body"><div id="allProductsGrid" class="all-products-grid"></div></div></div></div>
 
 <div id="paymentModal" class="modal-overlay">
   <div class="modal-card">
@@ -955,51 +673,20 @@ async function loadProducts(){
   try{
     const res = await fetch(API_URL + "?action=getProducts");
     const text = await res.text();
-
     let json;
-    try{
-      json = JSON.parse(text);
-    }catch(e){
-      throw new Error("API ไม่ได้ส่ง JSON กลับมา");
-    }
-
+    try{ json = JSON.parse(text); }catch(e){ throw new Error("API ไม่ได้ส่ง JSON กลับมา"); }
     let raw = [];
-
-    if(Array.isArray(json)){
-      raw = json;
-    }else if(Array.isArray(json.data)){
-      raw = json.data;
-    }else if(json.data && Array.isArray(json.data.data)){
-      raw = json.data.data;
-    }else{
-      console.log("API RAW:", json);
-      throw new Error(json.message || "โครงสร้างข้อมูลไม่ถูกต้อง");
-    }
-
-    products = raw
-      .filter(p => String(p.status || "active").toLowerCase() === "active")
-      .map(p => ({
-        id: String(p.product_id || p.id || ""),
-        barcode: String(p.barcode || ""),
-        name: String(p.name || ""),
-        category: String(p.category || ""),
-        cost: Number(p.cost || 0),
-        price: Number(p.price || 0),
-        stock: Number(p.stock || 0),
-        reorder: Number(p.reorder_point || p.reorder || 0),
-        unit: String(p.unit || "ชิ้น"),
-        sold_qty: Number(p.sold_qty || 0)
-      }))
-      .filter(p => p.id)
-      .sort((a,b) => b.sold_qty - a.sold_qty);
-
-    renderCategories();
-    renderProducts();
-    updateStats();
+    if(Array.isArray(json)) raw = json;
+    else if(Array.isArray(json.data)) raw = json.data;
+    else if(json.data && Array.isArray(json.data.data)) raw = json.data.data;
+    else throw new Error(json.message || "โครงสร้างข้อมูลสินค้าไม่ถูกต้อง");
+    products = raw.filter(p => String(p.status || "active").toLowerCase() === "active").map(p => ({
+      id:String(p.product_id || p.id || ""), barcode:String(p.barcode || ""), name:String(p.name || ""), category:String(p.category || ""), cost:Number(p.cost || 0), price:Number(p.price || 0), stock:Number(p.stock || 0), reorder:Number(p.reorder_point || p.reorder || 0), unit:String(p.unit || "ชิ้น"), sold_qty:Number(p.sold_qty || 0)
+    })).filter(p=>p.id).sort((a,b)=>b.sold_qty-a.sold_qty);
+    renderCategories(); renderProducts(); updateStats();
   }catch(err){
     console.error(err);
-    document.getElementById("productList").innerHTML =
-      `<div class="empty" style="grid-column:1/-1">โหลดสินค้าจาก Google Sheet ไม่สำเร็จ<br>${err.message}</div>`;
+    document.getElementById("productList").innerHTML = `<div class="empty" style="grid-column:1/-1">โหลดสินค้าจาก Google Sheet ไม่สำเร็จ<br>${err.message}</div>`;
   }
 }
 
@@ -1030,37 +717,16 @@ function matchProduct(p,q){
 function renderProducts(){
   const q = document.getElementById("searchInput").value;
   const keyword = String(q || "").trim();
-
   if(!keyword){
-    document.getElementById("productList").innerHTML =
-      `<div class="empty" style="grid-column:1/-1">
-        ยังไม่ได้ค้นหาสินค้า<br>
-        พิมพ์ชื่อ/บาร์โค้ด หรือกด “ดูสินค้าทั้งหมด”
-      </div>`;
+    document.getElementById("productList").innerHTML = `<div class="empty" style="grid-column:1/-1">ยังไม่ได้ค้นหาสินค้า<br>พิมพ์ชื่อ/บาร์โค้ด หรือกด “ดูสินค้าทั้งหมด”</div>`;
     return;
   }
-
   const filtered = products.filter(p => matchProduct(p,keyword));
-
-  document.getElementById("productList").innerHTML = filtered.length ? filtered.map(productCardHTML).join("") :
-    `<div class="empty" style="grid-column:1/-1">ไม่พบสินค้า</div>`;
+  document.getElementById("productList").innerHTML = filtered.length ? filtered.map(productCardHTML).join("") : `<div class="empty" style="grid-column:1/-1">ไม่พบสินค้า</div>`;
 }
 
 function productCardHTML(p){
-  return `
-    <div class="product" onclick="addToCart('${p.id}')">
-      <div>
-        <div class="emoji">🏷️</div>
-        <h3>${p.name}</h3>
-        ${p.sold_qty > 0 ? `<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>` : ""}
-        <span class="barcode">Barcode: ${p.barcode || "-"}</span>
-      </div>
-      <div class="bottom">
-        <div class="price">฿${money(p.price)}</div>
-        <div class="stock">เหลือ<br><b>${money(p.stock)} ${p.unit || "ชิ้น"}</b></div>
-      </div>
-    </div>
-  `;
+  return `<div class="product" onclick="addToCart('${p.id}')"><div><div class="emoji">🏷️</div><h3>${p.name}</h3>${p.sold_qty > 0 ? `<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>` : ""}<span class="barcode">Barcode: ${p.barcode || "-"}</span></div><div class="bottom"><div class="price">฿${money(p.price)}</div><div class="stock">เหลือ<br><b>${money(p.stock)} ${p.unit || "ชิ้น"}</b></div></div></div>`;
 }
 
 function handleSearchEnter(e){
@@ -1238,7 +904,10 @@ async function checkout(){
     const result = await res.json();
 
     if(!result.success){
-      showErrorPopup(result.message || "จำนวนสินค้าไม่พอจำหน่าย หรือกรอกเกินสต๊อก");
+      showPaymentModal([
+        {label:"สถานะ", value:"ชำระเงินไม่สำเร็จ"},
+        {label:"ข้อความ", value: result.message || "เกิดข้อผิดพลาด"}
+      ], "ชำระไม่สำเร็จ", "!");
       return;
     }
 
@@ -1271,63 +940,19 @@ async function checkout(){
 
     renderCart();
     await 
-let allProductsCategory = "ทั้งหมด";
-
-function openAllProductsModal(){
-  document.getElementById("allProductsModal").classList.add("active");
-  renderAllProductsCategories();
-  renderAllProductsModal();
-}
-
-function closeAllProductsModal(){
-  document.getElementById("allProductsModal").classList.remove("active");
-}
-
-function renderAllProductsCategories(){
-  const cats = ["ทั้งหมด", ...new Set(products.map(p => p.category || "อื่นๆ"))];
-  document.getElementById("allProductsCategory").innerHTML = cats.map(cat => `
-    <button class="${cat === allProductsCategory ? "active" : ""}" onclick="setAllProductsCategory('${cat}')">${cat}</button>
-  `).join("");
-}
-
-function setAllProductsCategory(cat){
-  allProductsCategory = cat;
-  renderAllProductsCategories();
-  renderAllProductsModal();
-}
-
-function renderAllProductsModal(){
-  const q = String(document.getElementById("allProductsSearch").value || "").trim().toLowerCase();
-
-  const filtered = products.filter(p => {
-    const matchCategory = allProductsCategory === "ทั้งหมด" || (p.category || "อื่นๆ") === allProductsCategory;
-    const matchKeyword = !q ||
-      String(p.name || "").toLowerCase().includes(q) ||
-      String(p.barcode || "").toLowerCase().includes(q) ||
-      String(p.category || "").toLowerCase().includes(q);
-
-    return matchCategory && matchKeyword;
-  });
-
-  document.getElementById("allProductsGrid").innerHTML = filtered.length ? filtered.map(p => `
-    <div class="product" onclick="addToCartFromModal('${p.id}')">
-      <div>
-        <div class="emoji">🏷️</div>
-        <h3>${p.name}</h3>
-        ${p.sold_qty > 0 ? `<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>` : ""}
-        <span class="barcode">Barcode: ${p.barcode || "-"}</span>
-      </div>
-      <div class="bottom">
-        <div class="price">฿${money(p.price)}</div>
-        <div class="stock">เหลือ<br><b>${money(p.stock)} ${p.unit || "ชิ้น"}</b></div>
-      </div>
-    </div>
-  `).join("") : `<div class="empty" style="grid-column:1/-1">ไม่พบสินค้า</div>`;
-}
-
-function addToCartFromModal(id){
-  addToCart(id);
-}
+function showErrorPopup(message){const old=document.getElementById("errorPopup");if(old)old.remove();const popup=document.createElement("div");popup.id="errorPopup";popup.innerHTML=`<div class="popup-overlay"><div class="popup-card"><div class="popup-icon">⚠️</div><h3>ไม่สามารถทำรายการได้</h3><p>${message}</p><button onclick="closeErrorPopup()">ตกลง</button></div></div>`;document.body.appendChild(popup)}
+function closeErrorPopup(){const popup=document.getElementById("errorPopup");if(popup)popup.remove()}
+let allProductsCategory="ทั้งหมด";
+function openAllProductsModal(){document.getElementById("allProductsModal").classList.add("active");renderAllProductsCategories();renderAllProductsModal()}
+function closeAllProductsModal(){document.getElementById("allProductsModal").classList.remove("active")}
+function renderAllProductsCategories(){const cats=["ทั้งหมด",...new Set(products.map(p=>p.category||"อื่นๆ"))];document.getElementById("allProductsCategory").innerHTML=cats.map(cat=>`<button class="${cat===allProductsCategory?"active":""}" onclick="setAllProductsCategory('${cat}')">${cat}</button>`).join("")}
+function setAllProductsCategory(cat){allProductsCategory=cat;renderAllProductsCategories();renderAllProductsModal()}
+function renderAllProductsModal(){const q=String(document.getElementById("allProductsSearch").value||"").trim().toLowerCase();const filtered=products.filter(p=>{const mc=allProductsCategory==="ทั้งหมด"||(p.category||"อื่นๆ")===allProductsCategory;const mk=!q||String(p.name||"").toLowerCase().includes(q)||String(p.barcode||"").toLowerCase().includes(q)||String(p.category||"").toLowerCase().includes(q);return mc&&mk});document.getElementById("allProductsGrid").innerHTML=filtered.length?filtered.map(p=>`<div class="product" onclick="addToCartFromModal('${p.id}')"><div><div class="emoji">🏷️</div><h3>${p.name}</h3>${p.sold_qty>0?`<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>`:""}<span class="barcode">Barcode: ${p.barcode||"-"}</span></div><div class="bottom"><div class="price">฿${money(p.price)}</div><div class="stock">เหลือ<br><b>${money(p.stock)} ${p.unit||"ชิ้น"}</b></div></div></div>`).join(""):`<div class="empty" style="grid-column:1/-1">ไม่พบสินค้า</div>`}
+function addToCartFromModal(id){addToCart(id)}
+let sellScanner=null,sellScannerRunning=false,lastSellScannedCode="";
+function setSellScanStatus(text){const status=document.getElementById("sellScanStatus");if(status)status.textContent=text}
+async function openSellScanner(){const modal=document.getElementById("sellScannerModal");if(!modal)return;modal.classList.add("active");setSellScanStatus("กำลังเตรียมกล้อง...");if(typeof Html5Qrcode==="undefined"){setSellScanStatus("โหลดตัวสแกนไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ");return}if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){setSellScanStatus("Browser นี้ไม่รองรับการเปิดกล้อง");return}await new Promise(r=>setTimeout(r,650));try{if(sellScannerRunning){setSellScanStatus("กล้องเปิดอยู่แล้ว");return}if(!sellScanner){sellScanner=new Html5Qrcode("sellBarcodeReader",{verbose:false})}setSellScanStatus("กำลังขอสิทธิ์กล้อง...");const cameras=await Html5Qrcode.getCameras();if(!cameras||cameras.length===0){setSellScanStatus("ไม่พบกล้องในอุปกรณ์นี้");return}let cameraId=cameras[cameras.length-1].id;const backCamera=cameras.find(cam=>{const label=String(cam.label||"").toLowerCase();return label.includes("back")||label.includes("rear")||label.includes("environment")});if(backCamera)cameraId=backCamera.id;setSellScanStatus("กำลังเปิดกล้อง...");await sellScanner.start(cameraId,{fps:10,qrbox:function(w,h){const m=Math.min(w,h);const width=Math.floor(m*.82);const height=Math.floor(width*.52);return{width,height}},aspectRatio:1.777},async(decodedText)=>{const code=String(decodedText||"").trim();if(!code||code===lastSellScannedCode)return;lastSellScannedCode=code;const found=products.find(p=>String(p.barcode||"").trim()===code);if(!found){setSellScanStatus("ไม่พบสินค้า: "+code);showErrorPopup("ไม่พบสินค้านี้ในระบบ: "+code);setTimeout(()=>{lastSellScannedCode=""},1500);return}document.getElementById("searchInput").value=code;renderProducts();addToCart(found.id);setSellScanStatus("เพิ่มเข้าตะกร้าแล้ว: "+found.name);await closeSellScanner(false);setTimeout(()=>{lastSellScannedCode=""},1200)},()=>{});sellScannerRunning=true;setSellScanStatus("พร้อมสแกนแล้ว")}catch(err){console.error(err);let msg=err&&err.message?err.message:String(err);if(msg.includes("NotAllowedError")||msg.includes("Permission")){msg="ยังไม่ได้อนุญาตกล้อง กรุณากด Allow Camera"}else if(msg.includes("NotFoundError")){msg="ไม่พบกล้องในอุปกรณ์นี้"}else if(msg.includes("NotReadableError")){msg="กล้องถูกใช้งานอยู่ในแอป/แท็บอื่น"}setSellScanStatus("เปิดกล้องไม่สำเร็จ: "+msg)}}
+async function closeSellScanner(clearReader=true){const modal=document.getElementById("sellScannerModal");try{if(sellScanner&&sellScannerRunning){await sellScanner.stop();sellScannerRunning=false}if(sellScanner&&clearReader){await sellScanner.clear()}}catch(err){console.warn(err)}if(modal)modal.classList.remove("active")}
 
 loadProducts();
 
@@ -1342,160 +967,6 @@ loadProducts();
 function updateStats(){
   const low = products.filter(p => p.stock <= p.reorder).length;
   document.getElementById("lowStock").innerText = low;
-}
-
-
-function showErrorPopup(message){
-  const old = document.getElementById("errorPopup");
-  if(old) old.remove();
-
-  const popup = document.createElement("div");
-  popup.id = "errorPopup";
-  popup.innerHTML = `
-    <div class="popup-overlay">
-      <div class="popup-card">
-        <div class="popup-icon">⚠️</div>
-        <h3>ไม่สามารถทำรายการได้</h3>
-        <p>${message}</p>
-        <button onclick="closeErrorPopup()">ตกลง</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(popup);
-}
-
-function closeErrorPopup(){
-  const popup = document.getElementById("errorPopup");
-  if(popup) popup.remove();
-}
-
-let sellScanner = null;
-let sellScannerRunning = false;
-let lastSellScannedCode = "";
-
-function setSellScanStatus(text){
-  const status = document.getElementById("sellScanStatus");
-  if(status) status.textContent = text;
-}
-
-async function openSellScanner(){
-  const modal = document.getElementById("sellScannerModal");
-  if(!modal) return;
-
-  modal.classList.add("active");
-  setSellScanStatus("กำลังเตรียมกล้อง...");
-
-  if(typeof Html5Qrcode === "undefined"){
-    setSellScanStatus("โหลดตัวสแกนไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ");
-    return;
-  }
-
-  await new Promise(resolve => setTimeout(resolve, 650));
-
-  try{
-    if(!sellScanner){
-      sellScanner = new Html5Qrcode("sellBarcodeReader", { verbose:false });
-    }
-
-    if(sellScannerRunning){
-      setSellScanStatus("กล้องเปิดอยู่แล้ว");
-      return;
-    }
-
-    setSellScanStatus("กำลังขอสิทธิ์กล้อง...");
-
-    const cameras = await Html5Qrcode.getCameras();
-
-    if(!cameras || cameras.length === 0){
-      setSellScanStatus("ไม่พบกล้องในอุปกรณ์นี้");
-      return;
-    }
-
-    let cameraId = cameras[cameras.length - 1].id;
-
-    const backCamera = cameras.find(cam => {
-      const label = String(cam.label || "").toLowerCase();
-      return label.includes("back") || label.includes("rear") || label.includes("environment");
-    });
-
-    if(backCamera) cameraId = backCamera.id;
-
-    await sellScanner.start(
-      cameraId,
-      {
-        fps: 10,
-        qrbox: function(viewfinderWidth, viewfinderHeight){
-          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-          const width = Math.floor(minEdge * 0.82);
-          const height = Math.floor(width * 0.52);
-          return { width, height };
-        },
-        aspectRatio: 1.777
-      },
-      async (decodedText) => {
-        const code = String(decodedText || "").trim();
-
-        if(!code || code === lastSellScannedCode) return;
-        lastSellScannedCode = code;
-
-        const found = products.find(p => String(p.barcode || "").trim() === code);
-
-        if(!found){
-          setSellScanStatus("ไม่พบสินค้า: " + code);
-          showErrorPopup("ไม่พบสินค้านี้ในระบบ: " + code);
-          setTimeout(() => { lastSellScannedCode = ""; }, 1500);
-          return;
-        }
-
-        document.getElementById("searchInput").value = code;
-        renderProducts();
-        addToCart(found.id);
-        setSellScanStatus("เจอสินค้าและเพิ่มเข้าตะกร้าแล้ว: " + found.name);
-
-        await closeSellScanner(false);
-
-        setTimeout(() => { lastSellScannedCode = ""; }, 1200);
-      },
-      () => {}
-    );
-
-    sellScannerRunning = true;
-    setSellScanStatus("พร้อมสแกนแล้ว");
-
-  }catch(err){
-    console.error(err);
-
-    let msg = err && err.message ? err.message : String(err);
-
-    if(msg.includes("NotAllowedError") || msg.includes("Permission")){
-      msg = "ยังไม่ได้อนุญาตกล้อง กรุณากด Allow Camera";
-    }else if(msg.includes("NotFoundError")){
-      msg = "ไม่พบกล้องในอุปกรณ์นี้";
-    }else if(msg.includes("NotReadableError")){
-      msg = "กล้องถูกใช้งานอยู่ในแอป/แท็บอื่น";
-    }
-
-    setSellScanStatus("เปิดกล้องไม่สำเร็จ: " + msg);
-  }
-}
-
-async function closeSellScanner(clearReader = true){
-  const modal = document.getElementById("sellScannerModal");
-
-  try{
-    if(sellScanner && sellScannerRunning){
-      await sellScanner.stop();
-      sellScannerRunning = false;
-    }
-
-    if(sellScanner && clearReader){
-      await sellScanner.clear();
-    }
-  }catch(err){
-    console.warn(err);
-  }
-
-  if(modal) modal.classList.remove("active");
 }
 
 loadProducts();
