@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koicerys POS | สต๊อกสินค้า stock-categories-surgical-v2</title>
+<title>Koicerys POS | สต๊อกสินค้า stock-categories-surgical-v3</title>
 <style>
 :root{
   --blue:#3468f5;
@@ -478,7 +478,7 @@ body{
     <div class="stock-scanner-head">
       <h3>สแกนค้นหาสต๊อก</h3>
       <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะค้นหาสต๊อกให้อัตโนมัติ</p>
-      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stock-categories-surgical-v2</div>
+      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stock-categories-surgical-v3</div>
     </div>
     <div class="stock-scanner-reader">
       <div id="stockBarcodeReader"></div>
@@ -496,10 +496,11 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzzkIqWxnmrFj48bTks8tC4
 
 
 let categories = [];
+const MASTER_CATEGORIES = ['เครื่องดื่ม','แอลกอฮอล์','ของสด','UHT / นม','อาหาร','เครื่องปรุง','Herb','PC','CG','ยา','ขนม','แป้ง/ข้าว','อื่น ๆ'];
 
 async function loadCategories(){
   try{
-    const res = await fetch(API_URL + "?action=getCategories");
+    const res = await fetch(API_URL + "?action=getCategories&v=" + Date.now());
     const json = await res.json();
 
     let raw = [];
@@ -512,7 +513,7 @@ async function loadCategories(){
       raw = json;
     }
 
-    categories = raw
+    const apiCategories = raw
       .map(x => ({
         category: String((typeof x === "string" ? x : x.category) || "").trim(),
         sort_order: Number((typeof x === "string" ? 999 : (x.sort_order || 999)))
@@ -521,12 +522,16 @@ async function loadCategories(){
       .sort((a,b) => a.sort_order - b.sort_order)
       .map(x => x.category);
 
-    categories = [...new Set(categories)];
+    // ใช้ master list ฝังไว้เป็นฐานเสมอ เพื่อกัน API/cache ทำให้หมวดมาไม่ครบ
+    categories = [...new Set([...MASTER_CATEGORIES, ...apiCategories])];
+
   }catch(err){
     console.warn("loadCategories failed:", err);
-    categories = [];
+    categories = [...MASTER_CATEGORIES];
   }
 }
+
+
 
 let products = [];
 let currentCategory = "ทั้งหมด";

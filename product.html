@@ -352,7 +352,7 @@ input,select{
           <option value="">กำลังโหลดสินค้าจาก Google Sheet...</option>
         </select>
         <small>ใช้เลือกสินค้าที่สร้างไว้แล้ว เพื่อแก้ข้อมูลหรือผูกบาร์โค้ด</small>
-        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-categories-surgical-v2</small>
+        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-categories-surgical-v3</small>
       </div>
 
       <input id="productId" type="hidden">
@@ -462,10 +462,11 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VT
 
 
 let categories = [];
+const MASTER_CATEGORIES = ['เครื่องดื่ม','แอลกอฮอล์','ของสด','UHT / นม','อาหาร','เครื่องปรุง','Herb','PC','CG','ยา','ขนม','แป้ง/ข้าว','อื่น ๆ'];
 
 async function loadCategories(){
   try{
-    const res = await fetch(API_URL + "?action=getCategories");
+    const res = await fetch(API_URL + "?action=getCategories&v=" + Date.now());
     const json = await res.json();
 
     let raw = [];
@@ -478,7 +479,7 @@ async function loadCategories(){
       raw = json;
     }
 
-    categories = raw
+    const apiCategories = raw
       .map(x => ({
         category: String((typeof x === "string" ? x : x.category) || "").trim(),
         sort_order: Number((typeof x === "string" ? 999 : (x.sort_order || 999)))
@@ -487,12 +488,16 @@ async function loadCategories(){
       .sort((a,b) => a.sort_order - b.sort_order)
       .map(x => x.category);
 
-    categories = [...new Set(categories)];
+    // ใช้ master list ฝังไว้เป็นฐานเสมอ เพื่อกัน API/cache ทำให้หมวดมาไม่ครบ
+    categories = [...new Set([...MASTER_CATEGORIES, ...apiCategories])];
+
   }catch(err){
     console.warn("loadCategories failed:", err);
-    categories = [];
+    categories = [...MASTER_CATEGORIES];
   }
 }
+
+
 
 let products = [];
 
