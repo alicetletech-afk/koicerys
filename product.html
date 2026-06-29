@@ -352,7 +352,7 @@ input,select{
           <option value="">กำลังโหลดสินค้าจาก Google Sheet...</option>
         </select>
         <small>ใช้เลือกสินค้าที่สร้างไว้แล้ว เพื่อแก้ข้อมูลหรือผูกบาร์โค้ด</small>
-        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-categories-v1</small>
+        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-categories-surgical-v2</small>
       </div>
 
       <input id="productId" type="hidden">
@@ -479,9 +479,13 @@ async function loadCategories(){
     }
 
     categories = raw
-      .map(x => typeof x === "string" ? x : (x.category || ""))
-      .map(x => String(x || "").trim())
-      .filter(Boolean);
+      .map(x => ({
+        category: String((typeof x === "string" ? x : x.category) || "").trim(),
+        sort_order: Number((typeof x === "string" ? 999 : (x.sort_order || 999)))
+      }))
+      .filter(x => x.category)
+      .sort((a,b) => a.sort_order - b.sort_order)
+      .map(x => x.category);
 
     categories = [...new Set(categories)];
   }catch(err){
@@ -551,13 +555,11 @@ function updateSummary(){
 }
 
 
-const fallbackCategories = ['เครื่องดื่ม','แอลกอฮอล์','ยา','ขนม','แป้ง/ข้าว','อาหาร','UHT / นม','ของแห้ง','ของใช้','นม/แช่เย็น'];
-
 function renderCategorySelect(selected = ""){
   const select = document.getElementById("category");
   if(!select) return;
 
-  const list = categories.length ? categories : fallbackCategories;
+  const list = categories.length ? categories : [];
 
   select.innerHTML = `<option value="">เลือกหมวดหมู่</option>` + list.map(cat => `
     <option value="${cat}">${cat}</option>

@@ -852,7 +852,7 @@ select,input{
         <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนขาย</button>
         <button type="button" class="all-products-btn" onclick="openAllProductsModal()">📦 ดูสินค้าทั้งหมด</button>
       </div>
-      <div class="help">ไฟล์เวอร์ชัน: index-categories-v1 · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
+      <div class="help">ไฟล์เวอร์ชัน: index-categories-surgical-v2 · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
     </div>
 
     <div class="category-wrap" id="categoryWrap"></div>
@@ -910,7 +910,7 @@ select,input{
     <div class="sell-scanner-head">
       <h3>สแกนขายสินค้า</h3>
       <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะเพิ่มเข้าตะกร้าอัตโนมัติ</p>
-      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · index-categories-v1</div>
+      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · index-ready-v14-fixed</div>
     </div>
     <div class="sell-scanner-reader">
       <div id="sellBarcodeReader"></div>
@@ -982,9 +982,13 @@ async function loadCategories(){
     }
 
     categories = raw
-      .map(x => typeof x === "string" ? x : (x.category || ""))
-      .map(x => String(x || "").trim())
-      .filter(Boolean);
+      .map(x => ({
+        category: String((typeof x === "string" ? x : x.category) || "").trim(),
+        sort_order: Number((typeof x === "string" ? 999 : (x.sort_order || 999)))
+      }))
+      .filter(x => x.category)
+      .sort((a,b) => a.sort_order - b.sort_order)
+      .map(x => x.category);
 
     categories = [...new Set(categories)];
   }catch(err){
@@ -1066,9 +1070,7 @@ async function loadProducts(){
 
 
 function renderCategories(){
-  const fromApi = categories.length ? categories : [];
-  const fromSheet = [...new Set(products.map(p => p.category).filter(Boolean))];
-  const categoriesList = [...new Set(["ทั้งหมด",...fromApi,...fromSheet])];
+  const categoriesList = categories.length ? ["ทั้งหมด", ...categories] : ["ทั้งหมด"];
 
   document.getElementById("categoryWrap").innerHTML = categoriesList.map(cat => `
     <button class="${cat === currentCategory ? "active" : ""}" onclick="setCategory('${cat}')">${cat}</button>
@@ -1430,9 +1432,7 @@ function closeAllProductsModal(){
 }
 
 function renderAllProductsCategories(){
-  const fromApi = categories.length ? categories : [];
-  const fromSheet = [...new Set(products.map(p => p.category || "อื่นๆ"))];
-  const cats = [...new Set(["ทั้งหมด", ...fromApi, ...fromSheet])];
+  const cats = categories.length ? ["ทั้งหมด", ...categories] : ["ทั้งหมด"];
 
   document.getElementById("allProductsCategory").innerHTML = cats.map(cat => `
     <button class="${cat === allProductsCategory ? "active" : ""}" onclick="setAllProductsCategory('${cat}')">${cat}</button>

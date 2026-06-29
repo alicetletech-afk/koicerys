@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koicerys POS | สต๊อกสินค้า stock-categories-v1</title>
+<title>Koicerys POS | สต๊อกสินค้า stock-categories-surgical-v2</title>
 <style>
 :root{
   --blue:#3468f5;
@@ -478,7 +478,7 @@ body{
     <div class="stock-scanner-head">
       <h3>สแกนค้นหาสต๊อก</h3>
       <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะค้นหาสต๊อกให้อัตโนมัติ</p>
-      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stock-categories-v1</div>
+      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stock-categories-surgical-v2</div>
     </div>
     <div class="stock-scanner-reader">
       <div id="stockBarcodeReader"></div>
@@ -513,9 +513,13 @@ async function loadCategories(){
     }
 
     categories = raw
-      .map(x => typeof x === "string" ? x : (x.category || ""))
-      .map(x => String(x || "").trim())
-      .filter(Boolean);
+      .map(x => ({
+        category: String((typeof x === "string" ? x : x.category) || "").trim(),
+        sort_order: Number((typeof x === "string" ? 999 : (x.sort_order || 999)))
+      }))
+      .filter(x => x.category)
+      .sort((a,b) => a.sort_order - b.sort_order)
+      .map(x => x.category);
 
     categories = [...new Set(categories)];
   }catch(err){
@@ -580,9 +584,7 @@ async function loadProducts(){
 }
 
 function renderCategories(){
-  const fromApi = categories.length ? categories : [];
-  const fromSheet = [...new Set(products.map(p => p.category).filter(Boolean))];
-  const categoriesList = [...new Set(["ทั้งหมด","ใกล้หมด",...fromApi,...fromSheet])];
+  const categoriesList = categories.length ? ["ทั้งหมด","ใกล้หมด", ...categories] : ["ทั้งหมด","ใกล้หมด"];
 
   document.getElementById("categoryWrap").innerHTML = categoriesList.map(cat => `
     <button class="${cat === currentCategory ? "active" : ""}" onclick="setCategory('${cat}')">${cat}</button>
