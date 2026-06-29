@@ -778,7 +778,7 @@ select,input{
   }
   .all-products-card{
     width:100vw;
-    height:100dvh;
+    height:100svh;
     border-radius:0;
   }
   .all-products-head{
@@ -871,6 +871,18 @@ select,input{
   color:#b91c1c;
 }
 
+
+/* viewport stability patch (iPad/iPhone/Android safe) */
+html,body{
+  overflow-x:hidden;
+  min-height:100svh;
+}
+
+/* replace dynamic viewport to stable viewport */
+.all-products-card{
+  height:100svh !important;
+}
+
 </style>
 </head>
 <body>
@@ -923,7 +935,7 @@ select,input{
         <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนขาย</button>
         <button type="button" class="all-products-btn" onclick="openAllProductsModal()">📦 ดูสินค้าทั้งหมด</button>
       </div>
-      <div class="help">ไฟล์เวอร์ชัน: index-confirm-add-v2 · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
+      <div class="help">ไฟล์เวอร์ชัน: index-viewport-stable-v1 · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
     </div>
 
     <div class="category-wrap" id="categoryWrap"></div>
