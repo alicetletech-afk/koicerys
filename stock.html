@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koicerys POS | สต๊อกสินค้า stock-categories-surgical-v3</title>
+<title>Koicerys POS | สต๊อกสินค้า stock-nosort-v1</title>
 <style>
 :root{
   --blue:#3468f5;
@@ -459,14 +459,6 @@ body{
   </div>
 
   <div class="category-wrap" id="categoryWrap"></div>
-
-  <div class="sort-wrap">
-    <button id="sortDefault" class="active" onclick="setSort('default')">ค่าเริ่มต้น</button>
-    <button id="sortLow" onclick="setSort('low')">คงเหลือน้อย</button>
-    <button id="sortHighValue" onclick="setSort('value')">มูลค่าสูง</button>
-    <button id="sortAZ" onclick="setSort('az')">A-Z</button>
-  </div>
-
   <div class="stock-grid" id="stockList">
     <div class="loading">กำลังโหลดสต๊อกจาก Google Sheet...</div>
   </div>
@@ -478,7 +470,7 @@ body{
     <div class="stock-scanner-head">
       <h3>สแกนค้นหาสต๊อก</h3>
       <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะค้นหาสต๊อกให้อัตโนมัติ</p>
-      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stock-categories-surgical-v3</div>
+      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stock-nosort-v1</div>
     </div>
     <div class="stock-scanner-reader">
       <div id="stockBarcodeReader"></div>
@@ -606,8 +598,10 @@ function setCategory(cat){
 
 function setSort(sort){
   currentSort = sort;
+
   ["sortDefault","sortLow","sortHighValue","sortAZ"].forEach(id => {
-    document.getElementById(id).classList.remove("active");
+    const el = document.getElementById(id);
+    if(el) el.classList.remove("active");
   });
 
   const map = {
@@ -617,7 +611,9 @@ function setSort(sort){
     az:"sortAZ"
   };
 
-  document.getElementById(map[sort]).classList.add("active");
+  const activeEl = document.getElementById(map[sort]);
+  if(activeEl) activeEl.classList.add("active");
+
   renderStock();
 }
 
