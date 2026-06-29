@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koicerys POS | สต๊อกสินค้า stockscan-v1</title>
+<title>Koicerys POS | สต๊อกสินค้า stock-categories-v1</title>
 <style>
 :root{
   --blue:#3468f5;
@@ -478,7 +478,7 @@ body{
     <div class="stock-scanner-head">
       <h3>สแกนค้นหาสต๊อก</h3>
       <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะค้นหาสต๊อกให้อัตโนมัติ</p>
-      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stockscan-v1</div>
+      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stock-categories-v1</div>
     </div>
     <div class="stock-scanner-reader">
       <div id="stockBarcodeReader"></div>
@@ -493,6 +493,36 @@ body{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzzkIqWxnmrFj48bTks8tC4KgOuhjfTomH6RRGUtdSgjFLrBpAbGcYuPlr2karfeXzuqQ/exec";
+
+
+let categories = [];
+
+async function loadCategories(){
+  try{
+    const res = await fetch(API_URL + "?action=getCategories");
+    const json = await res.json();
+
+    let raw = [];
+
+    if(Array.isArray(json.data)){
+      raw = json.data;
+    }else if(json.data && Array.isArray(json.data.data)){
+      raw = json.data.data;
+    }else if(Array.isArray(json)){
+      raw = json;
+    }
+
+    categories = raw
+      .map(x => typeof x === "string" ? x : (x.category || ""))
+      .map(x => String(x || "").trim())
+      .filter(Boolean);
+
+    categories = [...new Set(categories)];
+  }catch(err){
+    console.warn("loadCategories failed:", err);
+    categories = [];
+  }
+}
 
 let products = [];
 let currentCategory = "ทั้งหมด";
@@ -550,14 +580,16 @@ async function loadProducts(){
 }
 
 function renderCategories(){
-  const base = ["ทั้งหมด","ใกล้หมด","เครื่องดื่ม","แอลกอฮอล์","ยา","ขนม"];
+  const fromApi = categories.length ? categories : [];
   const fromSheet = [...new Set(products.map(p => p.category).filter(Boolean))];
-  const categories = [...new Set([...base,...fromSheet])];
+  const categoriesList = [...new Set(["ทั้งหมด","ใกล้หมด",...fromApi,...fromSheet])];
 
-  document.getElementById("categoryWrap").innerHTML = categories.map(cat => `
+  document.getElementById("categoryWrap").innerHTML = categoriesList.map(cat => `
     <button class="${cat === currentCategory ? "active" : ""}" onclick="setCategory('${cat}')">${cat}</button>
   `).join("");
 }
+
+
 
 function setCategory(cat){
   currentCategory = cat;
@@ -796,7 +828,7 @@ async function closeStockScanner(clearReader = true){
   if(modal) modal.classList.remove("active");
 }
 
-loadProducts();
+loadCategories().then(loadProducts);
 </script>
 
 </body>

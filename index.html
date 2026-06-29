@@ -852,7 +852,7 @@ select,input{
         <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนขาย</button>
         <button type="button" class="all-products-btn" onclick="openAllProductsModal()">📦 ดูสินค้าทั้งหมด</button>
       </div>
-      <div class="help">ไฟล์เวอร์ชัน: index-ready-v14-fixed · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
+      <div class="help">ไฟล์เวอร์ชัน: index-categories-v1 · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
     </div>
 
     <div class="category-wrap" id="categoryWrap"></div>
@@ -910,7 +910,7 @@ select,input{
     <div class="sell-scanner-head">
       <h3>สแกนขายสินค้า</h3>
       <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะเพิ่มเข้าตะกร้าอัตโนมัติ</p>
-      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · index-ready-v14-fixed</div>
+      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · index-categories-v1</div>
     </div>
     <div class="sell-scanner-reader">
       <div id="sellBarcodeReader"></div>
@@ -962,6 +962,36 @@ select,input{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
+
+
+let categories = [];
+
+async function loadCategories(){
+  try{
+    const res = await fetch(API_URL + "?action=getCategories");
+    const json = await res.json();
+
+    let raw = [];
+
+    if(Array.isArray(json.data)){
+      raw = json.data;
+    }else if(json.data && Array.isArray(json.data.data)){
+      raw = json.data.data;
+    }else if(Array.isArray(json)){
+      raw = json;
+    }
+
+    categories = raw
+      .map(x => typeof x === "string" ? x : (x.category || ""))
+      .map(x => String(x || "").trim())
+      .filter(Boolean);
+
+    categories = [...new Set(categories)];
+  }catch(err){
+    console.warn("loadCategories failed:", err);
+    categories = [];
+  }
+}
 
 let products = [];
 let cart = [];
@@ -1036,14 +1066,16 @@ async function loadProducts(){
 
 
 function renderCategories(){
-  const base = ["ทั้งหมด","เครื่องดื่ม","แอลกอฮอล์","ยา","ขนม"];
+  const fromApi = categories.length ? categories : [];
   const fromSheet = [...new Set(products.map(p => p.category).filter(Boolean))];
-  const categories = [...new Set([...base,...fromSheet])];
+  const categoriesList = [...new Set(["ทั้งหมด",...fromApi,...fromSheet])];
 
-  document.getElementById("categoryWrap").innerHTML = categories.map(cat => `
+  document.getElementById("categoryWrap").innerHTML = categoriesList.map(cat => `
     <button class="${cat === currentCategory ? "active" : ""}" onclick="setCategory('${cat}')">${cat}</button>
   `).join("");
 }
+
+
 
 function setCategory(cat){
   currentCategory = cat;
@@ -1320,7 +1352,7 @@ async function checkout(){
     document.getElementById("transferRef").value = "";
 
     renderCart();
-    await loadProducts();
+    await loadCategories().then(loadProducts);
 
   }catch(err){
     showPaymentModal([
@@ -1398,12 +1430,16 @@ function closeAllProductsModal(){
 }
 
 function renderAllProductsCategories(){
-  const cats = ["ทั้งหมด", ...new Set(products.map(p => p.category || "อื่นๆ"))];
+  const fromApi = categories.length ? categories : [];
+  const fromSheet = [...new Set(products.map(p => p.category || "อื่นๆ"))];
+  const cats = [...new Set(["ทั้งหมด", ...fromApi, ...fromSheet])];
 
   document.getElementById("allProductsCategory").innerHTML = cats.map(cat => `
     <button class="${cat === allProductsCategory ? "active" : ""}" onclick="setAllProductsCategory('${cat}')">${cat}</button>
   `).join("");
 }
+
+
 
 function setAllProductsCategory(cat){
   allProductsCategory = cat;
