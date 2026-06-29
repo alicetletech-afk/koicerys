@@ -380,9 +380,7 @@ input,select{
   display:grid;
   gap:10px;
 }
-.existing-product-box label{
-  color:#1d4ed8;
-}
+.existing-product-box label{color:#1d4ed8}
 .existing-product-box small{
   color:#475569;
   font-weight:800;
@@ -417,10 +415,7 @@ input,select{
   box-shadow:0 28px 80px rgba(15,23,42,.28);
   overflow:hidden;
 }
-.scanner-modal-head{
-  padding:20px 20px 10px;
-  text-align:center;
-}
+.scanner-modal-head{padding:20px 20px 10px;text-align:center}
 .scanner-modal-head h3{margin:0;font-size:1.25rem;font-weight:950}
 .scanner-modal-head p{margin:8px 0 0;color:var(--muted);font-size:.9rem}
 .scan-status{
@@ -493,7 +488,7 @@ input,select{
 <main class="main">
   <section>
     <div class="section-title">
-      <h2 id="formTitle">เพิ่มสินค้าใหม่ / ผูกบาร์โค้ด</h2>
+      <h2 id="formTitle">เพิ่มสินค้าใหม่</h2>
       <small>Master data</small>
     </div>
 
@@ -503,7 +498,8 @@ input,select{
       <select id="existingProductSelect" onchange="selectExistingProduct(this.value)">
         <option value="">กำลังโหลดสินค้าจาก Google Sheet...</option>
       </select>
-      <small>ใช้สำหรับเลือกสินค้าที่สร้างไว้แล้ว เพื่อแก้ข้อมูลหรือผูกบาร์โค้ด</small><small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-barcode-v3</small>
+      <small>ใช้เลือกสินค้าที่สร้างไว้แล้ว เพื่อแก้ข้อมูลหรือผูกบาร์โค้ด</small>
+      <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-array-fix-v5</small>
     </div>
 
       <input id="productId" type="hidden">
@@ -632,22 +628,34 @@ async function loadProducts(){
     const res = await fetch(API_URL + "?action=getProducts");
     const json = await res.json();
 
-    if(!json.success){
-      throw new Error(json.message || "โหลดข้อมูลไม่สำเร็จ");
+    let raw = [];
+
+    if(Array.isArray(json.data)){
+      raw = json.data;
+    }else if(json.data && Array.isArray(json.data.data)){
+      raw = json.data.data;
+    }else if(Array.isArray(json)){
+      raw = json;
+    }else{
+      throw new Error(json.message || "รูปแบบข้อมูลสินค้าไม่ถูกต้อง");
     }
 
-    products = json.data.map(p => ({
-      id: String(p.product_id),
-      barcode: String(p.barcode || ""),
-      name: String(p.name || ""),
-      category: String(p.category || ""),
-      cost: Number(p.cost || 0),
-      price: Number(p.price || 0),
-      stock: Number(p.stock || 0),
-      reorder: Number(p.reorder_point || 0),
-      unit: String(p.unit || "ชิ้น"),
-      status: String(p.status || "active")
-    }));
+    products = raw
+      .filter(p => String(p.status || "active").toLowerCase() === "active")
+      .map(p => ({
+        id: String(p.product_id || p.id || ""),
+        product_id: String(p.product_id || p.id || ""),
+        barcode: String(p.barcode || ""),
+        name: String(p.name || ""),
+        category: String(p.category || ""),
+        cost: Number(p.cost || 0),
+        price: Number(p.price || 0),
+        stock: Number(p.stock || 0),
+        reorder: Number(p.reorder_point || p.reorder || 0),
+        unit: String(p.unit || "ชิ้น"),
+        status: String(p.status || "active")
+      }))
+      .filter(p => p.id);
 
     renderProducts();
     renderExistingProductSelect();
@@ -662,19 +670,6 @@ async function loadProducts(){
       select.innerHTML = `<option value="">โหลดสินค้าจาก Google Sheet ไม่สำเร็จ</option>`;
     }
   }
-}
-
-function updateSummary(){
-  document.getElementById("totalSku").innerText = products.length;
-  document.getElementById("activeSku").innerText = products.filter(p => p.status === "active").length;
-}
-
-function matchProduct(p,q){
-  q = String(q || "").trim().toLowerCase();
-  return !q ||
-    p.name.toLowerCase().includes(q) ||
-    p.barcode.includes(q) ||
-    p.category.toLowerCase().includes(q);
 }
 
 function renderProducts(){
@@ -788,7 +783,8 @@ async function saveProduct(){
     "&stock=" + encodeURIComponent(payload.stock) +
     "&reorder_point=" + encodeURIComponent(payload.reorder_point) +
     "&unit=" + encodeURIComponent(payload.unit) +
-    "&status=" + encodeURIComponent(payload.status);
+    "&status=" + encodeURIComponent(payload.status) +
+    "&user_email=" + encodeURIComponent(window.CURRENT_USER_EMAIL || "");
 
   try{
     const res = await fetch(url);
@@ -808,7 +804,75 @@ async function saveProduct(){
     ]);
 
     resetForm();
-    await 
+    await loadProducts();
+
+  }catch(err){
+    showModal("เชื่อมต่อไม่สำเร็จ", [
+      {label:"ข้อความ", value:err.message}
+    ]);
+  }
+}
+
+async function toggleStatus(id){
+  const p = products.find(item => item.id === String(id));
+  if(!p) return;
+
+  const newStatus = p.status === "active" ? "inactive" : "active";
+
+  const url =
+    API_URL +
+    "?action=updateProduct" +
+    "&product_id=" + encodeURIComponent(p.id) +
+    "&barcode=" + encodeURIComponent(p.barcode) +
+    "&name=" + encodeURIComponent(p.name) +
+    "&category=" + encodeURIComponent(p.category) +
+    "&cost=" + encodeURIComponent(p.cost) +
+    "&price=" + encodeURIComponent(p.price) +
+    "&stock=" + encodeURIComponent(p.stock) +
+    "&reorder_point=" + encodeURIComponent(p.reorder) +
+    "&unit=" + encodeURIComponent(p.unit) +
+    "&status=" + encodeURIComponent(newStatus) +
+    "&user_email=" + encodeURIComponent(window.CURRENT_USER_EMAIL || "");
+
+  try{
+    const res = await fetch(url);
+    const result = await res.json();
+
+    if(result.success){
+      showModal("อัปเดตสถานะสำเร็จ", [
+        {label:"สินค้า", value:p.name},
+        {label:"สถานะใหม่", value:newStatus}
+      ]);
+
+      await loadProducts();
+    }else{
+      showModal("อัปเดตไม่สำเร็จ", [
+        {label:"ข้อความ", value:result.message || "เกิดข้อผิดพลาด"}
+      ]);
+    }
+  }catch(err){
+    showModal("เชื่อมต่อไม่สำเร็จ", [
+      {label:"ข้อความ", value:err.message}
+    ]);
+  }
+}
+
+function showModal(title, lines){
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("modalBody").innerHTML = lines.map(item => `
+    <div class="modal-line">
+      <span>${item.label}</span>
+      <strong>${item.value}</strong>
+    </div>
+  `).join("");
+  document.getElementById("resultModal").classList.add("active");
+}
+
+function closeModal(){
+  document.getElementById("resultModal").classList.remove("active");
+}
+
+
 function renderExistingProductSelect(){
   const select = document.getElementById("existingProductSelect");
   if(!select) return;
@@ -823,6 +887,11 @@ function renderExistingProductSelect(){
 function selectExistingProduct(id){
   if(!id) return;
 
+  if(typeof editProduct === "function"){
+    editProduct(id);
+    return;
+  }
+
   const p = products.find(item => String(item.id) === String(id));
   if(!p) return;
 
@@ -836,9 +905,6 @@ function selectExistingProduct(id){
   document.getElementById("reorder").value = p.reorder || 0;
   document.getElementById("unit").value = p.unit || "ชิ้น";
   document.getElementById("status").value = p.status || "active";
-
-  const title = document.getElementById("formTitle");
-  if(title) title.innerText = "แก้ไขสินค้า / ผูกบาร์โค้ด";
 }
 
 let barcodeScanner = null;
@@ -852,6 +918,8 @@ function setScanStatus(text){
 
 async function openBarcodeScanner(){
   const modal = document.getElementById("scannerModal");
+  if(!modal) return;
+
   modal.classList.add("active");
   setScanStatus("กำลังเตรียมกล้อง...");
 
@@ -860,14 +928,17 @@ async function openBarcodeScanner(){
     return;
   }
 
-  await new Promise(resolve => setTimeout(resolve, 350));
+  await new Promise(resolve => setTimeout(resolve, 450));
 
   try{
     if(!barcodeScanner){
       barcodeScanner = new Html5Qrcode("barcodeReader");
     }
 
-    if(scannerRunning) return;
+    if(scannerRunning){
+      setScanStatus("กล้องเปิดอยู่แล้ว");
+      return;
+    }
 
     await barcodeScanner.start(
       { facingMode: "environment" },
@@ -911,76 +982,11 @@ async function closeBarcodeScanner(clearReader = true){
     if(barcodeScanner && clearReader){
       await barcodeScanner.clear();
     }
-  }catch(err){}
+  }catch(err){
+    console.warn(err);
+  }
 
   if(modal) modal.classList.remove("active");
-}
-
-loadProducts();
-
-  }catch(err){
-    showModal("เชื่อมต่อไม่สำเร็จ", [
-      {label:"ข้อความ", value:err.message}
-    ]);
-  }
-}
-
-async function toggleStatus(id){
-  const p = products.find(item => item.id === String(id));
-  if(!p) return;
-
-  const newStatus = p.status === "active" ? "inactive" : "active";
-
-  const url =
-    API_URL +
-    "?action=updateProduct" +
-    "&product_id=" + encodeURIComponent(p.id) +
-    "&barcode=" + encodeURIComponent(p.barcode) +
-    "&name=" + encodeURIComponent(p.name) +
-    "&category=" + encodeURIComponent(p.category) +
-    "&cost=" + encodeURIComponent(p.cost) +
-    "&price=" + encodeURIComponent(p.price) +
-    "&stock=" + encodeURIComponent(p.stock) +
-    "&reorder_point=" + encodeURIComponent(p.reorder) +
-    "&unit=" + encodeURIComponent(p.unit) +
-    "&status=" + encodeURIComponent(newStatus);
-
-  try{
-    const res = await fetch(url);
-    const result = await res.json();
-
-    if(result.success){
-      showModal("อัปเดตสถานะสำเร็จ", [
-        {label:"สินค้า", value:p.name},
-        {label:"สถานะใหม่", value:newStatus}
-      ]);
-
-      await loadProducts();
-    }else{
-      showModal("อัปเดตไม่สำเร็จ", [
-        {label:"ข้อความ", value:result.message || "เกิดข้อผิดพลาด"}
-      ]);
-    }
-  }catch(err){
-    showModal("เชื่อมต่อไม่สำเร็จ", [
-      {label:"ข้อความ", value:err.message}
-    ]);
-  }
-}
-
-function showModal(title, lines){
-  document.getElementById("modalTitle").innerText = title;
-  document.getElementById("modalBody").innerHTML = lines.map(item => `
-    <div class="modal-line">
-      <span>${item.label}</span>
-      <strong>${item.value}</strong>
-    </div>
-  `).join("");
-  document.getElementById("resultModal").classList.add("active");
-}
-
-function closeModal(){
-  document.getElementById("resultModal").classList.remove("active");
 }
 
 loadProducts();
