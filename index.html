@@ -651,6 +651,128 @@ select,input{
     margin-top:6px;
   }
 }
+
+.all-products-btn{
+  padding:15px 18px;
+  border:none;
+  border-radius:16px;
+  background:#fff;
+  color:#173b92;
+  border:1px solid #bfdbfe;
+  font-weight:950;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.sold-badge{
+  display:inline-block;
+  margin-top:7px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#d1fae5;
+  color:#047857;
+  border:1px solid #6ee7b7;
+  font-size:.75rem;
+  font-weight:900;
+}
+.all-products-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.58);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10002;
+  padding:18px;
+}
+.all-products-overlay.active{display:flex}
+.all-products-card{
+  width:min(96vw,980px);
+  height:min(88vh,760px);
+  background:#fff;
+  border-radius:28px;
+  border:1px solid var(--line);
+  box-shadow:0 28px 80px rgba(15,23,42,.28);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.all-products-head{
+  padding:20px;
+  border-bottom:1px solid var(--line);
+  display:grid;
+  gap:12px;
+}
+.all-products-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+.all-products-title h3{
+  margin:0;
+  font-size:1.35rem;
+  font-weight:950;
+}
+.all-products-close{
+  border:0;
+  background:#fee2e2;
+  color:#b91c1c;
+  border-radius:14px;
+  padding:10px 14px;
+  font-weight:950;
+  cursor:pointer;
+}
+.all-products-search{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+}
+.all-products-search input{
+  width:100%;
+}
+.all-products-body{
+  padding:18px;
+  overflow:auto;
+}
+.all-products-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:14px;
+}
+.all-products-filter{
+  display:flex;
+  gap:10px;
+  overflow:auto;
+  scrollbar-width:none;
+  padding-bottom:2px;
+}
+.all-products-filter::-webkit-scrollbar{display:none}
+.all-products-filter button{
+  border:1px solid var(--line);
+  background:white;
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:950;
+  color:#475569;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.all-products-filter button.active{
+  background:#eaf1ff;
+  color:#245bd4;
+  border-color:#bcd2ff;
+}
+@media(max-width:720px){
+  .all-products-card{
+    width:100vw;
+    height:100vh;
+    border-radius:0;
+  }
+  .all-products-search{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -700,9 +822,10 @@ select,input{
       <div class="search-wrap">
         <input id="searchInput" class="search" placeholder="ยิงบาร์โค้ด หรือค้นหาชื่อสินค้า" oninput="renderProducts()" onkeydown="handleSearchEnter(event)">
         <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนแล้วขายทันที</button>
+        <button type="button" class="all-products-btn" onclick="openAllProductsModal()">📦 ดูสินค้าทั้งหมด</button>
         <button class="search-btn" onclick="renderProducts()">ค้นหา</button>
       </div>
-      <div class="help">คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ · index-clean-scan-v6</div>
+      <div class="help">ไฟล์เวอร์ชัน: index-popup-products-v8 · ไฟล์เวอร์ชัน: index-scanfilter-v7 · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ · index-clean-scan-v6</div>
     </div>
 
     <div class="category-wrap" id="categoryWrap"></div>
@@ -770,6 +893,27 @@ select,input{
     </div>
   </div>
 </div>
+
+
+<div id="allProductsModal" class="all-products-overlay">
+  <div class="all-products-card">
+    <div class="all-products-head">
+      <div class="all-products-title">
+        <h3>สินค้าทั้งหมด</h3>
+        <button class="all-products-close" onclick="closeAllProductsModal()">ปิด</button>
+      </div>
+      <div class="all-products-search">
+        <input id="allProductsSearch" placeholder="ค้นหาชื่อสินค้า / บาร์โค้ด / หมวดหมู่" oninput="renderAllProductsModal()">
+        <button class="search-btn" onclick="renderAllProductsModal()">ค้นหา</button>
+      </div>
+      <div id="allProductsCategory" class="all-products-filter"></div>
+    </div>
+    <div class="all-products-body">
+      <div id="allProductsGrid" class="all-products-grid"></div>
+    </div>
+  </div>
+</div>
+
 
 <div id="paymentModal" class="modal-overlay">
   <div class="modal-card">
@@ -885,25 +1029,38 @@ function matchProduct(p,q){
 
 function renderProducts(){
   const q = document.getElementById("searchInput").value;
-  const filtered = products.filter(p => {
-    const matchCat = currentCategory === "ทั้งหมด" || p.category === currentCategory;
-    return matchCat && matchProduct(p,q);
-  });
+  const keyword = String(q || "").trim();
 
-  document.getElementById("productList").innerHTML = filtered.length ? filtered.map(p => `
+  if(!keyword){
+    document.getElementById("productList").innerHTML =
+      `<div class="empty" style="grid-column:1/-1">
+        ยังไม่ได้ค้นหาสินค้า<br>
+        พิมพ์ชื่อ/บาร์โค้ด หรือกด “ดูสินค้าทั้งหมด”
+      </div>`;
+    return;
+  }
+
+  const filtered = products.filter(p => matchProduct(p,keyword));
+
+  document.getElementById("productList").innerHTML = filtered.length ? filtered.map(productCardHTML).join("") :
+    `<div class="empty" style="grid-column:1/-1">ไม่พบสินค้า</div>`;
+}
+
+function productCardHTML(p){
+  return `
     <div class="product" onclick="addToCart('${p.id}')">
       <div>
-        <div class="emoji">${getEmoji(p.category)}</div>
+        <div class="emoji">🏷️</div>
         <h3>${p.name}</h3>
-        ${p.sold_qty > 0 ? `<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span><br>` : ""}
-        <span class="barcode">Barcode: ${p.barcode || "ยังไม่มี"}</span>
+        ${p.sold_qty > 0 ? `<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>` : ""}
+        <span class="barcode">Barcode: ${p.barcode || "-"}</span>
       </div>
       <div class="bottom">
         <div class="price">฿${money(p.price)}</div>
-        <div class="stock">เหลือ<br>${money(p.stock)} ${p.unit}</div>
+        <div class="stock">เหลือ<br><b>${money(p.stock)} ${p.unit || "ชิ้น"}</b></div>
       </div>
     </div>
-  `).join("") : `<div class="empty" style="grid-column:1/-1">ไม่พบสินค้า</div>`;
+  `;
 }
 
 function handleSearchEnter(e){
@@ -1113,7 +1270,66 @@ async function checkout(){
     document.getElementById("transferRef").value = "";
 
     renderCart();
-    await loadProducts();
+    await 
+let allProductsCategory = "ทั้งหมด";
+
+function openAllProductsModal(){
+  document.getElementById("allProductsModal").classList.add("active");
+  renderAllProductsCategories();
+  renderAllProductsModal();
+}
+
+function closeAllProductsModal(){
+  document.getElementById("allProductsModal").classList.remove("active");
+}
+
+function renderAllProductsCategories(){
+  const cats = ["ทั้งหมด", ...new Set(products.map(p => p.category || "อื่นๆ"))];
+  document.getElementById("allProductsCategory").innerHTML = cats.map(cat => `
+    <button class="${cat === allProductsCategory ? "active" : ""}" onclick="setAllProductsCategory('${cat}')">${cat}</button>
+  `).join("");
+}
+
+function setAllProductsCategory(cat){
+  allProductsCategory = cat;
+  renderAllProductsCategories();
+  renderAllProductsModal();
+}
+
+function renderAllProductsModal(){
+  const q = String(document.getElementById("allProductsSearch").value || "").trim().toLowerCase();
+
+  const filtered = products.filter(p => {
+    const matchCategory = allProductsCategory === "ทั้งหมด" || (p.category || "อื่นๆ") === allProductsCategory;
+    const matchKeyword = !q ||
+      String(p.name || "").toLowerCase().includes(q) ||
+      String(p.barcode || "").toLowerCase().includes(q) ||
+      String(p.category || "").toLowerCase().includes(q);
+
+    return matchCategory && matchKeyword;
+  });
+
+  document.getElementById("allProductsGrid").innerHTML = filtered.length ? filtered.map(p => `
+    <div class="product" onclick="addToCartFromModal('${p.id}')">
+      <div>
+        <div class="emoji">🏷️</div>
+        <h3>${p.name}</h3>
+        ${p.sold_qty > 0 ? `<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>` : ""}
+        <span class="barcode">Barcode: ${p.barcode || "-"}</span>
+      </div>
+      <div class="bottom">
+        <div class="price">฿${money(p.price)}</div>
+        <div class="stock">เหลือ<br><b>${money(p.stock)} ${p.unit || "ชิ้น"}</b></div>
+      </div>
+    </div>
+  `).join("") : `<div class="empty" style="grid-column:1/-1">ไม่พบสินค้า</div>`;
+}
+
+function addToCartFromModal(id){
+  addToCart(id);
+}
+
+loadProducts();
 
   }catch(err){
     showPaymentModal([
@@ -1231,9 +1447,10 @@ async function openSellScanner(){
           return;
         }
 
-        document.getElementById("searchInput").value = "";
+        document.getElementById("searchInput").value = code;
+        renderProducts();
         addToCart(found.id);
-        setSellScanStatus("เพิ่มเข้าตะกร้าแล้ว: " + found.name);
+        setSellScanStatus("เจอสินค้าและเพิ่มเข้าตะกร้าแล้ว: " + found.name);
 
         await closeSellScanner(false);
 
