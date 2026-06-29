@@ -576,6 +576,123 @@ select,input{
   cursor:pointer;
 }
 
+
+.scan-sell-btn{
+  padding:15px 18px;
+  border:none;
+  border-radius:16px;
+  background:#eaf1ff;
+  color:#245bd4;
+  border:1px solid #bcd2ff;
+  font-weight:950;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.sell-scanner-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.58);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+  padding:20px;
+}
+.sell-scanner-overlay.active{display:flex}
+.sell-scanner-card{
+  width:min(94vw,520px);
+  background:#fff;
+  border-radius:28px;
+  border:1px solid var(--line);
+  box-shadow:0 28px 80px rgba(15,23,42,.28);
+  overflow:hidden;
+}
+.sell-scanner-head{
+  padding:20px 20px 10px;
+  text-align:center;
+}
+.sell-scanner-head h3{
+  margin:0;
+  font-size:1.25rem;
+  font-weight:950;
+}
+.sell-scanner-head p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.sell-scan-status{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:#f1f5fb;
+  color:#475569;
+  font-size:.9rem;
+  font-weight:850;
+  text-align:center;
+}
+.sell-scanner-reader{
+  padding:16px;
+}
+#sellBarcodeReader{
+  width:100%;
+  min-height:280px;
+  overflow:hidden;
+  border-radius:20px;
+  background:#0f172a;
+}
+.sell-scanner-footer{
+  padding:0 20px 20px;
+}
+.sell-scanner-close{
+  width:100%;
+  border:0;
+  border-radius:16px;
+  padding:15px;
+  background:#fee2e2;
+  color:#b91c1c;
+  font-weight:950;
+  cursor:pointer;
+}
+.popup-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10001;
+}
+.popup-card{
+  width:min(90%,360px);
+  background:#fff;
+  border-radius:22px;
+  padding:24px;
+  text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.18);
+}
+.popup-icon{font-size:2rem;margin-bottom:10px}
+.popup-card h3{margin:0 0 8px;color:#dc2626}
+.popup-card p{color:#475569;margin-bottom:18px;line-height:1.5}
+.popup-card button{
+  border:0;
+  background:#dc2626;
+  color:white;
+  padding:12px 18px;
+  border-radius:14px;
+  font-weight:800;
+  cursor:pointer;
+}
+@media(max-width:720px){
+  .search-wrap{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .scan-sell-btn,.search-btn{
+    width:100%;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -624,6 +741,7 @@ select,input{
     <div class="box">
       <div class="search-wrap">
         <input id="searchInput" class="search" placeholder="ยิงบาร์โค้ด หรือค้นหาชื่อสินค้า" onkeydown="handleSearchEnter(event)">
+        <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนขาย</button>
         <button class="search-btn" onclick="renderProducts()">ค้นหา</button>
       </div>
       <div class="help">คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
@@ -678,6 +796,24 @@ select,input{
 </main>
 
 
+
+<div id="sellScannerModal" class="sell-scanner-overlay">
+  <div class="sell-scanner-card">
+    <div class="sell-scanner-head">
+      <h3>สแกนขายสินค้า</h3>
+      <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะเพิ่มเข้าตะกร้าอัตโนมัติ</p>
+      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง</div>
+    </div>
+    <div class="sell-scanner-reader">
+      <div id="sellBarcodeReader"></div>
+    </div>
+    <div class="sell-scanner-footer">
+      <button class="sell-scanner-close" onclick="closeSellScanner()">ปิดกล้อง</button>
+    </div>
+  </div>
+</div>
+
+
 <div id="paymentModal" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-head">
@@ -691,6 +827,7 @@ select,input{
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
 
@@ -1001,7 +1138,94 @@ async function checkout(){
     document.getElementById("transferRef").value = "";
 
     renderCart();
-    await loadProducts();
+    await 
+let sellScanner = null;
+let sellScannerRunning = false;
+let lastSellScannedCode = "";
+
+function setSellScanStatus(text){
+  const status = document.getElementById("sellScanStatus");
+  if(status) status.textContent = text;
+}
+
+async function openSellScanner(){
+  const modal = document.getElementById("sellScannerModal");
+  if(!modal) return;
+
+  modal.classList.add("active");
+  setSellScanStatus("กำลังเตรียมกล้อง...");
+
+  if(typeof Html5Qrcode === "undefined"){
+    setSellScanStatus("โหลดตัวสแกนไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ");
+    return;
+  }
+
+  await new Promise(resolve => setTimeout(resolve, 450));
+
+  try{
+    if(!sellScanner){
+      sellScanner = new Html5Qrcode("sellBarcodeReader");
+    }
+
+    if(sellScannerRunning){
+      setSellScanStatus("กล้องเปิดอยู่แล้ว");
+      return;
+    }
+
+    await sellScanner.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: { width: 260, height: 140 } },
+      async (decodedText) => {
+        if(decodedText === lastSellScannedCode) return;
+        lastSellScannedCode = decodedText;
+
+        const found = products.find(p => String(p.barcode || "").trim() === String(decodedText).trim());
+
+        if(!found){
+          setSellScanStatus("ไม่พบสินค้า: " + decodedText);
+          showErrorPopup("ไม่พบสินค้านี้ในระบบ: " + decodedText);
+          setTimeout(() => { lastSellScannedCode = ""; }, 1200);
+          return;
+        }
+
+        document.getElementById("searchInput").value = decodedText;
+        addToCart(found.id);
+        setSellScanStatus("เพิ่มเข้าตะกร้าแล้ว: " + found.name);
+
+        await closeSellScanner(false);
+
+        setTimeout(() => { lastSellScannedCode = ""; }, 1200);
+      },
+      () => {}
+    );
+
+    sellScannerRunning = true;
+    setSellScanStatus("พร้อมสแกนแล้ว");
+  }catch(err){
+    setSellScanStatus("เปิดกล้องไม่สำเร็จ: " + (err.message || err));
+  }
+}
+
+async function closeSellScanner(clearReader = true){
+  const modal = document.getElementById("sellScannerModal");
+
+  try{
+    if(sellScanner && sellScannerRunning){
+      await sellScanner.stop();
+      sellScannerRunning = false;
+    }
+
+    if(sellScanner && clearReader){
+      await sellScanner.clear();
+    }
+  }catch(err){
+    console.warn(err);
+  }
+
+  if(modal) modal.classList.remove("active");
+}
+
+loadProducts();
 
   }catch(err){
     showPaymentModal([
