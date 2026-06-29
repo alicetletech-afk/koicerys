@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koicerys POS | สต๊อกสินค้า stock-nosort-v1</title>
+<title>Koicerys POS | สต๊อกสินค้า stock-nosort-fixstats-v2</title>
 <style>
 :root{
   --blue:#3468f5;
@@ -470,7 +470,7 @@ body{
     <div class="stock-scanner-head">
       <h3>สแกนค้นหาสต๊อก</h3>
       <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะค้นหาสต๊อกให้อัตโนมัติ</p>
-      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stock-nosort-v1</div>
+      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stock-nosort-fixstats-v2</div>
     </div>
     <div class="stock-scanner-reader">
       <div id="stockBarcodeReader"></div>
@@ -573,7 +573,7 @@ async function loadProducts(){
 
     renderCategories();
     renderStock();
-    updateStats();
+    updateSummary();
   }catch(err){
     document.getElementById("stockList").innerHTML =
       `<div class="empty">โหลดสต๊อกจาก Google Sheet ไม่สำเร็จ<br>${err.message}</div>`;
