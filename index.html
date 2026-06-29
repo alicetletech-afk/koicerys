@@ -744,7 +744,7 @@ select,input{
         <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนขาย</button>
         <button class="search-btn" onclick="renderProducts()">ค้นหา</button>
       </div>
-      <div class="help">คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
+      <div class="help">คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ · index-loadfix-v3</div>
     </div>
 
     <div class="category-wrap" id="categoryWrap"></div>
@@ -855,24 +855,33 @@ async function loadProducts(){
     const res = await fetch(API_URL + "?action=getProducts");
     const json = await res.json();
 
-    if(!json.success){
-      throw new Error(json.message || "โหลดข้อมูลไม่สำเร็จ");
+    let raw = [];
+
+    if(Array.isArray(json.data)){
+      raw = json.data;
+    }else if(json.data && Array.isArray(json.data.data)){
+      raw = json.data.data;
+    }else if(Array.isArray(json)){
+      raw = json;
+    }else{
+      throw new Error(json.message || "รูปแบบข้อมูลสินค้าไม่ถูกต้อง");
     }
 
-    products = json.data
+    products = raw
       .filter(p => String(p.status || "active").toLowerCase() === "active")
       .map(p => ({
-        id: String(p.product_id),
+        id: String(p.product_id || p.id || ""),
         barcode: String(p.barcode || ""),
         name: String(p.name || ""),
         category: String(p.category || ""),
         cost: Number(p.cost || 0),
         price: Number(p.price || 0),
         stock: Number(p.stock || 0),
-        reorder: Number(p.reorder_point || 0),
+        reorder: Number(p.reorder_point || p.reorder || 0),
         unit: String(p.unit || "ชิ้น"),
         sold_qty: Number(p.sold_qty || 0)
       }))
+      .filter(p => p.id)
       .sort((a,b) => b.sold_qty - a.sold_qty);
 
     renderCategories();
