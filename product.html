@@ -352,7 +352,7 @@ input,select{
           <option value="">กำลังโหลดสินค้าจาก Google Sheet...</option>
         </select>
         <small>ใช้เลือกสินค้าที่สร้างไว้แล้ว เพื่อแก้ข้อมูลหรือผูกบาร์โค้ด</small>
-        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-category-single-source-v1</small>
+        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-category-safe-v7</small>
       </div>
 
       <input id="productId" type="hidden">
@@ -461,40 +461,54 @@ input,select{
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
 
 
-let categories = [];
+
 const MASTER_CATEGORIES = ['เครื่องดื่ม','แอลกอฮอล์','ของสด','UHT / นม','อาหาร','เครื่องปรุง','Herb','PC','CG','ยา','ขนม','แป้ง/ข้าว','อื่น ๆ'];
+let categories = [...MASTER_CATEGORIES];
+
+function renderCategorySelect(selected = ""){
+  const select = document.getElementById("category");
+  if(!select) return;
+
+  const list = categories && categories.length ? categories : MASTER_CATEGORIES;
+  select.innerHTML = `<option value="">เลือกหมวดหมู่</option>` + list.map(cat => `
+    <option value="${cat}">${cat}</option>
+  `).join("");
+
+  if(selected){
+    const exists = Array.from(select.options).some(opt => opt.value === selected);
+    if(!exists){
+      select.innerHTML += `<option value="${selected}">${selected}</option>`;
+    }
+    select.value = selected;
+  }
+}
 
 async function loadCategories(){
   categories = [...MASTER_CATEGORIES];
+  renderCategorySelect();
 
   try{
     const res = await fetch(API_URL + "?action=getCategories&v=" + Date.now());
     const json = await res.json();
-
-    let raw = [];
-
-    if(Array.isArray(json.data)){
-      raw = json.data;
-    }else if(json.data && Array.isArray(json.data.data)){
-      raw = json.data.data;
-    }else if(Array.isArray(json)){
-      raw = json;
-    }
+    const raw = Array.isArray(json.data) ? json.data : [];
 
     const apiCategories = raw
       .map(x => ({
-        category: String((typeof x === "string" ? x : x.category) || "").trim(),
-        sort_order: Number((typeof x === "string" ? 999 : (x.sort_order || 999)))
+        category: String(x.category || "").trim(),
+        sort_order: Number(x.sort_order || 999)
       }))
       .filter(x => x.category)
       .sort((a,b) => a.sort_order - b.sort_order)
       .map(x => x.category);
 
-    categories = apiCategories.length ? [...new Set(apiCategories)] : [...MASTER_CATEGORIES];
-
+    if(apiCategories.length){
+      categories = [...new Set(apiCategories)];
+      renderCategorySelect();
+    }
   }catch(err){
     console.warn("loadCategories failed:", err);
     categories = [...MASTER_CATEGORIES];
+    renderCategorySelect();
   }
 }
 
@@ -556,26 +570,6 @@ async function loadProducts(){
 function updateSummary(){
   document.getElementById("totalSku").innerText = products.length;
   document.getElementById("activeSku").innerText = products.filter(p => p.status === "active").length;
-}
-
-
-function renderCategorySelect(selected = ""){
-  const select = document.getElementById("category");
-  if(!select) return;
-
-  const list = categories.length ? categories : MASTER_CATEGORIES;
-
-  select.innerHTML = `<option value="">เลือกหมวดหมู่</option>` + list.map(cat => `
-    <option value="${cat}">${cat}</option>
-  `).join("");
-
-  if(selected){
-    const exists = [...select.options].some(opt => opt.value === selected);
-    if(!exists){
-      select.innerHTML += `<option value="${selected}">${selected}</option>`;
-    }
-    select.value = selected;
-  }
 }
 
 function renderExistingProductSelect(){
@@ -712,7 +706,7 @@ async function saveProduct(){
     ]);
 
     resetForm();
-    await loadCategories().then(() => { renderCategorySelect(); loadProducts(); });
+    await loadProducts();
 
   }catch(err){
     showModal("เชื่อมต่อไม่สำเร็จ", [
@@ -872,7 +866,7 @@ async function closeBarcodeScanner(clearReader = true){
   if(modal) modal.classList.remove("active");
 }
 
-loadProducts();
+loadCategories().then(loadProducts);
 </script>
 
 <!-- Firebase Auth Guard -->
