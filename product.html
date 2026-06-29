@@ -352,7 +352,7 @@ input,select{
           <option value="">กำลังโหลดสินค้าจาก Google Sheet...</option>
         </select>
         <small>ใช้เลือกสินค้าที่สร้างไว้แล้ว เพื่อแก้ข้อมูลหรือผูกบาร์โค้ด</small>
-        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-clean-final-v6</small>
+        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-category-single-source-v1</small>
       </div>
 
       <input id="productId" type="hidden">
@@ -367,16 +367,6 @@ input,select{
       <label>หมวดหมู่</label>
       <select id="category">
         <option value="">เลือกหมวดหมู่</option>
-        <option value="เครื่องดื่ม">เครื่องดื่ม</option>
-        <option value="แอลกอฮอล์">แอลกอฮอล์</option>
-        <option value="ยา">ยา</option>
-        <option value="ขนม">ขนม</option>
-        <option value="แป้ง/ข้าว">แป้ง/ข้าว</option>
-        <option value="อาหาร">อาหาร</option>
-        <option value="UHT / นม">UHT / นม</option>
-        <option value="ของแห้ง">ของแห้ง</option>
-        <option value="ของใช้">ของใช้</option>
-        <option value="นม/แช่เย็น">นม/แช่เย็น</option>
       </select>
 
       <div class="form-grid">
@@ -470,6 +460,44 @@ input,select{
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxRMzXHblOqxkswl-ocO6VTnGkxaie4fx9yfqOboeAno5bLKynHdXqaxmqRIk-vHpICHg/exec";
 
+
+let categories = [];
+const MASTER_CATEGORIES = ['เครื่องดื่ม','แอลกอฮอล์','ของสด','UHT / นม','อาหาร','เครื่องปรุง','Herb','PC','CG','ยา','ขนม','แป้ง/ข้าว','อื่น ๆ'];
+
+async function loadCategories(){
+  categories = [...MASTER_CATEGORIES];
+
+  try{
+    const res = await fetch(API_URL + "?action=getCategories&v=" + Date.now());
+    const json = await res.json();
+
+    let raw = [];
+
+    if(Array.isArray(json.data)){
+      raw = json.data;
+    }else if(json.data && Array.isArray(json.data.data)){
+      raw = json.data.data;
+    }else if(Array.isArray(json)){
+      raw = json;
+    }
+
+    const apiCategories = raw
+      .map(x => ({
+        category: String((typeof x === "string" ? x : x.category) || "").trim(),
+        sort_order: Number((typeof x === "string" ? 999 : (x.sort_order || 999)))
+      }))
+      .filter(x => x.category)
+      .sort((a,b) => a.sort_order - b.sort_order)
+      .map(x => x.category);
+
+    categories = apiCategories.length ? [...new Set(apiCategories)] : [...MASTER_CATEGORIES];
+
+  }catch(err){
+    console.warn("loadCategories failed:", err);
+    categories = [...MASTER_CATEGORIES];
+  }
+}
+
 let products = [];
 
 function money(n){
@@ -512,6 +540,7 @@ async function loadProducts(){
     products = raw.map(normalizeProduct).filter(p => p.id);
 
     renderExistingProductSelect();
+    renderCategorySelect();
     renderProducts();
     updateSummary();
 
@@ -527,6 +556,26 @@ async function loadProducts(){
 function updateSummary(){
   document.getElementById("totalSku").innerText = products.length;
   document.getElementById("activeSku").innerText = products.filter(p => p.status === "active").length;
+}
+
+
+function renderCategorySelect(selected = ""){
+  const select = document.getElementById("category");
+  if(!select) return;
+
+  const list = categories.length ? categories : MASTER_CATEGORIES;
+
+  select.innerHTML = `<option value="">เลือกหมวดหมู่</option>` + list.map(cat => `
+    <option value="${cat}">${cat}</option>
+  `).join("");
+
+  if(selected){
+    const exists = [...select.options].some(opt => opt.value === selected);
+    if(!exists){
+      select.innerHTML += `<option value="${selected}">${selected}</option>`;
+    }
+    select.value = selected;
+  }
 }
 
 function renderExistingProductSelect(){
@@ -547,7 +596,7 @@ function selectExistingProduct(id){
   document.getElementById("productId").value = p.id;
   document.getElementById("barcode").value = p.barcode;
   document.getElementById("name").value = p.name;
-  document.getElementById("category").value = p.category;
+  renderCategorySelect(p.category);
   document.getElementById("cost").value = p.cost;
   document.getElementById("price").value = p.price;
   document.getElementById("stock").value = p.stock;
@@ -663,7 +712,7 @@ async function saveProduct(){
     ]);
 
     resetForm();
-    await loadProducts();
+    await loadCategories().then(() => { renderCategorySelect(); loadProducts(); });
 
   }catch(err){
     showModal("เชื่อมต่อไม่สำเร็จ", [
@@ -717,7 +766,7 @@ function resetForm(){
   document.getElementById("barcode").value = "";
   document.getElementById("barcode").classList.remove("scan-success");
   document.getElementById("name").value = "";
-  document.getElementById("category").value = "";
+  renderCategorySelect("");
   document.getElementById("cost").value = "";
   document.getElementById("price").value = "";
   document.getElementById("stock").value = "";
