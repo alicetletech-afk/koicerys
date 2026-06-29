@@ -352,7 +352,7 @@ input,select{
           <option value="">กำลังโหลดสินค้าจาก Google Sheet...</option>
         </select>
         <small>ใช้เลือกสินค้าที่สร้างไว้แล้ว เพื่อแก้ข้อมูลหรือผูกบาร์โค้ด</small>
-        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-categories-surgical-v3</small>
+        <small style="color:#1d4ed8;">ไฟล์เวอร์ชัน: product-categories-loadfix-v4</small>
       </div>
 
       <input id="productId" type="hidden">
@@ -754,7 +754,7 @@ async function toggleStatus(id){
       return;
     }
 
-    await loadProducts();
+    await loadCategories().then(loadProducts);
   }catch(err){
     showModal("เชื่อมต่อไม่สำเร็จ", [
       {label:"ข้อความ", value:err.message}
