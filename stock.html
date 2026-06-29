@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koicerys POS | สต๊อกสินค้า</title>
+<title>Koicerys POS | สต๊อกสินค้า stockscan-v1</title>
 <style>
 :root{
   --blue:#3468f5;
@@ -273,33 +273,6 @@ body{
   border-radius:22px;
   border:1px solid var(--line);
 }
-
-.auth-logout-btn{
-  border:1px solid rgba(255,255,255,.28);
-  background:rgba(255,255,255,.16);
-  color:#fff;
-  padding:10px 14px;
-  border-radius:14px;
-  font-weight:950;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.auth-logout-btn:hover{
-  background:rgba(255,255,255,.24);
-}
-.auth-user-email{
-  color:rgba(255,255,255,.78);
-  font-size:.82rem;
-  font-weight:850;
-  text-align:right;
-  margin-top:6px;
-}
-.auth-box{
-  display:grid;
-  gap:4px;
-  justify-items:end;
-}
-
 @media(max-width:720px){
   .header{
     padding:26px 16px 36px;
@@ -339,6 +312,101 @@ body{
     margin-top:6px;
   }
 }
+
+.scan-stock-btn{
+  padding:15px 18px;
+  border:none;
+  border-radius:16px;
+  background:#eaf1ff;
+  color:#245bd4;
+  border:1px solid #bcd2ff;
+  font-weight:950;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.stock-scanner-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.58);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+  padding:20px;
+}
+.stock-scanner-overlay.active{display:flex}
+.stock-scanner-card{
+  width:min(94vw,520px);
+  background:#fff;
+  border-radius:28px;
+  border:1px solid var(--line);
+  box-shadow:0 28px 80px rgba(15,23,42,.28);
+  overflow:hidden;
+}
+.stock-scanner-head{
+  padding:20px 20px 10px;
+  text-align:center;
+}
+.stock-scanner-head h3{
+  margin:0;
+  font-size:1.25rem;
+  font-weight:950;
+}
+.stock-scanner-head p{
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.stock-scan-status{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:#f1f5fb;
+  color:#475569;
+  font-size:.9rem;
+  font-weight:850;
+  text-align:center;
+}
+.stock-scanner-reader{
+  padding:16px;
+}
+#stockBarcodeReader{
+  width:100%;
+  min-height:280px;
+  overflow:hidden;
+  border-radius:20px;
+  background:#0f172a;
+}
+.stock-scanner-footer{
+  padding:0 20px 20px;
+}
+.stock-scanner-close{
+  width:100%;
+  border:0;
+  border-radius:16px;
+  padding:15px;
+  background:#fee2e2;
+  color:#b91c1c;
+  font-weight:950;
+  cursor:pointer;
+}
+.stock-scan-hit{
+  animation:stockHit .35s ease;
+}
+@keyframes stockHit{
+  from{transform:scale(.98);opacity:.75}
+  to{transform:scale(1);opacity:1}
+}
+@media(max-width:720px){
+  .search-wrap{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .scan-stock-btn,.search-btn{
+    width:100%;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -349,12 +417,7 @@ body{
       <h1>สต๊อกสินค้า</h1>
       <p>เช็คของคงเหลือ / ต้นทุน / ราคาขาย</p>
     </div>
-
-    <div class="auth-box">
-      <button class="auth-logout-btn" onclick="logout()">ออกจากระบบ</button>
-      <div id="currentUserEmail" class="auth-user-email"></div>
-    </div>
-
+    <div class="icon-box">📦</div>
   </div>
 
   <div class="stats">
@@ -389,7 +452,8 @@ body{
 
   <div class="box">
     <div class="search-wrap">
-      <input id="searchInput" class="search" placeholder="ค้นหาชื่อสินค้า / บาร์โค้ด / หมวดหมู่" onkeydown="if(event.key==='Enter') renderStock()">
+      <input id="searchInput" class="search" placeholder="ค้นหาชื่อสินค้า / บาร์โค้ด / หมวดหมู่" oninput="renderStock()" onkeydown="if(event.key==='Enter') renderStock()">
+      <button type="button" class="scan-stock-btn" onclick="openStockScanner()">📷 สแกนค้นหาสต๊อก</button>
       <button class="search-btn" onclick="renderStock()">ค้นหา</button>
     </div>
   </div>
@@ -408,6 +472,25 @@ body{
   </div>
 </main>
 
+
+<div id="stockScannerModal" class="stock-scanner-overlay">
+  <div class="stock-scanner-card">
+    <div class="stock-scanner-head">
+      <h3>สแกนค้นหาสต๊อก</h3>
+      <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะค้นหาสต๊อกให้อัตโนมัติ</p>
+      <div id="stockScanStatus" class="stock-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · stockscan-v1</div>
+    </div>
+    <div class="stock-scanner-reader">
+      <div id="stockBarcodeReader"></div>
+    </div>
+    <div class="stock-scanner-footer">
+      <button class="stock-scanner-close" onclick="closeStockScanner()">ปิดกล้อง</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzzkIqWxnmrFj48bTks8tC4KgOuhjfTomH6RRGUtdSgjFLrBpAbGcYuPlr2karfeXzuqQ/exec";
 
@@ -430,27 +513,36 @@ async function loadProducts(){
     const res = await fetch(API_URL + "?action=getProducts");
     const json = await res.json();
 
-    if(!json.success){
+    let raw = [];
+
+    if(Array.isArray(json.data)){
+      raw = json.data;
+    }else if(json.data && Array.isArray(json.data.data)){
+      raw = json.data.data;
+    }else if(Array.isArray(json)){
+      raw = json;
+    }else{
       throw new Error(json.message || "โหลดข้อมูลไม่สำเร็จ");
     }
 
-    products = json.data
+    products = raw
       .filter(p => String(p.status || "active").toLowerCase() === "active")
       .map(p => ({
-        id: String(p.product_id),
+        id: String(p.product_id || p.id || ""),
         barcode: String(p.barcode || ""),
         name: String(p.name || ""),
         category: String(p.category || ""),
         cost: Number(p.cost || 0),
         price: Number(p.price || 0),
         stock: Number(p.stock || 0),
-        reorder: Number(p.reorder_point || 0),
+        reorder: Number(p.reorder_point || p.reorder || 0),
         unit: String(p.unit || "ชิ้น")
-      }));
+      }))
+      .filter(p => p.id);
 
     renderCategories();
     renderStock();
-    updateSummary();
+    updateStats();
   }catch(err){
     document.getElementById("stockList").innerHTML =
       `<div class="empty">โหลดสต๊อกจาก Google Sheet ไม่สำเร็จ<br>${err.message}</div>`;
@@ -573,15 +665,139 @@ function updateSummary(){
   document.getElementById("stockValue").innerText = money(value);
 }
 
+
+let stockScanner = null;
+let stockScannerRunning = false;
+let lastStockScannedCode = "";
+
+function setStockScanStatus(text){
+  const status = document.getElementById("stockScanStatus");
+  if(status) status.textContent = text;
+}
+
+async function openStockScanner(){
+  const modal = document.getElementById("stockScannerModal");
+  if(!modal) return;
+
+  modal.classList.add("active");
+  setStockScanStatus("กำลังเตรียมกล้อง...");
+
+  if(typeof Html5Qrcode === "undefined"){
+    setStockScanStatus("โหลดตัวสแกนไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ");
+    return;
+  }
+
+  await new Promise(resolve => setTimeout(resolve, 650));
+
+  try{
+    if(!stockScanner){
+      stockScanner = new Html5Qrcode("stockBarcodeReader", { verbose:false });
+    }
+
+    if(stockScannerRunning){
+      setStockScanStatus("กล้องเปิดอยู่แล้ว");
+      return;
+    }
+
+    setStockScanStatus("กำลังขอสิทธิ์กล้อง...");
+
+    const cameras = await Html5Qrcode.getCameras();
+    if(!cameras || cameras.length === 0){
+      setStockScanStatus("ไม่พบกล้องในอุปกรณ์นี้");
+      return;
+    }
+
+    let cameraId = cameras[cameras.length - 1].id;
+    const backCamera = cameras.find(cam => {
+      const label = String(cam.label || "").toLowerCase();
+      return label.includes("back") || label.includes("rear") || label.includes("environment");
+    });
+    if(backCamera) cameraId = backCamera.id;
+
+    await stockScanner.start(
+      cameraId,
+      {
+        fps: 10,
+        qrbox: function(viewfinderWidth, viewfinderHeight){
+          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+          const width = Math.floor(minEdge * 0.82);
+          const height = Math.floor(width * 0.52);
+          return { width, height };
+        },
+        aspectRatio: 1.777
+      },
+      async (decodedText) => {
+        const code = String(decodedText || "").trim();
+
+        if(!code || code === lastStockScannedCode) return;
+        lastStockScannedCode = code;
+
+        document.getElementById("searchInput").value = code;
+        currentCategory = "ทั้งหมด";
+
+        if(typeof renderCategories === "function") renderCategories();
+        renderStock();
+
+        const found = products.find(p => String(p.barcode || "").trim() === code);
+
+        if(found){
+          setStockScanStatus("พบสินค้า: " + found.name);
+          const list = document.getElementById("stockList");
+          if(list){
+            list.classList.remove("stock-scan-hit");
+            void list.offsetWidth;
+            list.classList.add("stock-scan-hit");
+          }
+          await closeStockScanner(false);
+        }else{
+          setStockScanStatus("ไม่พบสินค้าในสต๊อก: " + code);
+        }
+
+        setTimeout(() => { lastStockScannedCode = ""; }, 1500);
+      },
+      () => {}
+    );
+
+    stockScannerRunning = true;
+    setStockScanStatus("พร้อมสแกนแล้ว");
+
+  }catch(err){
+    console.error(err);
+    let msg = err && err.message ? err.message : String(err);
+
+    if(msg.includes("NotAllowedError") || msg.includes("Permission")){
+      msg = "ยังไม่ได้อนุญาตกล้อง กรุณากด Allow Camera";
+    }else if(msg.includes("NotFoundError")){
+      msg = "ไม่พบกล้องในอุปกรณ์นี้";
+    }else if(msg.includes("NotReadableError")){
+      msg = "กล้องถูกใช้งานอยู่ในแอป/แท็บอื่น";
+    }
+
+    setStockScanStatus("เปิดกล้องไม่สำเร็จ: " + msg);
+  }
+}
+
+async function closeStockScanner(clearReader = true){
+  const modal = document.getElementById("stockScannerModal");
+
+  try{
+    if(stockScanner && stockScannerRunning){
+      await stockScanner.stop();
+      stockScannerRunning = false;
+    }
+
+    if(stockScanner && clearReader){
+      await stockScanner.clear();
+    }
+  }catch(err){
+    console.warn(err);
+  }
+
+  if(modal) modal.classList.remove("active");
+}
+
 loadProducts();
 </script>
-
-
-<!-- Firebase Auth Guard -->
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
-<script src="firebase-config.js"></script>
-<script src="guard.js"></script>
 
 </body>
 </html>
