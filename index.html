@@ -852,7 +852,7 @@ select,input{
         <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนขาย</button>
         <button type="button" class="all-products-btn" onclick="openAllProductsModal()">📦 ดูสินค้าทั้งหมด</button>
       </div>
-      <div class="help">ไฟล์เวอร์ชัน: index-loadcategories-fix-v1 · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
+      <div class="help">ไฟล์เวอร์ชัน: index-category-single-source-v1 · คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ</div>
     </div>
 
     <div class="category-wrap" id="categoryWrap"></div>
@@ -968,6 +968,8 @@ let categories = [];
 const MASTER_CATEGORIES = ['เครื่องดื่ม','แอลกอฮอล์','ของสด','UHT / นม','อาหาร','เครื่องปรุง','Herb','PC','CG','ยา','ขนม','แป้ง/ข้าว','อื่น ๆ'];
 
 async function loadCategories(){
+  categories = [...MASTER_CATEGORIES];
+
   try{
     const res = await fetch(API_URL + "?action=getCategories&v=" + Date.now());
     const json = await res.json();
@@ -991,14 +993,15 @@ async function loadCategories(){
       .sort((a,b) => a.sort_order - b.sort_order)
       .map(x => x.category);
 
-    // ใช้ master list ฝังไว้เป็นฐานเสมอ เพื่อกัน API/cache ทำให้หมวดมาไม่ครบ
-    categories = [...new Set([...MASTER_CATEGORIES, ...apiCategories])];
+    categories = apiCategories.length ? [...new Set(apiCategories)] : [...MASTER_CATEGORIES];
 
   }catch(err){
     console.warn("loadCategories failed:", err);
     categories = [...MASTER_CATEGORIES];
   }
 }
+
+
 
 
 
@@ -1075,12 +1078,14 @@ async function loadProducts(){
 
 
 function renderCategories(){
-  const categoriesList = categories.length ? ["ทั้งหมด", ...categories] : ["ทั้งหมด"];
+  const categoriesList = ["ทั้งหมด", ...(categories.length ? categories : MASTER_CATEGORIES)];
 
   document.getElementById("categoryWrap").innerHTML = categoriesList.map(cat => `
     <button class="${cat === currentCategory ? "active" : ""}" onclick="setCategory('${cat}')">${cat}</button>
   `).join("");
 }
+
+
 
 
 
@@ -1437,12 +1442,14 @@ function closeAllProductsModal(){
 }
 
 function renderAllProductsCategories(){
-  const cats = categories.length ? ["ทั้งหมด", ...categories] : ["ทั้งหมด"];
+  const cats = ["ทั้งหมด", ...(categories.length ? categories : MASTER_CATEGORIES)];
 
   document.getElementById("allProductsCategory").innerHTML = cats.map(cat => `
     <button class="${cat === allProductsCategory ? "active" : ""}" onclick="setAllProductsCategory('${cat}')">${cat}</button>
   `).join("");
 }
+
+
 
 
 
