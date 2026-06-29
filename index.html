@@ -860,6 +860,20 @@ select,input{
   </div>
 </div>
 
+
+<div id="confirmAddModal" class="sell-scanner-overlay">
+  <div class="sell-scanner-card">
+    <div class="sell-scanner-head">
+      <h3 id="confirmProductName">ยืนยันเพิ่มสินค้า</h3>
+      <p id="confirmProductInfo">รายละเอียดสินค้า</p>
+    </div>
+    <div class="sell-scanner-footer" style="padding:20px;display:grid;gap:12px;">
+      <button id="confirmAddBtn" class="search-btn">เพิ่มเข้าตะกร้า</button>
+      <button class="sell-scanner-close" onclick="closeConfirmAdd()">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
 <div id="paymentModal" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-head">
@@ -994,7 +1008,7 @@ function renderProducts(){
 
 function productCardHTML(p){
   return `
-    <div class="product" onclick="addToCart('${p.id}')">
+    <div class="product" onclick="openConfirmAdd('${p.id}')">
       <div>
         <div class="emoji">${getEmoji(p.category)}</div>
         <h3>${p.name}</h3>
@@ -1304,7 +1318,7 @@ function renderAllProductsModal(){
   });
 
   document.getElementById("allProductsGrid").innerHTML = filtered.length ? filtered.map(p => `
-    <div class="product" onclick="addToCart('${p.id}')">
+    <div class="product" onclick="openConfirmAdd('${p.id}')">
       <div>
         <div class="emoji">${getEmoji(p.category)}</div>
         <h3>${p.name}</h3>
@@ -1433,6 +1447,31 @@ async function closeSellScanner(clearReader = true){
   if(modal) modal.classList.remove("active");
 }
 
+
+
+let selectedProductId = null;
+
+function openConfirmAdd(productId){
+  const p = products.find(x => String(x.id) === String(productId));
+  if(!p) return;
+
+  selectedProductId = productId;
+
+  document.getElementById("confirmProductName").textContent = p.name;
+  document.getElementById("confirmProductInfo").innerHTML =
+    `ราคา ฿${money(p.price)}<br>คงเหลือ ${money(p.stock)} ${p.unit}`;
+
+  document.getElementById("confirmAddBtn").onclick = function(){
+    addToCart(selectedProductId);
+    closeConfirmAdd();
+  };
+
+  document.getElementById("confirmAddModal").classList.add("active");
+}
+
+function closeConfirmAdd(){
+  document.getElementById("confirmAddModal").classList.remove("active");
+}
 
 loadProducts();
 renderCart();
