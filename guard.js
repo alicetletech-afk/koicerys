@@ -36,7 +36,11 @@ async function fetchUserRole(email){
 
 auth.onAuthStateChanged(async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    setTimeout(() => {
+      if (!auth.currentUser) {
+        window.location.href = "login.html";
+      }
+    }, 1200);
     return;
   }
 
