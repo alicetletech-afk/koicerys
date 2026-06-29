@@ -487,94 +487,6 @@ select,input{
   justify-items:end;
 }
 
-@media(max-width:1050px){
-  .main{
-    grid-template-columns:1fr;
-  }
-  .cart-box{
-    position:static;
-  }
-}
-@media(max-width:720px){
-  .header{
-    padding:26px 16px 36px;
-  }
-  .stats{
-    grid-template-columns:1fr;
-  }
-  .nav{
-    justify-content:flex-start;
-    padding-left:16px;
-    padding-right:16px;
-  }
-  .nav a{
-    min-width:105px;
-    min-height:78px;
-    font-size:.85rem;
-  }
-  .main{
-    padding:24px 16px 40px;
-  }
-  .search-wrap{
-    align-items:stretch;
-  }
-  .products{
-    grid-template-columns:1fr 1fr;
-  }
-}
-@media(max-width:440px){
-  .products{
-    grid-template-columns:1fr;
-  }
-  .section-title{
-    display:block;
-  }
-  .section-title small{
-    display:block;
-    margin-top:6px;
-  }
-}
-
-.popup-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
-.popup-card{
-  width:min(90%,360px);
-  background:#fff;
-  border-radius:22px;
-  padding:24px;
-  text-align:center;
-  box-shadow:0 20px 40px rgba(0,0,0,.18);
-}
-.popup-icon{
-  font-size:2rem;
-  margin-bottom:10px;
-}
-.popup-card h3{
-  margin:0 0 8px;
-  color:#dc2626;
-}
-.popup-card p{
-  color:#475569;
-  margin-bottom:18px;
-  line-height:1.5;
-}
-.popup-card button{
-  border:0;
-  background:#dc2626;
-  color:white;
-  padding:12px 18px;
-  border-radius:14px;
-  font-weight:800;
-  cursor:pointer;
-}
-
 
 .scan-sell-btn{
   padding:15px 18px;
@@ -692,6 +604,53 @@ select,input{
   }
 }
 
+@media(max-width:1050px){
+  .main{
+    grid-template-columns:1fr;
+  }
+  .cart-box{
+    position:static;
+  }
+}
+@media(max-width:720px){
+  .header{
+    padding:26px 16px 36px;
+  }
+  .stats{
+    grid-template-columns:1fr;
+  }
+  .nav{
+    justify-content:flex-start;
+    padding-left:16px;
+    padding-right:16px;
+  }
+  .nav a{
+    min-width:105px;
+    min-height:78px;
+    font-size:.85rem;
+  }
+  .main{
+    padding:24px 16px 40px;
+  }
+  .search-wrap{
+    align-items:stretch;
+  }
+  .products{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media(max-width:440px){
+  .products{
+    grid-template-columns:1fr;
+  }
+  .section-title{
+    display:block;
+  }
+  .section-title small{
+    display:block;
+    margin-top:6px;
+  }
+}
 </style>
 </head>
 <body>
@@ -743,7 +702,7 @@ select,input{
         <button type="button" class="scan-sell-btn" onclick="openSellScanner()">📷 สแกนแล้วขายทันที</button>
         <button class="search-btn" onclick="renderProducts()">ค้นหา</button>
       </div>
-      <div class="help">คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ · index-flow-v4 · index-flow-v4</div>
+      <div class="help">คลิกช่องนี้ไว้ ถ้าใช้เครื่องยิงบาร์โค้ด เครื่องจะกด Enter ให้อัตโนมัติ · index-clean-scan-v6</div>
     </div>
 
     <div class="category-wrap" id="categoryWrap"></div>
@@ -801,7 +760,7 @@ select,input{
     <div class="sell-scanner-head">
       <h3>สแกนขายสินค้า</h3>
       <p>เล็งกล้องไปที่บาร์โค้ดสินค้า ระบบจะเพิ่มเข้าตะกร้าอัตโนมัติ</p>
-      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · sellscan-camera-v2</div>
+      <div id="sellScanStatus" class="sell-scan-status">กดสแกนแล้วระบบจะขอสิทธิ์เปิดกล้อง · index-clean-scan-v6</div>
     </div>
     <div class="sell-scanner-reader">
       <div id="sellBarcodeReader"></div>
@@ -811,7 +770,6 @@ select,input{
     </div>
   </div>
 </div>
-
 
 <div id="paymentModal" class="modal-overlay">
   <div class="modal-card">
@@ -852,18 +810,26 @@ function getEmoji(category){
 async function loadProducts(){
   try{
     const res = await fetch(API_URL + "?action=getProducts");
-    const json = await res.json();
+    const text = await res.text();
+
+    let json;
+    try{
+      json = JSON.parse(text);
+    }catch(e){
+      throw new Error("API ไม่ได้ส่ง JSON กลับมา");
+    }
 
     let raw = [];
 
-    if(Array.isArray(json.data)){
+    if(Array.isArray(json)){
+      raw = json;
+    }else if(Array.isArray(json.data)){
       raw = json.data;
     }else if(json.data && Array.isArray(json.data.data)){
       raw = json.data.data;
-    }else if(Array.isArray(json)){
-      raw = json;
     }else{
-      throw new Error(json.message || "รูปแบบข้อมูลสินค้าไม่ถูกต้อง");
+      console.log("API RAW:", json);
+      throw new Error(json.message || "โครงสร้างข้อมูลไม่ถูกต้อง");
     }
 
     products = raw
@@ -887,6 +853,7 @@ async function loadProducts(){
     renderProducts();
     updateStats();
   }catch(err){
+    console.error(err);
     document.getElementById("productList").innerHTML =
       `<div class="empty" style="grid-column:1/-1">โหลดสินค้าจาก Google Sheet ไม่สำเร็จ<br>${err.message}</div>`;
   }
@@ -928,8 +895,8 @@ function renderProducts(){
       <div>
         <div class="emoji">${getEmoji(p.category)}</div>
         <h3>${p.name}</h3>
-        ${p.sold_qty > 0 ? `<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span>` : ""}
-        <span class="barcode">Barcode: ${p.barcode}</span>
+        ${p.sold_qty > 0 ? `<span class="sold-badge">ขายแล้ว ${money(p.sold_qty)} ชิ้น</span><br>` : ""}
+        <span class="barcode">Barcode: ${p.barcode || "ยังไม่มี"}</span>
       </div>
       <div class="bottom">
         <div class="price">฿${money(p.price)}</div>
@@ -1146,7 +1113,45 @@ async function checkout(){
     document.getElementById("transferRef").value = "";
 
     renderCart();
-    await 
+    await loadProducts();
+
+  }catch(err){
+    showPaymentModal([
+      {label:"สถานะ", value:"เชื่อมต่อไม่สำเร็จ"},
+      {label:"ข้อความ", value: err.message}
+    ], "ชำระไม่สำเร็จ", "!");
+  }
+}
+
+function updateStats(){
+  const low = products.filter(p => p.stock <= p.reorder).length;
+  document.getElementById("lowStock").innerText = low;
+}
+
+
+function showErrorPopup(message){
+  const old = document.getElementById("errorPopup");
+  if(old) old.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "errorPopup";
+  popup.innerHTML = `
+    <div class="popup-overlay">
+      <div class="popup-card">
+        <div class="popup-icon">⚠️</div>
+        <h3>ไม่สามารถทำรายการได้</h3>
+        <p>${message}</p>
+        <button onclick="closeErrorPopup()">ตกลง</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+}
+
+function closeErrorPopup(){
+  const popup = document.getElementById("errorPopup");
+  if(popup) popup.remove();
+}
 
 let sellScanner = null;
 let sellScannerRunning = false;
@@ -1169,22 +1174,16 @@ async function openSellScanner(){
     return;
   }
 
-  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    setSellScanStatus("Browser นี้ไม่รองรับการเปิดกล้อง");
-    return;
-  }
-
-  // ให้ modal แสดงผลก่อน โดยเฉพาะ iPhone Safari
   await new Promise(resolve => setTimeout(resolve, 650));
 
   try{
+    if(!sellScanner){
+      sellScanner = new Html5Qrcode("sellBarcodeReader", { verbose:false });
+    }
+
     if(sellScannerRunning){
       setSellScanStatus("กล้องเปิดอยู่แล้ว");
       return;
-    }
-
-    if(!sellScanner){
-      sellScanner = new Html5Qrcode("sellBarcodeReader", { verbose:false });
     }
 
     setSellScanStatus("กำลังขอสิทธิ์กล้อง...");
@@ -1196,7 +1195,6 @@ async function openSellScanner(){
       return;
     }
 
-    // มือถือส่วนใหญ่ กล้องหลังมักอยู่ตัวท้าย ๆ
     let cameraId = cameras[cameras.length - 1].id;
 
     const backCamera = cameras.find(cam => {
@@ -1205,8 +1203,6 @@ async function openSellScanner(){
     });
 
     if(backCamera) cameraId = backCamera.id;
-
-    setSellScanStatus("กำลังเปิดกล้อง...");
 
     await sellScanner.start(
       cameraId,
@@ -1286,161 +1282,16 @@ async function closeSellScanner(clearReader = true){
 }
 
 loadProducts();
-
-  }catch(err){
-    showPaymentModal([
-      {label:"สถานะ", value:"เชื่อมต่อไม่สำเร็จ"},
-      {label:"ข้อความ", value: err.message}
-    ], "ชำระไม่สำเร็จ", "!");
-  }
-}
-
-function updateStats(){
-  const low = products.filter(p => p.stock <= p.reorder).length;
-  document.getElementById("lowStock").innerText = low;
-}
-
-loadProducts();
 renderCart();
 togglePayment();
-
-function showErrorPopup(message){
-  const old = document.getElementById("errorPopup");
-  if(old) old.remove();
-
-  const popup = document.createElement("div");
-  popup.id = "errorPopup";
-  popup.innerHTML = `
-    <div class="popup-overlay">
-      <div class="popup-card">
-        <div class="popup-icon">⚠️</div>
-        <h3>ไม่สามารถขายได้</h3>
-        <p>${message}</p>
-        <button onclick="closeErrorPopup()">ตกลง</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-}
-
-function closeErrorPopup(){
-  const popup = document.getElementById("errorPopup");
-  if(popup) popup.remove();
-}
-
 </script>
 
 
 <!-- Firebase Auth Guard -->
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js">
-function showErrorPopup(message){
-  const old = document.getElementById("errorPopup");
-  if(old) old.remove();
-
-  const popup = document.createElement("div");
-  popup.id = "errorPopup";
-  popup.innerHTML = `
-    <div class="popup-overlay">
-      <div class="popup-card">
-        <div class="popup-icon">⚠️</div>
-        <h3>ไม่สามารถขายได้</h3>
-        <p>${message}</p>
-        <button onclick="closeErrorPopup()">ตกลง</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-}
-
-function closeErrorPopup(){
-  const popup = document.getElementById("errorPopup");
-  if(popup) popup.remove();
-}
-
-</script>
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js">
-function showErrorPopup(message){
-  const old = document.getElementById("errorPopup");
-  if(old) old.remove();
-
-  const popup = document.createElement("div");
-  popup.id = "errorPopup";
-  popup.innerHTML = `
-    <div class="popup-overlay">
-      <div class="popup-card">
-        <div class="popup-icon">⚠️</div>
-        <h3>ไม่สามารถขายได้</h3>
-        <p>${message}</p>
-        <button onclick="closeErrorPopup()">ตกลง</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-}
-
-function closeErrorPopup(){
-  const popup = document.getElementById("errorPopup");
-  if(popup) popup.remove();
-}
-
-</script>
-<script src="firebase-config.js">
-function showErrorPopup(message){
-  const old = document.getElementById("errorPopup");
-  if(old) old.remove();
-
-  const popup = document.createElement("div");
-  popup.id = "errorPopup";
-  popup.innerHTML = `
-    <div class="popup-overlay">
-      <div class="popup-card">
-        <div class="popup-icon">⚠️</div>
-        <h3>ไม่สามารถขายได้</h3>
-        <p>${message}</p>
-        <button onclick="closeErrorPopup()">ตกลง</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-}
-
-function closeErrorPopup(){
-  const popup = document.getElementById("errorPopup");
-  if(popup) popup.remove();
-}
-
-</script>
-<script src="guard.js">
-function showErrorPopup(message){
-  const old = document.getElementById("errorPopup");
-  if(old) old.remove();
-
-  const popup = document.createElement("div");
-  popup.id = "errorPopup";
-  popup.innerHTML = `
-    <div class="popup-overlay">
-      <div class="popup-card">
-        <div class="popup-icon">⚠️</div>
-        <h3>ไม่สามารถขายได้</h3>
-        <p>${message}</p>
-        <button onclick="closeErrorPopup()">ตกลง</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-}
-
-function closeErrorPopup(){
-  const popup = document.getElementById("errorPopup");
-  if(popup) popup.remove();
-}
-
-</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="guard.js"></script>
 
 </body>
 </html>
